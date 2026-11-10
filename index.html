@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Blend is a Cairo agency for UGC video, branded giveaways, and ushers and events. One brief, three deliverables.">
+<meta property="og:title" content="Blend — Cairo">
+<meta property="og:description" content="UGC video, branded giveaways, ushers and events. One team for the whole campaign.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#1A0B2E">
+<title>Blend Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0}
+img{max-width:100%}
+</style>
+<style>
+/* Layout: paper ground throughout, photographs full-bleed between text bands.
+   Each service is a chapter with its own accent on the eyebrow only. The dark
+   ink ground appears once, on the cover, so it reads as a cover and not as a
+   default. Lime and pink are small: a rule, a label, a highlight behind three
+   words. Never a field of either. */
+:root{
+  --paper:#F7F4EF; --card:#FFFFFF; --ink:#1A0B2E;
+  --ink-72:rgba(26,11,46,.72); --ink-50:rgba(26,11,46,.50);
+  --ink-14:rgba(26,11,46,.13); --ink-06:rgba(26,11,46,.05);
+  --lime:#C8FF00; --purple:#5B21A8; --pink:#EB4478; --clay:#A8553C;
+  --sans:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --serif:'DM Serif Display',Georgia,'Times New Roman',serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#15101C; --card:#1D1726; --ink:#F3EFE8;
+  --ink-72:rgba(243,239,232,.74); --ink-50:rgba(243,239,232,.52);
+  --ink-14:rgba(243,239,232,.16); --ink-06:rgba(243,239,232,.06);
+  --purple:#C9ABF7; --pink:#F2789E; --clay:#E0A188; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#15101C; --card:#1D1726; --ink:#F3EFE8;
+  --ink-72:rgba(243,239,232,.74); --ink-50:rgba(243,239,232,.52);
+  --ink-14:rgba(243,239,232,.16); --ink-06:rgba(243,239,232,.06);
+  --purple:#C9ABF7; --pink:#F2789E; --clay:#E0A188; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+  font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px))}
+img,video{max-width:100%;display:block}
+
+/* ---- cover: the one dark surface in the document ---- */
+.cover{background:#1A0B2E;color:#F3EFE8}
+.cover .wrap{padding-block:clamp(56px,11vw,112px) clamp(48px,9vw,88px)}
+.cover .mark{font-family:var(--serif);font-style:italic;
+  font-size:clamp(64px,15vw,150px);line-height:.84;letter-spacing:-.02em;margin:0}
+.cover .sub{font-size:11px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--lime);margin:0 0 clamp(28px,6vw,52px)}
+.cover .line{font-size:clamp(19px,2.6vw,26px);line-height:1.38;max-width:21ch;
+  margin:clamp(30px,6vw,52px) 0 0;font-weight:500;letter-spacing:-.015em}
+.cover .svc{display:flex;flex-wrap:wrap;gap:0 10px;margin-top:clamp(28px,5vw,46px);
+  font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(243,239,232,.62)}
+.cover .svc b{color:#F3EFE8;font-weight:700}
+.rule{height:3px;background:var(--lime);width:76px;margin:0 0 22px}
+
+/* ---- shared section furniture ---- */
+section>.wrap{padding-block:clamp(52px,9vw,96px)}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;
+  margin:0 0 14px}
+h2{font-size:clamp(30px,5.4vw,52px);line-height:1.04;letter-spacing:-.035em;
+  margin:0 0 18px;font-weight:700;text-wrap:balance;max-width:17ch}
+h3{font-size:clamp(19px,2.3vw,23px);line-height:1.22;letter-spacing:-.02em;
+  margin:0 0 7px;font-weight:700}
+p{margin:0 0 15px;max-width:60ch;color:var(--ink-72)}
+p.lead{font-size:clamp(18px,2.1vw,21px);color:var(--ink);max-width:48ch;line-height:1.45}
+strong{font-weight:700;color:var(--ink)}
+.hl{background:var(--lime);color:#1A0B2E;padding:0 .18em;
+  box-decoration-break:clone;-webkit-box-decoration-break:clone}
+:root[data-theme="dark"] .hl,
+:root:not([data-theme="light"]) .hl{color:#1A0B2E}
+
+/* ---- the number band ---- */
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:28px 24px;margin-top:clamp(32px,5vw,48px);
+  border-top:1px solid var(--ink-14);padding-top:30px}
+.nums .n{font-size:clamp(34px,5vw,46px);line-height:1;font-weight:700;
+  letter-spacing:-.04em;font-variant-numeric:tabular-nums;margin:0}
+.nums .k{font-size:11px;font-weight:700;letter-spacing:.17em;text-transform:uppercase;
+  color:var(--ink-50);margin:8px 0 0}
+.nums .src{font-size:12.5px;color:var(--ink-50);margin:5px 0 0;line-height:1.4}
+
+/* ---- photography ---- */
+.shots{display:grid;gap:10px;margin-top:clamp(30px,5vw,44px)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.shots figure{margin:0;position:relative;overflow:hidden;background:var(--ink-06);
+  border-radius:2px;box-shadow:0 1px 2px rgba(26,11,46,.10),0 8px 24px rgba(26,11,46,.07)}
+:root[data-theme="dark"] .shots figure,
+:root:not([data-theme="light"]) .shots figure{box-shadow:0 1px 2px rgba(0,0,0,.4)}
+.shots img{width:100%;height:100%;object-fit:cover;aspect-ratio:4/5}
+.shots .wide img{aspect-ratio:16/10}
+.cap{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-50);margin:9px 0 0}
+@media (max-width:620px){.g3{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:420px){.g3,.g2{grid-template-columns:1fr}}
+
+/* ---- the detail rows ---- */
+.rows{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));
+  gap:26px 34px;margin-top:clamp(30px,5vw,44px)}
+.rows>div{min-width:0;border-top:2px solid var(--ink);padding-top:14px}
+.rows h3{font-size:17px;margin-bottom:5px}
+.rows p{font-size:15.5px;margin:0}
+
+/* ---- the UGC case ---- */
+.case{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);
+  gap:clamp(24px,4vw,44px);align-items:start;margin-top:clamp(30px,5vw,44px)}
+.case video{width:100%;border-radius:3px;background:#000;aspect-ratio:9/16}
+@media (max-width:700px){.case{grid-template-columns:1fr}
+  .case .vid{max-width:300px}}
+.beat{border-left:2px solid var(--ink-14);padding:0 0 0 18px;margin:0 0 20px}
+.beat b{display:block;font-size:11px;font-weight:700;letter-spacing:.17em;
+  text-transform:uppercase;color:var(--pink);margin-bottom:5px}
+.beat p{margin:0;font-size:15.5px}
+
+/* ---- second creator, video beside its note ---- */
+.pair{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);
+  gap:clamp(22px,4vw,40px);align-items:center;margin-top:clamp(34px,5vw,50px);
+  padding-top:clamp(30px,4vw,40px);border-top:1px solid var(--ink-14)}
+.pair video{width:100%;border-radius:3px;background:#000;aspect-ratio:9/16}
+.pair-txt h3{margin-bottom:9px}
+.pair-txt p:last-child{margin-bottom:0}
+@media (max-width:700px){.pair{grid-template-columns:1fr}
+  .pair>div:first-child{max-width:260px}}
+
+/* ---- motion pair ---- */
+.reels{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:14px;margin-top:clamp(30px,5vw,44px)}
+.reels video{width:100%;border-radius:3px;background:#000}
+
+/* ---- the honest note ---- */
+.note{background:var(--card);border-left:3px solid var(--pink);padding:20px 22px;
+  margin-top:clamp(28px,4vw,40px);max-width:62ch;border-radius:0 3px 3px 0}
+.note p{margin:0;color:var(--ink);font-size:16px}
+.note p+p{margin-top:11px}
+
+/* ---- client names, set as type rather than logos ---- */
+.names{display:flex;flex-wrap:wrap;gap:9px 0;margin-top:26px;
+  font-size:clamp(17px,2.4vw,22px);font-weight:600;letter-spacing:-.02em;
+  line-height:1.45;color:var(--ink);max-width:40ch}
+.names span::after{content:"·";color:var(--ink-50);margin:0 .5em;font-weight:400}
+.names span:last-child::after{content:""}
+
+/* ---- price ---- */
+.price{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;
+  margin-top:clamp(26px,4vw,38px);padding-top:22px;border-top:1px solid var(--ink-14)}
+.price .big{font-size:clamp(30px,4.6vw,42px);font-weight:700;letter-spacing:-.035em;
+  font-variant-numeric:tabular-nums}
+.price .unit{font-size:14px;color:var(--ink-50);font-weight:600}
+
+/* ---- steps ---- */
+.steps{counter-reset:s;margin-top:clamp(30px,5vw,44px);display:grid;gap:0}
+.steps>div{counter-increment:s;display:grid;grid-template-columns:42px 1fr;
+  gap:0 16px;padding:19px 0;border-top:1px solid var(--ink-14)}
+.steps>div:last-child{border-bottom:1px solid var(--ink-14)}
+.steps>div::before{content:counter(s,decimal-leading-zero);font-size:12px;
+  font-weight:700;color:var(--pink);letter-spacing:.1em;padding-top:4px;
+  font-variant-numeric:tabular-nums}
+.steps h3{font-size:17px}
+.steps p{font-size:15.5px;margin:0}
+
+/* ---- close ---- */
+.close{background:#1A0B2E;color:#F3EFE8}
+.close .wrap{padding-block:clamp(52px,9vw,92px)}
+.close h2{color:#F3EFE8;max-width:15ch}
+.close p{color:rgba(243,239,232,.74)}
+.close .contact{display:flex;flex-wrap:wrap;gap:12px 34px;margin-top:34px;
+  padding-top:26px;border-top:1px solid rgba(243,239,232,.2)}
+.close .contact div{min-width:0}
+.close .k{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--lime);margin:0 0 5px}
+.close .v{font-size:17px;font-weight:600;color:#F3EFE8;margin:0;word-break:break-word}
+.close .mark{font-family:var(--serif);font-style:italic;font-size:30px;margin:36px 0 0;
+  color:rgba(243,239,232,.5)}
+
+/* reveal, from a visible resting state */
+@media (prefers-reduced-motion:no-preference){
+  .rv{animation:rise .7s cubic-bezier(.2,.7,.3,1) both;animation-timeline:view();
+    animation-range:entry 0% entry 42%}
+  @keyframes rise{from{opacity:.25;transform:translateY(16px)}to{opacity:1;transform:none}}
+}
+</style>
+</head>
+<body>
+
+
+<header class="cover">
+  <div class="wrap">
+    <p class="sub">Blend &middot; Cairo</p>
+    <h1 class="mark">blend</h1>
+    <p class="line">We put the content, the merch and the people on your campaign.</p>
+    <p class="svc"><b>UGC video</b> &nbsp;/&nbsp; <b>Branded giveaways</b> &nbsp;/&nbsp;
+      <b>Ushers &amp; events</b></p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap rv">
+    <div class="rule"></div>
+    <p class="eyebrow" style="color:var(--purple)">Who we are</p>
+    <h2>Six years on the floor. Now the whole campaign.</h2>
+    <p class="lead">Blend started in events, putting briefed teams on the floor for
+      activations and launches across Egypt. We have built outward from there, so one
+      team now handles the content, the merch and the people at the same activation.</p>
+    <p>Founded and run by Moustafa Shawkat, in Cairo.</p>
+
+    <div class="nums">
+      <div>
+        <p class="n">200+</p>
+        <p class="k">Events delivered</p>
+      </div>
+      <div>
+        <p class="n">6</p>
+        <p class="k">Years in the field</p>
+      </div>
+      <div>
+        <p class="n">2,000</p>
+        <p class="k">Creators on the roster</p>
+      </div>
+      <div>
+        <p class="n">1</p>
+        <p class="k">Brief, three deliverables</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap rv">
+    <div class="rule" style="background:var(--pink)"></div>
+    <p class="eyebrow" style="color:var(--pink)">Service one</p>
+    <h2>UGC video</h2>
+    <p class="lead">Content that looks like a recommendation instead of an ad. Filmed by
+      real people, in the rooms they actually live in.</p>
+
+    <div class="case">
+      <div class="vid">
+        <video src="img/mintra.mp4" poster="img/mintra_poster.jpg" controls playsinline preload="metadata" aria-label="UGC video made for a footwear brand"></video>
+        <p class="cap">Mintra &middot; footwear &middot; 2026</p>
+      </div>
+      <div>
+        <h3 style="margin-bottom:16px">One video, start to finish</h3>
+        <div class="beat">
+          <b>The brief</b>
+          <p>Comfortable, affordable shoes for everyday wear. The buyer weighs price and
+            whether they are worth the money. The video had to run as a paid ad.</p>
+        </div>
+        <div class="beat">
+          <b>What the first cut got wrong</b>
+          <p>It opened on the discount and did not reach the product until second 19.
+            Nobody watches an offer for nineteen seconds.</p>
+        </div>
+        <div class="beat">
+          <b>The recut</b>
+          <p>Cut to 22 seconds. Shots grouped by camera distance so every hard cut lands
+            between two shots of similar size. Product first, offer last.</p>
+        </div>
+        <div class="beat">
+          <b>What stayed</b>
+          <p>Her room, her phone, her words. The unpolished look is a decision about the
+            footage, not a limit of the budget.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pair">
+      <div>
+        <video src="img/creator2.mp4" poster="img/creator2_poster.jpg" controls playsinline preload="metadata" aria-label="Creator talking to camera at home and showing an outfit"></video>
+        <p class="cap">Creator video &middot; apparel &middot; Cairo</p>
+      </div>
+      <div class="pair-txt">
+        <h3>A hallway, a phone, and somebody who talks like a person</h3>
+        <p>No set, no crew, no lighting kit. She opens on the thing itself rather than on
+          an introduction, shows it the way she would show a friend, and the whole piece
+          runs fourteen seconds.</p>
+        <p>By studio rules the room is lit wrong. That is also the reason somebody
+          believes a real person owns the product.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:clamp(36px,6vw,56px)">How we work</h3>
+    <div class="rows">
+      <div>
+        <h3>Send the product, not a moodboard</h3>
+        <p>Two units, because creators spill things and film the same scene four times.</p>
+      </div>
+      <div>
+        <h3>One page, not a script</h3>
+        <p>The hook, the thing to show, the one reason to buy. The words stay theirs, which
+          is the part that makes somebody watch.</p>
+      </div>
+      <div>
+        <h3>Every segment in Egypt</h3>
+        <p>Mothers, fathers, students, whole families. If a product lives in a house,
+          somebody needs it filmed there.</p>
+      </div>
+      <div>
+        <h3>You own the file</h3>
+        <p>Organic use on your page and the creator's is included. Paid advertising is
+          licensed separately and that fee goes to the creator.</p>
+      </div>
+    </div>
+
+    <div class="price">
+      <span class="big">EGP 2,500</span>
+      <span class="unit">per video &middot; 3 to 5 days from the day the product arrives</span>
+    </div>
+
+    <div class="note">
+      <p><strong>Being straight about this one.</strong> The brands on the previous page
+        hired us for staffing, events and giveaways. They are not UGC clients, and we are
+        not going to let a logo imply otherwise.</p>
+      <p>So the first video is <span class="hl">on us</span>. You judge the quality before
+        you commit to anything, and if it isn't for you, the video is still yours to keep.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap rv">
+    <div class="rule" style="background:var(--purple)"></div>
+    <p class="eyebrow" style="color:var(--purple)">Service two</p>
+    <h2>Ushers and events</h2>
+    <p class="lead">This is the part of Blend with six years behind it. Briefed crews, in
+      uniform, who know the floor plan before the doors open.</p>
+
+    <div class="shots g3">
+      <figure><img src="img/post1.jpg" alt="Forty-five crew at a tech conference in Cairo: registration, guest flow and floor management" loading="lazy"></figure>
+      <figure><img src="img/post7.jpg" alt="Ushers and guest flow for a brand anniversary at the Pyramids" loading="lazy"></figure>
+      <figure><img src="img/post9.jpg" alt="Ten-person crew in branded uniform at a Garnier activation in Cairo" loading="lazy"></figure>
+      <figure><img src="img/post2.jpg" alt="Door and guest list at a restaurant opening" loading="lazy"></figure>
+      <figure><img src="img/post3.jpg" alt="Wristbands being fitted at the door of an event" loading="lazy"></figure>
+      <figure><img src="img/post4.jpg" alt="Crew member demonstrating a skincare product one guest at a time" loading="lazy"></figure>
+      <figure><img src="img/post6.jpg" alt="Ten ushers at a resident activation on the Sokhna shore" loading="lazy"></figure>
+      <figure><img src="img/post5.jpg" alt="Crew member running an activity with guests rather than watching from the back" loading="lazy"></figure>
+      <figure><img src="img/post8.jpg" alt="Night crew at a beach club on the North Coast" loading="lazy"></figure>
+    </div>
+    <p class="cap">Every photograph here is from a Blend event. No stock photography in this
+      document.</p>
+
+    <h3 style="margin-top:clamp(36px,6vw,56px)">What a briefed crew actually means</h3>
+    <div class="rows">
+      <div>
+        <h3>Screened, then briefed</h3>
+        <p>Vetted before they join the roster, and briefed on your brand before they
+          arrive rather than on the morning.</p>
+      </div>
+      <div>
+        <h3>English as standard</h3>
+        <p>Across the team, not an upgrade you pay extra to unlock.</p>
+      </div>
+      <div>
+        <h3>Crews that scale</h3>
+        <p>From four people on a stand to forty-five across a conference floor.</p>
+      </div>
+      <div>
+        <h3>Sampling is a skill</h3>
+        <p>Getting a product into somebody's hand so they actually try it, a hundred
+          times an hour, without the queue stopping.</p>
+      </div>
+      <div>
+        <h3>Explaining, not handing out</h3>
+        <p>Some briefs need the product demonstrated one person at a time. That is a
+          different crew and we say so before you book.</p>
+      </div>
+      <div>
+        <h3>Wherever it runs</h3>
+        <p>Cairo, the North Coast, and anywhere in Egypt the campaign travels.</p>
+      </div>
+    </div>
+
+    <div class="reels">
+      <video src="img/ev_montage.mp4" poster="img/ev_montage_poster.jpg" muted loop playsinline autoplay preload="metadata" aria-label="Montage from a beach activation"></video>
+      <video src="img/ev_azha.mp4" poster="img/ev_azha_poster.jpg" muted loop playsinline autoplay preload="metadata" aria-label="Gates and crowd flow at a festival"></video>
+    </div>
+    <p class="cap">Our own footage, from our own events</p>
+
+    <h3 style="margin-top:clamp(36px,6vw,56px)">Brands that have called us in</h3>
+    <div class="names">
+      <span>L'Oréal</span><span>Garnier</span><span>Kérastase</span><span>LUX</span>
+      <span>Dell</span><span>IBM</span><span>Huawei</span><span>Honor</span><span>LG</span>
+      <span>Bosch</span><span>Emaar</span><span>SODIC</span><span>Orascom</span>
+      <span>Majid Al Futtaim</span><span>Ahmad Tea</span><span>Eucerin</span>
+      <span>ADNOC</span><span>Standard Bank</span><span>Egypt Post</span>
+      <span>The American University in Cairo</span>
+    </div>
+    <p class="cap" style="margin-top:14px">Staffing, events and giveaways work</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap rv">
+    <div class="rule" style="background:var(--clay)"></div>
+    <p class="eyebrow" style="color:var(--clay)">Service three</p>
+    <h2>Branded giveaways</h2>
+    <p class="lead">Merch people keep instead of leaving on the chair. Sourced
+      manufacturer-direct, from fifty units to five thousand.</p>
+    <div class="rows">
+      <div>
+        <h3>Sourced direct</h3>
+        <p>Bags, drinkware, apparel, caps and full branded kits, priced from the factory
+          rather than through a reseller.</p>
+      </div>
+      <div>
+        <h3>Any run size</h3>
+        <p>Fifty units for a press day or five thousand for a national activation.</p>
+      </div>
+      <div>
+        <h3>It arrives with the crew</h3>
+        <p>Same brief, same team. The merch is on the floor when the people are, which is
+          the thing that usually goes wrong.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap rv">
+    <div class="rule" style="background:var(--purple)"></div>
+    <p class="eyebrow" style="color:var(--purple)">How it works</p>
+    <h2>One brief. Nothing to chase.</h2>
+    <p class="lead">Three vendors means three contracts, three timelines and three people
+      to chase. This is one of each.</p>
+    <div class="steps">
+      <div>
+        <div>
+          <h3>Brief</h3>
+          <p>One conversation. We map what the campaign actually needs, and say so if it
+            does not need all three.</p>
+        </div>
+      </div>
+      <div>
+        <div>
+          <h3>Build</h3>
+          <p>Creators booked, merch sourced, crew scheduled. Running in parallel rather
+            than one after the other.</p>
+        </div>
+      </div>
+      <div>
+        <div>
+          <h3>Deliver</h3>
+          <p>Video in 3 to 5 days. Merch to your door. Crew on the floor, briefed and in
+            uniform before the doors open.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="close">
+  <div class="wrap">
+    <div class="rule"></div>
+    <h2>Send us the product.</h2>
+    <p>One message and we will map it out. Content, merch, staff, or all three.</p>
+    <div class="contact">
+      <div>
+        <p class="k">Instagram</p>
+        <p class="v">@blendmarketingeg</p>
+      </div>
+      <div>
+        <p class="k">WhatsApp</p>
+        <p class="v">+20 110 740 9572</p>
+      </div>
+      <div>
+        <p class="k">Where</p>
+        <p class="v">Cairo, Egypt</p>
+      </div>
+    </div>
+    <p class="mark">blend</p>
+  </div>
+</footer>
+
+</body>
+</html>
