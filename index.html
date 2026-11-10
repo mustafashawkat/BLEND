@@ -47,6 +47,36 @@ img{max-width:100%}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
   font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* ---- the bar that makes this read as a site rather than a document ---- */
+html{scroll-behavior:smooth}
+/* a jump has to clear the bar, or the heading lands underneath it */
+section[id],footer[id]{scroll-margin-top:calc(62px + env(safe-area-inset-top,0px))}
+/* paints the strip above the bar so nothing scrolls into the phone's status area */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);
+  background:#1A0B2E;z-index:60}
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:#1A0B2E;
+  border-bottom:1px solid rgba(243,239,232,.15)}
+.nav .in{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:12px;
+  padding-block:11px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px))}
+.nav .logo{font-family:var(--serif);font-style:italic;font-size:25px;color:#F3EFE8;
+  text-decoration:none;line-height:1;flex:0 0 auto}
+.nav ul{list-style:none;display:flex;gap:2px;margin:0;padding:0;flex:1 1 auto;
+  min-width:0;overflow-x:auto;scrollbar-width:none}
+.nav ul::-webkit-scrollbar{display:none}
+.nav a.l{color:rgba(243,239,232,.76);text-decoration:none;font-size:12px;font-weight:700;
+  letter-spacing:.13em;text-transform:uppercase;white-space:nowrap;padding:8px 10px;
+  border-radius:3px;display:block}
+.nav a.l:hover,.nav a.l:focus-visible{color:#1A0B2E;background:var(--lime)}
+.nav .cta{flex:0 0 auto;background:var(--lime);color:#1A0B2E;text-decoration:none;
+  font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  padding:10px 15px;border-radius:3px;white-space:nowrap}
+.nav .cta:hover,.nav .cta:focus-visible{background:#F3EFE8}
+.nav a:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+@media (max-width:560px){.nav ul{display:none}.nav .in{justify-content:space-between}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 .wrap{max-width:1080px;margin:0 auto;
   padding-left:max(16px,env(safe-area-inset-left,0px));
   padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -59,8 +89,11 @@ img,video{max-width:100%;display:block}
   font-size:clamp(64px,15vw,150px);line-height:.84;letter-spacing:-.02em;margin:0}
 .cover .sub{font-size:11px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
   color:var(--lime);margin:0 0 clamp(28px,6vw,52px)}
+/* the colour is explicit because the generic p rule sets a dark ink that
+   would be invisible on this one dark band */
 .cover .line{font-size:clamp(19px,2.6vw,26px);line-height:1.38;max-width:21ch;
-  margin:clamp(30px,6vw,52px) 0 0;font-weight:500;letter-spacing:-.015em}
+  margin:clamp(30px,6vw,52px) 0 0;font-weight:500;letter-spacing:-.015em;
+  color:#F3EFE8}
 .cover .svc{display:flex;flex-wrap:wrap;gap:0 10px;margin-top:clamp(28px,5vw,46px);
   font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
   color:rgba(243,239,232,.62)}
@@ -197,7 +230,20 @@ strong{font-weight:700;color:var(--ink)}
 <body>
 
 
-<header class="cover">
+<nav class="nav">
+  <div class="in">
+    <a class="logo" href="#top" aria-label="Blend, back to top">blend</a>
+    <ul>
+      <li><a class="l" href="#ugc">UGC</a></li>
+      <li><a class="l" href="#events">Ushers &amp; events</a></li>
+      <li><a class="l" href="#giveaways">Giveaways</a></li>
+      <li><a class="l" href="#how">How it works</a></li>
+    </ul>
+    <a class="cta" href="#contact">Get in touch</a>
+  </div>
+</nav>
+
+<header class="cover" id="top">
   <div class="wrap">
     <p class="sub">Blend &middot; Cairo</p>
     <h1 class="mark">blend</h1>
@@ -238,7 +284,7 @@ strong{font-weight:700;color:var(--ink)}
   </div>
 </section>
 
-<section>
+<section id="ugc">
   <div class="wrap rv">
     <div class="rule" style="background:var(--pink)"></div>
     <p class="eyebrow" style="color:var(--pink)">Service one</p>
@@ -329,7 +375,7 @@ strong{font-weight:700;color:var(--ink)}
   </div>
 </section>
 
-<section>
+<section id="events">
   <div class="wrap rv">
     <div class="rule" style="background:var(--purple)"></div>
     <p class="eyebrow" style="color:var(--purple)">Service two</p>
@@ -401,7 +447,7 @@ strong{font-weight:700;color:var(--ink)}
   </div>
 </section>
 
-<section>
+<section id="giveaways">
   <div class="wrap rv">
     <div class="rule" style="background:var(--clay)"></div>
     <p class="eyebrow" style="color:var(--clay)">Service three</p>
@@ -427,7 +473,7 @@ strong{font-weight:700;color:var(--ink)}
   </div>
 </section>
 
-<section>
+<section id="how">
   <div class="wrap rv">
     <div class="rule" style="background:var(--purple)"></div>
     <p class="eyebrow" style="color:var(--purple)">How it works</p>
@@ -460,7 +506,7 @@ strong{font-weight:700;color:var(--ink)}
   </div>
 </section>
 
-<footer class="close">
+<footer class="close" id="contact">
   <div class="wrap">
     <div class="rule"></div>
     <h2>Send us the product.</h2>
