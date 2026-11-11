@@ -135,12 +135,74 @@ body::after{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;
 
 /* depth on the photographs themselves */
 .shots figure{will-change:transform}
-.shots img{transition:transform .28s cubic-bezier(.2,.7,.3,1)}
+.shots img{transition:transform .28s var(--ease-cine)}
 @media (hover:hover){.shots figure:hover img{transform:scale(1.035)}}
 
 
 
 
+
+
+/* ================= the cinematic pass =================
+   Four things, all of them about pacing rather than effects.
+   ====================================================== */
+
+/* One easing curve for everything that is meant to feel heavy: a fast start
+   and a long tail, the way a camera settles rather than stops. */
+:root{--ease-cine:cubic-bezier(.16,1,.3,1)}
+
+/* 1. The cover composes itself once, on load, instead of arriving complete.
+      The whole sequence is under a second, because an entrance a viewer has
+      to wait through is a cost, not an effect. */
+@media (prefers-reduced-motion:no-preference){
+  .cover .sub,.cover .mark,.cover .line,.cover .svc,
+  .cover .cover-cta,.cover .scroll-cue{
+    animation:cineIn .95s var(--ease-cine) both}
+  .cover .sub{animation-delay:.05s}
+  .cover .mark{animation-delay:.16s}
+  .cover .line{animation-delay:.34s}
+  .cover .svc{animation-delay:.46s}
+  .cover .cover-cta{animation-delay:.56s}
+  .cover .scroll-cue{animation-delay:.72s}
+}
+@keyframes cineIn{
+  from{opacity:0;transform:translate3d(0,30px,0)}
+  to{opacity:1;transform:none}}
+
+/* 2. A vignette. The single cheapest thing that makes a frame read as a
+      frame rather than as a coloured rectangle. */
+.cover::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(120% 92% at 50% 42%,transparent 44%,rgba(8,3,16,.55) 100%)}
+.cover .wrap{position:relative;z-index:1}
+
+/* 3. The photographs are uncovered rather than faded in: the frame wipes
+      open and the picture inside settles back from a slight push. */
+.shots figure{clip-path:inset(0 0 0 0)}
+@media (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline:view()){
+    .shots figure{animation:lag linear both,wipeIn 1s var(--ease-cine) both;
+      animation-timeline:view(),auto}
+  }
+  .js-motion .shots figure.pre{clip-path:inset(0 0 100% 0);opacity:1}
+  .js-motion .shots figure.pre.in{clip-path:inset(0 0 0 0);
+    transition:clip-path .95s var(--ease-cine)}
+}
+@keyframes wipeIn{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes settle{from{transform:scale(1.14)}to{transform:scale(1)}}
+
+/* 4. A slow push on each photograph, so the grid is never completely still.
+      Twenty-two seconds for two per cent: at that rate nobody catches it
+      moving, they only register that it is alive. It starts after the
+      settle has finished, and pauses under the pointer so anyone actually
+      looking at a picture gets a still one. */
+@media (prefers-reduced-motion:no-preference){
+  .shots img{animation:settle 1.4s var(--ease-cine) both,
+                       push 22s 1.4s ease-in-out infinite alternate}
+  .shots figure:nth-child(2n) img{animation-duration:1.4s,27s}
+  .shots figure:nth-child(3n) img{animation-duration:1.4s,31s}
+  .shots figure:hover img{animation-play-state:running,paused}
+}
+@keyframes push{from{transform:scale(1)}to{transform:scale(1.02)}}
 
 /* ---- the cover's one action ----
    The page opened with nothing to do. A visitor who is convinced by the
@@ -217,7 +279,7 @@ a:focus-visible,button:focus-visible,video:focus-visible{
 /* ---- the grid arrives one card at a time ---- */
 @media (prefers-reduced-motion:no-preference){
   @supports (animation-timeline:view()){
-    .shots figure{animation:lag linear both,cardIn .6s cubic-bezier(.2,.7,.3,1) both;
+    .shots figure{animation:lag linear both,cardIn .6s var(--ease-cine) both;
       animation-timeline:view(),auto}
   }
 }
@@ -232,8 +294,8 @@ a:focus-visible,button:focus-visible,video:focus-visible{
 /* the fallback's own states, used only once the script has said it is needed */
 .js-motion .rv>.pre{opacity:0;transform:translate3d(0,26px,0)}
 .js-motion .rv>.pre.in{opacity:1;transform:none;
-  transition:opacity .62s cubic-bezier(.2,.7,.3,1),
-             transform .62s cubic-bezier(.2,.7,.3,1)}
+  transition:opacity .62s var(--ease-cine),
+             transform .62s var(--ease-cine)}
 .js-motion .glow,.js-motion .tintwash,
 .js-motion .cover .mark,.js-motion .shots figure{will-change:transform}
 
@@ -452,7 +514,7 @@ strong{font-weight:700;color:var(--ink)}
 
 /* reveal, from a visible resting state */
 @media (prefers-reduced-motion:no-preference){
-  .rv{animation:rise .7s cubic-bezier(.2,.7,.3,1) both;animation-timeline:view();
+  .rv{animation:rise .7s var(--ease-cine) both;animation-timeline:view();
     animation-range:entry 0% entry 42%}
   @keyframes rise{from{opacity:.25;transform:translateY(16px)}to{opacity:1;transform:none}}
 }
