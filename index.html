@@ -101,6 +101,15 @@ img{max-width:100%}
 .shots img{transition:transform .5s cubic-bezier(.2,.7,.3,1)}
 @media (hover:hover){.shots figure:hover img{transform:scale(1.035)}}
 
+
+/* the fallback's own states, used only once the script has said it is needed */
+.js-motion .rv>.pre{opacity:0;transform:translate3d(0,26px,0)}
+.js-motion .rv>.pre.in{opacity:1;transform:none;
+  transition:opacity .62s cubic-bezier(.2,.7,.3,1),
+             transform .62s cubic-bezier(.2,.7,.3,1)}
+.js-motion .glow,.js-motion .tintwash,
+.js-motion .cover .mark,.js-motion .shots figure{will-change:transform}
+
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}}
 </style>
@@ -619,5 +628,78 @@ strong{font-weight:700;color:var(--ink)}
   </div>
 </footer>
 
+
+<script>
+/* Motion for browsers without animation-timeline.
+ *
+ * Where the browser understands scroll-driven animations the CSS above does
+ * all of this and this script does nothing at all. Safari only learned the
+ * property recently, so on a lot of phones the page was arriving completely
+ * still: the fallback was working exactly as designed and the result was no
+ * movement anywhere.
+ *
+ * The reveals use IntersectionObserver, which costs nothing between
+ * intersections. The parallax needs a scroll listener, so it is kept cheap:
+ * the listener only records that a frame is due, one rAF does all the work,
+ * each element's offset comes from a rect read in that same frame, and only
+ * transform is ever written. Nothing here reads a layout property after
+ * writing one, which is what makes hand-written parallax stutter.
+ */
+(function () {
+  var native = false;
+  try { native = CSS.supports('animation-timeline: view()'); } catch (e) {}
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (native || still) return;
+
+  var root = document.documentElement;
+  root.classList.add('js-motion');
+
+  var rise = [].slice.call(document.querySelectorAll('.rv > *'));
+  rise.forEach(function (el) { el.classList.add('pre'); });
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+    });
+  }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
+  rise.forEach(function (el) { io.observe(el); });
+
+  // depth: a small offset tied to how far through the viewport a thing is
+  var layers = [];
+  function add(sel, depth) {
+    [].slice.call(document.querySelectorAll(sel)).forEach(function (el) {
+      layers.push({ el: el, d: depth });
+    });
+  }
+  add('.cover .mark', 30);
+  add('.glow', 60);
+  add('.tintwash', 40);
+  [].slice.call(document.querySelectorAll('.shots figure')).forEach(function (el, i) {
+    layers.push({ el: el, d: (i % 3 === 1) ? 44 : 20 });
+  });
+
+  var queued = false;
+  function frame() {
+    queued = false;
+    var h = window.innerHeight;
+    for (var i = 0; i < layers.length; i++) {
+      var L = layers[i], r = L.el.getBoundingClientRect();
+      if (r.bottom < -200 || r.top > h + 200) continue;
+      // -1 above the fold, +1 below it
+      var t = ((r.top + r.height / 2) / h - 0.5) * 2;
+      L.el.style.transform = 'translate3d(0,' + (t * L.d).toFixed(1) + 'px,0)';
+    }
+  }
+  function onScroll() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(frame);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  frame();
+})();
+</script>
 </body>
 </html>
