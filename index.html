@@ -18,6 +18,91 @@
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0}
 img{max-width:100%}
+
+/* ================= motion =================
+   Driven by the scroll position itself through animation-timeline, so there
+   is no scroll listener and no library: the browser runs it on the
+   compositor. Only transform and opacity ever animate, because those two
+   are the only properties that do not force the page to be laid out again.
+   Where animation-timeline is unsupported the rules simply never apply and
+   every element stays in its finished state, which is why each keyframe
+   ends where the element is meant to rest.
+   ========================================== */
+@media (prefers-reduced-motion:no-preference){
+
+  /* the cover: three layers at three speeds. The wordmark drifts slowest and
+     the type over it fastest, which is the whole parallax effect. */
+  @supports (animation-timeline:view()){
+    .cover .mark{animation:markDrift linear both;animation-timeline:view();
+      animation-range:entry 0% exit 100%}
+    .cover .line,.cover .svc{animation:upFade linear both;
+      animation-timeline:view();animation-range:entry 0% cover 40%}
+    .glow{animation:glowDrift linear both;animation-timeline:view();
+      animation-range:entry 0% exit 100%}
+
+    /* sections rise as they come in, each resting at its natural place */
+    .rv>*{animation:riseIn linear both;animation-timeline:view();
+      animation-range:entry 8% entry 46%}
+
+    /* photographs lag the page slightly, which reads as depth. The offset is
+       small on purpose: a big one looks like the grid is broken. */
+    .shots figure{animation:lag linear both;animation-timeline:view();
+      animation-range:entry 0% exit 100%}
+    .shots figure:nth-child(3n+2){animation-name:lagMore}
+
+    /* the band behind each service shifts hue as it passes */
+    .tintwash{animation:washMove linear both;animation-timeline:view();
+      animation-range:entry 0% exit 100%}
+  }
+
+  @keyframes markDrift{from{transform:translate3d(0,26px,0)}
+    to{transform:translate3d(0,-34px,0)}}
+  @keyframes glowDrift{from{transform:translate3d(-4%,8%,0) scale(1.05)}
+    to{transform:translate3d(4%,-10%,0) scale(1.15)}}
+  @keyframes upFade{from{opacity:0;transform:translate3d(0,22px,0)}
+    35%{opacity:1;transform:none} to{opacity:1;transform:none}}
+  @keyframes riseIn{from{opacity:0;transform:translate3d(0,26px,0)}
+    to{opacity:1;transform:none}}
+  @keyframes lag{from{transform:translate3d(0,22px,0)}
+    to{transform:translate3d(0,-22px,0)}}
+  @keyframes lagMore{from{transform:translate3d(0,46px,0)}
+    to{transform:translate3d(0,-46px,0)}}
+  @keyframes washMove{from{transform:translate3d(0,-6%,0)}
+    to{transform:translate3d(0,6%,0)}}
+}
+
+/* the colour field behind the cover */
+.cover{position:relative;overflow:hidden;isolation:isolate}
+.glow{position:absolute;inset:-25%;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(42% 38% at 22% 24%,rgba(91,33,168,.95),transparent 68%),
+    radial-gradient(38% 34% at 80% 32%,rgba(235,68,120,.60),transparent 66%),
+    radial-gradient(34% 30% at 58% 86%,rgba(200,255,0,.26),transparent 64%);
+  filter:blur(18px)}
+
+/* a tinted band per service, so the page has colour without the type sitting
+   on a saturated ground */
+.tinted{position:relative;overflow:hidden;isolation:isolate}
+.tintwash{position:absolute;inset:-14% -10%;z-index:-1;pointer-events:none}
+.t-ugc .tintwash{background:
+  radial-gradient(48% 40% at 84% 10%,rgba(235,68,120,.20),transparent 70%),
+  radial-gradient(40% 36% at 6% 72%,rgba(91,33,168,.16),transparent 70%)}
+.t-ev .tintwash{background:
+  radial-gradient(46% 40% at 10% 12%,rgba(91,33,168,.20),transparent 70%),
+  radial-gradient(42% 36% at 92% 70%,rgba(200,255,0,.20),transparent 70%)}
+.t-gv .tintwash{background:
+  radial-gradient(46% 40% at 78% 14%,rgba(168,85,60,.22),transparent 70%),
+  radial-gradient(40% 36% at 8% 78%,rgba(200,255,0,.14),transparent 70%)}
+.t-how .tintwash{background:
+  radial-gradient(44% 38% at 50% 6%,rgba(91,33,168,.16),transparent 72%)}
+
+/* depth on the photographs themselves */
+.shots figure{will-change:transform}
+.shots img{transition:transform .5s cubic-bezier(.2,.7,.3,1)}
+@media (hover:hover){.shots figure:hover img{transform:scale(1.035)}}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}}
 </style>
 <style>
 /* Layout: paper ground throughout, photographs full-bleed between text bands.
@@ -86,7 +171,7 @@ img,video{max-width:100%;display:block}
 .cover{background:#1A0B2E;color:#F3EFE8}
 .cover .wrap{padding-block:clamp(56px,11vw,112px) clamp(48px,9vw,88px)}
 .cover .mark{font-family:var(--serif);font-style:italic;
-  font-size:clamp(64px,15vw,150px);line-height:.84;letter-spacing:-.02em;margin:0}
+  font-size:clamp(68px,17vw,236px);line-height:.82;letter-spacing:-.03em;margin:0}
 .cover .sub{font-size:11px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
   color:var(--lime);margin:0 0 clamp(28px,6vw,52px)}
 /* the colour is explicit because the generic p rule sets a dark ink that
@@ -244,6 +329,7 @@ strong{font-weight:700;color:var(--ink)}
 </nav>
 
 <header class="cover" id="top">
+  <div class="glow" aria-hidden="true"></div>
   <div class="wrap">
     <p class="sub">Blend &middot; Cairo</p>
     <h1 class="mark">blend</h1>
@@ -284,7 +370,8 @@ strong{font-weight:700;color:var(--ink)}
   </div>
 </section>
 
-<section id="ugc">
+<section id="ugc" class="tinted t-ugc">
+  <div class="tintwash" aria-hidden="true"></div>
   <div class="wrap rv">
     <div class="rule" style="background:var(--pink)"></div>
     <p class="eyebrow" style="color:var(--pink)">Service one</p>
@@ -375,7 +462,8 @@ strong{font-weight:700;color:var(--ink)}
   </div>
 </section>
 
-<section id="events">
+<section id="events" class="tinted t-ev">
+  <div class="tintwash" aria-hidden="true"></div>
   <div class="wrap rv">
     <div class="rule" style="background:var(--purple)"></div>
     <p class="eyebrow" style="color:var(--purple)">Service two</p>
@@ -447,7 +535,8 @@ strong{font-weight:700;color:var(--ink)}
   </div>
 </section>
 
-<section id="giveaways">
+<section id="giveaways" class="tinted t-gv">
+  <div class="tintwash" aria-hidden="true"></div>
   <div class="wrap rv">
     <div class="rule" style="background:var(--clay)"></div>
     <p class="eyebrow" style="color:var(--clay)">Service three</p>
@@ -473,7 +562,8 @@ strong{font-weight:700;color:var(--ink)}
   </div>
 </section>
 
-<section id="how">
+<section id="how" class="tinted t-how">
+  <div class="tintwash" aria-hidden="true"></div>
   <div class="wrap rv">
     <div class="rule" style="background:var(--purple)"></div>
     <p class="eyebrow" style="color:var(--purple)">How it works</p>
