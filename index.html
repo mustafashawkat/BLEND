@@ -514,8 +514,206 @@ strong{font-weight:700;color:var(--ink)}
   @keyframes rise{from{opacity:.25;transform:translateY(16px)}to{opacity:1;transform:none}}
 }
 </style>
+
+<style>
+/* ================= the craft pass =================
+   Four additions, all of them things a visitor feels rather than reads: a
+   mark of our own always moving behind the page, the work shown in the
+   device it is watched on, the event photographs travelling sideways as the
+   page is scrolled, and a line that says how far through you are.
+   =================================================== */
+
+:root{--navh:56px}
+/* The horizontal gallery is wider than the viewport by design. clip rather
+   than hidden: hidden on an ancestor silently kills position:sticky, which
+   is the one thing the gallery depends on. */
+html{overflow-x:clip}
+
+/* ---- the mark ----
+   Nested contour rings, generated rather than drawn: the innermost ring is
+   one shape, the outermost is a different one, and each ring between is a
+   stage of the first turning into the second. Two copies turn against each
+   other at unrelated speeds, so the pair never returns to the same
+   arrangement and the loop cannot be spotted.
+
+   Only rotation animates, and the stroke is non-scaling, so the whole thing
+   costs one composited transform per copy no matter how large it is drawn. */
+.rings{position:absolute;pointer-events:none;z-index:-1;fill:none;
+  stroke:currentColor;opacity:.2;width:var(--rs,1100px);aspect-ratio:1;
+  overflow:visible}
+.rings path{vector-effect:non-scaling-stroke;stroke-width:1.15}
+@media (prefers-reduced-motion:no-preference){
+  .rings{animation:spin var(--rd,150s) linear infinite}
+  .rings.ccw{animation-direction:reverse}
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---- the cover, rebuilt as two columns ---- */
+.cover-grid{display:block}
+.cover-copy>.scroll-cue{display:none}
+.stage{position:relative;margin-top:clamp(30px,5vw,44px)}
+
+@media (min-width:900px){
+  .cover-grid{display:grid;align-items:start;
+    grid-template-columns:minmax(0,1fr) minmax(0,420px);
+    grid-template-areas:"copy stage" "cue stage";
+    column-gap:clamp(28px,4vw,56px)}
+  .cover-copy{grid-area:copy}
+  .stage{grid-area:stage;align-self:center;margin-top:0}
+  .cover-grid>.scroll-cue{grid-area:cue}
+}
+
+/* ---- the work, in the thing it is watched on ----
+   Three devices on a real perspective rather than three rectangles given a
+   tilt: each sits at its own depth, so the cluster separates when the
+   pointer moves across it. Drawn in CSS, so it weighs nothing and takes the
+   page's own colours instead of a stock mock-up's grey.
+
+   The transforms are split across three elements on purpose. The cluster
+   carries the pointer tilt, each device carries its fixed pose, and the
+   sleeve inside it carries the drift. One element cannot hold three
+   animations of the same property; three elements can. */
+.cluster{position:relative;height:clamp(280px,46vw,430px);
+  perspective:1300px;perspective-origin:50% 44%;
+  transform-style:preserve-3d;will-change:transform;
+  transition:transform .5s var(--ease-cine)}
+.dev{position:absolute;top:50%;left:50%;width:var(--w);
+  transform:translate(-50%,-50%) var(--pose);transform-style:preserve-3d}
+.dev-i{border-radius:26px;padding:6px;
+  background:linear-gradient(155deg,#3a3147,#17121f 44%,#453a55);
+  box-shadow:0 1px 0 rgba(255,255,255,.16) inset,
+             0 30px 60px rgba(0,0,0,.55),0 6px 16px rgba(0,0,0,.4);
+  will-change:transform}
+@media (prefers-reduced-motion:no-preference){
+  .dev-1 .dev-i{animation:bobA 11s ease-in-out infinite alternate}
+  .dev-2 .dev-i{animation:bobB 14s ease-in-out infinite alternate}
+  .dev-3 .dev-i{animation:bobC 17s ease-in-out infinite alternate}
+}
+@keyframes bobA{from{transform:translate3d(0,-7px,0)}to{transform:translate3d(0,9px,0)}}
+@keyframes bobB{from{transform:translate3d(0,8px,0)}to{transform:translate3d(0,-10px,0)}}
+@keyframes bobC{from{transform:translate3d(0,-5px,0)}to{transform:translate3d(0,7px,0)}}
+
+.dev-sc{position:relative;border-radius:21px;overflow:hidden;background:#000;
+  aspect-ratio:9/19.5}
+.dev-sc img,.dev-sc video{width:100%;height:100%;object-fit:cover;display:block}
+.dev-sc::after{content:"";position:absolute;top:7px;left:50%;
+  transform:translateX(-50%);width:34%;height:13px;border-radius:9px;
+  background:#07050c}
+/* a sheen across the glass, which is what stops a drawn phone reading flat */
+.dev-i::after{content:"";position:absolute;inset:0;border-radius:26px;
+  pointer-events:none;
+  background:linear-gradient(118deg,rgba(255,255,255,.17) 0 16%,
+             transparent 38% 100%)}
+
+.dev-1{--w:39%;--pose:translate3d(-92%,-7%,-110px) rotateY(22deg) rotateX(5deg) rotateZ(-5deg)}
+.dev-2{--w:48%;--pose:translate3d(0,0,50px) rotateY(-9deg) rotateX(3deg)}
+.dev-3{--w:37%;--pose:translate3d(96%,15%,-130px) rotateY(-25deg) rotateX(6deg) rotateZ(4deg)}
+@media (max-width:899px){
+  /* on a phone the cluster is a band that runs off the right edge rather
+     than a centred object, which keeps the first screen short */
+  .cluster{height:238px;perspective:900px}
+  .dev-1{--w:88px;--pose:translate3d(-116%,-5%,-80px) rotateY(20deg) rotateZ(-5deg)}
+  .dev-2{--w:100px;--pose:translate3d(0,0,30px) rotateY(-10deg)}
+  .dev-3{--w:84px;--pose:translate3d(120%,12%,-110px) rotateY(-24deg) rotateZ(4deg)}
+}
+.stage-cap{font-size:10.5px;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:rgba(243,239,232,.42);margin:22px 0 0;
+  text-align:center}
+
+/* ---- the event photographs travel sideways ----
+   Nine pictures in a grid are a grid. The same nine moving past as the page
+   is scrolled are a reel, which is what the work actually is. Desktop only:
+   on a phone a sideways scroller fights the thumb, so the grid stays. */
+.hwrap{display:none}
+/* The whole thing hangs on position:sticky, and the service band around it
+   carries overflow:hidden to clip its drifting wash. An ancestor with
+   overflow:hidden becomes the scrollport for anything sticky inside it, and
+   since that band does not itself scroll, the lid never sticks: it just
+   rides up with the page. overflow:clip does the same clipping without
+   becoming a scrollport, so the band is switched to it exactly where the
+   gallery runs. A browser without overflow:clip keeps the band as it was
+   and keeps the grid, because a gallery that cannot stick is worse than no
+   gallery. */
+@supports (overflow:clip){
+@media (min-width:880px) and (prefers-reduced-motion:no-preference){
+  #events.tinted{overflow:clip}
+  .evgrid{display:none}
+  .hwrap{display:block;position:relative;height:300vh;
+    margin-inline:calc(50% - 50vw);width:100vw}
+  .hstick{position:sticky;top:var(--navh);height:calc(100vh - var(--navh));
+    display:flex;align-items:center;overflow:hidden}
+  .hrow{display:flex;gap:20px;padding-inline:clamp(20px,4vw,60px);
+    width:max-content;will-change:transform}
+  .hrow figure{flex:0 0 clamp(272px,30vw,430px);margin:0;position:relative;
+    border-radius:3px;overflow:hidden;background:var(--ink-06);
+    box-shadow:0 0 0 1px rgba(243,239,232,.09),0 22px 50px rgba(0,0,0,.55)}
+  .hrow img{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover}
+  .hrow figure:nth-child(3n+2){margin-top:clamp(30px,6vw,90px)}
+  .hrow figure:nth-child(3n){margin-bottom:clamp(24px,5vw,74px)}
+  .hnote{position:absolute;left:clamp(20px,4vw,60px);bottom:clamp(14px,3vw,26px);
+    margin:0;font-size:11px;font-weight:700;letter-spacing:.18em;
+    text-transform:uppercase;color:rgba(243,239,232,.45)}
+}}
+
+/* ---- the line that says how far through you are ---- */
+.prog{position:absolute;left:0;right:0;bottom:-1px;height:2px;
+  pointer-events:none;overflow:hidden}
+.prog i{display:block;height:100%;transform:scaleX(0);transform-origin:0 50%;
+  background:linear-gradient(90deg,var(--purple),var(--pink) 58%,var(--lime))}
+@supports (animation-timeline:scroll()){
+  @media (prefers-reduced-motion:no-preference){
+    .prog i{animation:prog linear both;animation-timeline:scroll(root block)}
+  }
+}
+@keyframes prog{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* ---- the process numbers get the weight they were describing ---- */
+.steps>div{grid-template-columns:clamp(58px,7vw,88px) 1fr;align-items:start;
+  padding-block:clamp(20px,3vw,28px)}
+.steps>div::before{font-size:clamp(34px,4.6vw,54px);line-height:.86;
+  letter-spacing:-.04em;padding-top:0;color:transparent;
+  -webkit-text-stroke:1.4px var(--purple);
+  transition:color .7s var(--ease-cine),-webkit-text-stroke-color .7s var(--ease-cine)}
+.steps>div.lit::before{color:rgba(164,123,240,.22)}
+
+/* ---- things answer the pointer ---- */
+@media (hover:hover){
+  .btn{transition:background .18s ease,transform .22s var(--ease-cine),
+       box-shadow .22s var(--ease-cine)}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.45)}
+  .shots figure,.hrow figure{transition:transform .4s var(--ease-cine),
+       box-shadow .4s var(--ease-cine)}
+  .shots figure:hover,.hrow figure:hover{transform:translateY(-4px);
+       box-shadow:0 0 0 1px rgba(200,255,0,.3),0 26px 56px rgba(0,0,0,.62)}
+}
+
+/* a soft light that follows the pointer across the cover, so the first
+   screen responds to a person being there at all */
+.cursor-glow{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;
+  transition:opacity .6s ease;
+  background:radial-gradient(260px 260px at var(--mx,50%) var(--my,40%),
+             rgba(200,255,0,.1),transparent 70%)}
+.cover.lit-cursor .cursor-glow{opacity:1}
+
+@media (prefers-reduced-motion:reduce){
+  .rings{animation:none}
+  .cluster{transition:none}
+}
+</style>
 </head>
 <body>
+
+<svg width="0" height="0" aria-hidden="true" focusable="false"
+     style="position:absolute;left:-9999px" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="rings" viewBox="0 0 1000 1000">
+<path d="M620 500C620 507 620 515 618 522C617 529 614 536 611 543C608 550 604 556 600 562C596 568 591 573 585 578C580 582 573 586 567 588C560 590 552 591 546 591C539 592 532 591 526 592C520 592 515 593 509 594C503 595 497 597 491 598C485 599 478 599 472 598C466 596 460 593 456 589C451 585 448 579 444 574C441 569 438 564 435 559C432 554 429 551 425 546C421 542 417 538 413 534C409 529 405 524 401 518C398 513 394 507 392 500C389 493 386 486 385 479C384 471 384 463 385 455C386 448 389 440 393 434C397 428 403 422 409 417C415 412 421 408 428 404C434 400 441 397 448 395C455 393 462 392 470 393C477 394 484 397 491 401C497 405 503 411 508 416C513 421 516 426 520 429C524 432 528 433 533 434C538 435 543 434 549 435C555 435 563 435 569 437C575 439 582 442 587 446C593 450 598 455 602 460C607 466 611 472 614 479C617 485 619 493 620 500Z"/>
+<path d="M699 500C700 512 700 525 698 537C696 549 693 561 688 573C683 584 677 595 670 605C663 615 654 625 645 632C635 639 623 645 612 648C601 652 588 653 577 654C565 655 554 654 544 654C534 655 524 656 515 657C505 658 495 661 485 662C475 663 464 664 454 662C444 660 434 656 425 651C416 646 408 638 401 632C393 625 386 617 379 610C372 603 365 596 359 588C352 580 346 571 340 562C335 553 331 543 327 532C324 522 321 511 319 500C317 489 314 477 314 465C314 453 314 441 316 429C319 417 323 405 329 394C335 384 344 374 352 365C361 357 371 349 381 342C391 335 401 328 412 324C423 319 436 316 448 316C460 316 473 320 484 325C495 330 505 340 514 348C523 355 530 364 537 370C545 376 551 379 559 381C567 384 577 383 587 385C597 387 609 388 619 391C629 395 640 401 649 408C658 415 666 424 673 433C680 442 686 453 690 465C694 476 698 488 699 500Z"/>
+<path d="M775 500C777 517 777 534 775 551C774 569 770 586 764 602C758 618 750 635 740 648C729 662 717 675 703 685C689 695 673 702 657 707C641 712 623 714 607 715C591 717 576 716 561 716C547 717 534 717 520 718C507 719 493 722 479 722C466 723 451 723 437 722C423 720 408 717 394 712C380 707 367 701 354 694C340 687 327 679 315 669C303 659 290 648 281 636C272 623 264 608 259 593C253 579 251 562 250 547C248 531 249 516 249 500C249 484 249 469 251 453C252 438 254 422 258 406C262 391 267 375 275 360C282 346 292 333 302 320C313 307 325 295 337 284C350 273 363 262 378 254C392 246 409 239 425 237C442 236 460 239 476 244C492 250 508 262 521 272C534 282 545 295 556 303C567 312 576 318 588 323C600 328 613 329 627 332C641 336 657 338 671 344C685 351 699 359 711 369C723 379 734 393 742 406C751 420 758 435 763 451C768 466 772 483 775 500Z"/>
+<path d="M846 500C849 521 851 544 850 565C849 587 846 610 839 631C832 652 822 674 809 691C796 709 779 725 761 738C742 750 721 759 700 765C679 771 657 773 637 775C617 777 597 776 579 777C560 777 543 777 526 777C508 777 492 778 474 778C457 778 439 778 421 778C403 777 384 776 364 773C344 770 323 767 303 761C282 755 260 747 242 736C223 724 205 708 192 691C180 673 172 650 168 629C164 607 166 583 168 562C171 541 177 520 182 500C187 480 191 462 196 443C200 424 203 406 209 387C215 369 221 350 229 332C238 314 248 297 259 280C270 263 283 247 297 231C311 215 326 198 344 186C361 174 382 162 403 157C423 153 447 153 468 159C489 164 511 177 529 189C547 201 562 218 577 229C592 241 605 251 620 259C635 267 652 270 669 276C686 282 706 287 724 296C741 305 760 316 774 330C788 344 800 362 810 380C820 398 827 418 833 438C839 458 843 479 846 500Z"/>
+<path d="M914 500C918 526 922 552 922 579C921 605 920 634 913 660C906 686 894 713 878 734C862 756 840 775 818 789C795 804 768 814 742 821C717 828 691 831 666 834C642 836 618 836 596 836C573 836 552 834 531 833C510 832 490 830 469 830C449 829 429 829 406 829C384 830 360 833 334 833C308 834 277 837 248 833C219 829 186 824 160 810C134 797 108 776 92 752C77 729 69 697 67 668C66 639 75 606 84 578C92 550 107 524 118 500C129 476 140 456 148 434C157 413 163 393 171 372C178 352 184 331 193 310C201 289 211 268 222 247C233 225 245 203 260 182C275 161 291 138 311 120C331 103 355 85 379 76C404 67 434 64 460 68C486 72 514 86 537 99C561 112 581 133 600 148C620 163 636 178 655 190C673 201 693 208 713 217C734 227 758 234 778 246C799 258 821 273 837 291C853 309 867 332 877 354C888 376 894 401 900 425C906 450 910 474 914 500Z"/>
+<path d="M978 500C982 530 989 560 990 592C992 623 993 657 986 688C979 719 966 751 947 777C928 802 901 824 874 841C846 857 814 867 784 876C754 884 723 888 695 891C666 894 638 894 612 894C586 893 560 890 536 887C511 885 489 879 465 877C441 876 420 874 393 877C366 880 338 888 304 893C270 899 230 910 191 910C151 910 104 907 69 893C34 878 -0 852 -19 821C-38 791 -45 748 -42 710C-40 672 -22 629 -5 594C11 559 38 528 57 500C76 472 95 450 109 427C124 404 133 384 142 361C152 339 158 317 166 293C174 269 181 245 191 219C201 193 212 165 226 138C241 111 257 80 279 56C301 32 327 7 356 -7C384 -21 419 -29 451 -28C483 -26 517 -13 546 1C575 16 601 40 625 59C650 78 669 99 692 115C714 131 736 142 760 156C784 169 811 179 834 195C858 211 882 230 901 252C919 274 932 302 943 328C953 355 958 385 964 413C969 442 973 470 978 500Z"/>
+  </symbol>
+</svg>
 
 
 <nav class="nav">
@@ -529,6 +727,7 @@ strong{font-weight:700;color:var(--ink)}
     </ul>
     <a class="cta" href="#contact">Get in touch</a>
   </div>
+  <div class="prog" aria-hidden="true"><i></i></div>
 </nav>
 
 <header class="cover" id="top">
@@ -537,22 +736,53 @@ strong{font-weight:700;color:var(--ink)}
     <div class="blob blob-b"></div>
     <div class="blob blob-c"></div>
   </div>
-  <div class="wrap">
-    <p class="sub">Blend &middot; Cairo</p>
-    <h1 class="mark">blend</h1>
-    <p class="line">We put the content, the merch and the people on your campaign.</p>
-    <p class="svc"><b>UGC video</b> &nbsp;/&nbsp; <b>Branded giveaways</b> &nbsp;/&nbsp;
-      <b>Ushers &amp; events</b></p>
-    <div class="cover-cta">
-      <a class="btn" href="#contact">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M3 8l9 6 9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/>
-        </svg>
-        Start a project
-      </a>
-      <a class="btn btn-ghost" href="#ugc">See the work</a>
+  <div class="cursor-glow" aria-hidden="true"></div>
+  <svg class="rings" aria-hidden="true" focusable="false"
+       style="--rs:min(128vw,1150px);--rd:190s;color:var(--purple);
+              right:-26%;top:-42%"><use href="#rings"/></svg>
+  <svg class="rings ccw" aria-hidden="true" focusable="false"
+       style="--rs:min(96vw,820px);--rd:240s;color:var(--lime);opacity:.11;
+              left:-24%;bottom:-54%"><use href="#rings"/></svg>
+  <div class="wrap cover-grid">
+    <div class="cover-copy">
+      <p class="sub">Blend &middot; Cairo</p>
+      <h1 class="mark">blend</h1>
+      <p class="line">We put the content, the merch and the people on your campaign.</p>
+      <p class="svc"><b>UGC video</b> &nbsp;/&nbsp; <b>Branded giveaways</b> &nbsp;/&nbsp;
+        <b>Ushers &amp; events</b></p>
+      <div class="cover-cta">
+        <a class="btn" href="#contact">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 8l9 6 9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/>
+          </svg>
+          Start a project
+        </a>
+        <a class="btn btn-ghost" href="#ugc">See the work</a>
+      </div>
     </div>
+
+    <!-- The work, in the device it is watched on. Decorative here: every one
+         of these appears again further down with its own caption and its own
+         controls, so a screen reader is told about it there rather than
+         twice. The centre video is attached by script on a wide screen only,
+         because three videos loading on a phone is a cost with no return. -->
+    <div class="stage" aria-hidden="true">
+      <div class="cluster">
+        <div class="dev dev-1"><div class="dev-i"><div class="dev-sc">
+          <img src="img/creator2_poster.jpg" alt="" loading="eager" decoding="async">
+        </div></div></div>
+        <div class="dev dev-2"><div class="dev-i"><div class="dev-sc">
+          <video data-src="img/mintra.mp4" poster="img/mintra_poster.jpg"
+                 muted loop playsinline preload="none"></video>
+        </div></div></div>
+        <div class="dev dev-3"><div class="dev-i"><div class="dev-sc">
+          <img src="img/ev_montage_poster.jpg" alt="" loading="eager" decoding="async">
+        </div></div></div>
+      </div>
+      <p class="stage-cap">Our own work, not a mock-up</p>
+    </div>
+
     <p class="scroll-cue"><i aria-hidden="true"></i>Scroll</p>
   </div>
 </header>
@@ -699,7 +929,7 @@ strong{font-weight:700;color:var(--ink)}
     <p class="lead">This is the part of Blend with six years behind it. Briefed crews, in
       uniform, who know the floor plan before the doors open.</p>
 
-    <div class="shots g3">
+    <div class="shots g3 evgrid">
       <figure><img src="img/post1.jpg" alt="Forty-five crew at a tech conference in Cairo: registration, guest flow and floor management" loading="lazy"></figure>
       <figure><img src="img/post7.jpg" alt="Ushers and guest flow for a brand anniversary at the Pyramids" loading="lazy"></figure>
       <figure><img src="img/post9.jpg" alt="Ten-person crew in branded uniform at a Garnier activation in Cairo" loading="lazy"></figure>
@@ -710,8 +940,26 @@ strong{font-weight:700;color:var(--ink)}
       <figure><img src="img/post5.jpg" alt="Crew member running an activity with guests rather than watching from the back" loading="lazy"></figure>
       <figure><img src="img/post8.jpg" alt="Night crew at a beach club on the North Coast" loading="lazy"></figure>
     </div>
-    <p class="cap">Every photograph here is from a Blend event. No stock photography in this
-      document.</p>
+    <p class="cap evgrid">Every photograph here is from a Blend event. No stock
+      photography on this page.</p>
+
+    <div class="hwrap">
+      <div class="hstick">
+        <div class="hrow">
+      <figure><img src="img/post1.jpg" alt="Forty-five crew at a tech conference in Cairo: registration, guest flow and floor management" loading="lazy"></figure>
+      <figure><img src="img/post7.jpg" alt="Ushers and guest flow for a brand anniversary at the Pyramids" loading="lazy"></figure>
+      <figure><img src="img/post9.jpg" alt="Ten-person crew in branded uniform at a Garnier activation in Cairo" loading="lazy"></figure>
+      <figure><img src="img/post2.jpg" alt="Door and guest list at a restaurant opening" loading="lazy"></figure>
+      <figure><img src="img/post3.jpg" alt="Wristbands being fitted at the door of an event" loading="lazy"></figure>
+      <figure><img src="img/post4.jpg" alt="Crew member demonstrating a skincare product one guest at a time" loading="lazy"></figure>
+      <figure><img src="img/post6.jpg" alt="Ten ushers at a resident activation on the Sokhna shore" loading="lazy"></figure>
+      <figure><img src="img/post5.jpg" alt="Crew member running an activity with guests rather than watching from the back" loading="lazy"></figure>
+      <figure><img src="img/post8.jpg" alt="Night crew at a beach club on the North Coast" loading="lazy"></figure>
+        </div>
+        <p class="hnote">Every photograph here is from a Blend event. No stock
+          photography on this page.</p>
+      </div>
+    </div>
 
     <h3 style="margin-top:clamp(36px,6vw,56px)">What a briefed crew actually means</h3>
     <div class="rows">
@@ -969,20 +1217,165 @@ strong{font-weight:700;color:var(--ink)}
   [].slice.call(document.querySelectorAll('.nav a.l')).forEach(function (a) {
     links[a.getAttribute('href').slice(1)] = a;
   });
+  function clearAll() {
+    Object.keys(links).forEach(function (k) { links[k].classList.remove('here'); });
+  }
   var spy = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      if (e.target.id === 'top') { clearAll(); return; }
       var a = links[e.target.id];
       if (!a) return;
-      if (e.isIntersecting) {
-        Object.keys(links).forEach(function (k) { links[k].classList.remove('here'); });
-        a.classList.add('here');
-      }
+      clearAll();
+      a.classList.add('here');
     });
   }, { rootMargin: '-45% 0px -45% 0px' });
   Object.keys(links).forEach(function (id) {
     var el = document.getElementById(id);
     if (el) spy.observe(el);
   });
+  var cover = document.getElementById('top');
+  if (cover) spy.observe(cover);
+})();
+</script>
+
+<script>
+/* The craft pass: the sideways gallery, the progress line, the pointer, and
+ * the numbers that fill as they arrive.
+ *
+ * One rAF for all of it. The scroll listener only records that a frame is
+ * due; the frame reads every rect it needs first and writes every transform
+ * afterwards, so no write is ever followed by a read. Anything that can be
+ * done by the browser on its own is left to CSS and skipped here: the
+ * progress line runs from animation-timeline where that exists, and this
+ * only drives it where it does not.
+ */
+(function () {
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // the sticky gallery's lid has to clear the bar, and the bar's height
+  // depends on the font, so it is measured rather than guessed
+  var nav = document.querySelector('.nav');
+  function navHeight() {
+    if (!nav) return;
+    document.documentElement.style.setProperty(
+      '--navh', Math.round(nav.getBoundingClientRect().height) + 'px');
+  }
+  navHeight();
+
+  if (still) return;
+
+  // ---- what this frame has to do -------------------------------------
+  var wrap = document.querySelector('.hwrap');
+  var stick = document.querySelector('.hstick');
+  var row = document.querySelector('.hrow');
+  var bar = document.querySelector('.prog i');
+  var nativeProg = false;
+  try { nativeProg = CSS.supports('animation-timeline: scroll()'); } catch (e) {}
+
+  var wide = window.matchMedia('(min-width: 880px)');
+
+  var queued = false;
+  function onScroll() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(frame);
+  }
+
+  function frame() {
+    queued = false;
+
+    // --- read ---
+    var vh = window.innerHeight;
+    var doc = document.documentElement;
+    var scrolled = window.scrollY || doc.scrollTop;
+    var scrollable = doc.scrollHeight - vh;
+
+    var shift = null;
+    if (row && wrap && stick && wide.matches) {
+      var r = wrap.getBoundingClientRect();
+      var travel = r.height - stick.getBoundingClientRect().height;
+      if (travel > 0) {
+        // 0 when the section's top reaches the lid, 1 when its bottom does
+        var p = Math.min(Math.max(-r.top / travel, 0), 1);
+        var over = row.scrollWidth - stick.clientWidth;
+        if (over > 0) shift = -(p * over);
+      }
+    }
+
+    // --- write ---
+    if (shift !== null) {
+      row.style.transform = 'translate3d(' + shift.toFixed(1) + 'px,0,0)';
+    }
+    if (bar && !nativeProg) {
+      var k = scrollable > 0 ? scrolled / scrollable : 0;
+      bar.style.transform = 'scaleX(' + Math.min(Math.max(k, 0), 1).toFixed(4) + ')';
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', function () { navHeight(); onScroll(); },
+                          { passive: true });
+  frame();
+
+  // ---- the cover answers the pointer ---------------------------------
+  // Desktop only, and only for a real pointer: on a touch screen there is no
+  // hover to answer and the handler would never fire anyway.
+  var fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+  var cover = document.querySelector('.cover');
+  var cluster = document.querySelector('.cluster');
+  if (fine.matches && cover) {
+    var mx = 0, my = 0, pending = false;
+    cover.addEventListener('pointermove', function (e) {
+      var b = cover.getBoundingClientRect();
+      mx = (e.clientX - b.left) / b.width;
+      my = (e.clientY - b.top) / b.height;
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(function () {
+        pending = false;
+        cover.classList.add('lit-cursor');
+        cover.style.setProperty('--mx', (mx * 100).toFixed(1) + '%');
+        cover.style.setProperty('--my', (my * 100).toFixed(1) + '%');
+        if (cluster) {
+          // a small tilt. Larger than about eight degrees and the cluster
+          // stops reading as depth and starts reading as a wobble.
+          cluster.style.transform =
+            'rotateY(' + ((mx - 0.5) * 11).toFixed(2) + 'deg) ' +
+            'rotateX(' + ((0.5 - my) * 7).toFixed(2) + 'deg)';
+        }
+      });
+    }, { passive: true });
+    cover.addEventListener('pointerleave', function () {
+      cover.classList.remove('lit-cursor');
+      if (cluster) cluster.style.transform = '';
+    });
+  }
+
+  // ---- the centre device plays, on a wide screen only ----------------
+  var heroVid = document.querySelector('.dev-2 video');
+  if (heroVid && wide.matches) {
+    var src = heroVid.getAttribute('data-src');
+    if (src) {
+      heroVid.src = src;
+      heroVid.load();
+      var go = heroVid.play();
+      if (go && go.catch) go.catch(function () { /* poster stays, which is fine */ });
+    }
+  }
+
+  // ---- the step numbers fill as they arrive --------------------------
+  var steps = [].slice.call(document.querySelectorAll('.steps > div'));
+  if (steps.length && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('lit');
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.5 });
+    steps.forEach(function (el) { io.observe(el); });
+  }
 })();
 </script>
 </body>
