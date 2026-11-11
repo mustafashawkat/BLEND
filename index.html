@@ -494,7 +494,9 @@ strong{font-weight:700;color:var(--ink)}
 .steps p{font-size:15.5px;margin:0}
 
 /* ---- close ---- */
-.close{background:#140E20;color:#F3EFE8}
+.close{background:#140E20;color:#F3EFE8;position:relative;overflow:clip;
+  isolation:isolate}
+.close .wrap{position:relative;z-index:1}
 .close .wrap{padding-block:clamp(52px,9vw,92px)}
 .close h2{color:#F3EFE8;max-width:15ch}
 .close p{color:rgba(243,239,232,.74)}
@@ -820,6 +822,9 @@ html{overflow-x:clip}
 
 <section id="ugc" class="tinted t-ugc">
   <div class="tintwash" aria-hidden="true"></div>
+  <svg class="rings ccw" aria-hidden="true" focusable="false"
+       style="--rs:min(104vw,900px);--rd:205s;color:var(--pink);opacity:.13;
+              right:-30%;top:-30%"><use href="#rings"/></svg>
   <div class="wrap rv">
     <div class="rule" style="background:var(--pink)"></div>
     <p class="eyebrow" style="color:var(--pink-ink)">Service one</p>
@@ -922,6 +927,9 @@ html{overflow-x:clip}
 
 <section id="events" class="tinted t-ev">
   <div class="tintwash" aria-hidden="true"></div>
+  <svg class="rings" aria-hidden="true" focusable="false"
+       style="--rs:min(88vw,760px);--rd:235s;color:var(--purple);opacity:.14;
+              left:-26%;bottom:-24%"><use href="#rings"/></svg>
   <div class="wrap rv">
     <div class="rule" style="background:var(--purple)"></div>
     <p class="eyebrow" style="color:var(--purple)">Service two</p>
@@ -1008,6 +1016,9 @@ html{overflow-x:clip}
 
 <section id="giveaways" class="tinted t-gv">
   <div class="tintwash" aria-hidden="true"></div>
+  <svg class="rings ccw" aria-hidden="true" focusable="false"
+       style="--rs:min(118vw,1020px);--rd:180s;color:var(--clay);opacity:.17;
+              right:-18%;top:-54%"><use href="#rings"/></svg>
   <div class="wrap rv">
     <div class="rule" style="background:var(--clay)"></div>
     <p class="eyebrow" style="color:var(--clay)">Service three</p>
@@ -1035,6 +1046,9 @@ html{overflow-x:clip}
 
 <section id="how" class="tinted t-how">
   <div class="tintwash" aria-hidden="true"></div>
+  <svg class="rings" aria-hidden="true" focusable="false"
+       style="--rs:min(80vw,680px);--rd:260s;color:var(--purple);opacity:.12;
+              left:-20%;top:-38%"><use href="#rings"/></svg>
   <div class="wrap rv">
     <div class="rule" style="background:var(--purple)"></div>
     <p class="eyebrow" style="color:var(--purple)">How it works</p>
@@ -1068,6 +1082,9 @@ html{overflow-x:clip}
 </section>
 
 <footer class="close" id="contact">
+  <svg class="rings" aria-hidden="true" focusable="false"
+       style="--rs:min(96vw,840px);--rd:220s;color:var(--lime);opacity:.1;
+              right:-28%;bottom:-46%"><use href="#rings"/></svg>
   <div class="wrap">
     <div class="rule"></div>
     <h2>Send us the product.</h2>
