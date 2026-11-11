@@ -102,6 +102,55 @@ img{max-width:100%}
 @media (hover:hover){.shots figure:hover img{transform:scale(1.035)}}
 
 
+
+/* ---- the phone the work is actually watched on ----
+   Drawn rather than photographed: a device mock-up as an image would be
+   another 300KB and would not match the page's own dark value. */
+.phone{position:relative;width:100%;max-width:272px;margin-inline:auto;
+  padding:9px;border-radius:40px;background:linear-gradient(160deg,#2b2436,#15101c 42%,#372e45);
+  box-shadow:0 1px 1px rgba(255,255,255,.14) inset,
+             0 18px 40px rgba(26,11,46,.30),0 3px 10px rgba(26,11,46,.22)}
+.phone-screen{position:relative;border-radius:32px;overflow:hidden;background:#000;
+  aspect-ratio:9/19.5;display:grid}
+.phone-screen video{width:100%;height:100%;object-fit:cover;border-radius:0;
+  aspect-ratio:auto;background:#000}
+.phone-notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);
+  width:72px;height:19px;border-radius:12px;background:#0b0810;z-index:2;
+  pointer-events:none}
+.phone-cap{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-50);margin:13px 0 0;text-align:center}
+
+/* ---- client names, moving ---- */
+.marquee{margin-top:26px;overflow:hidden;position:relative;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
+.marquee-row{display:flex;width:max-content;gap:0}
+.marquee-row span{font-size:clamp(16px,2.2vw,21px);font-weight:600;letter-spacing:-.02em;
+  color:var(--ink);white-space:nowrap;padding-right:30px;position:relative}
+.marquee-row span::after{content:"";position:absolute;right:13px;top:50%;
+  width:5px;height:5px;border-radius:50%;background:var(--pink);transform:translateY(-50%)}
+@media (prefers-reduced-motion:no-preference){
+  .marquee-row{animation:slide 46s linear infinite}
+  .marquee:hover .marquee-row{animation-play-state:paused}
+}
+@keyframes slide{from{transform:translate3d(0,0,0)}
+  to{transform:translate3d(-50%,0,0)}}
+
+/* ---- the grid arrives one card at a time ---- */
+@media (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline:view()){
+    .shots figure{animation:lag linear both,cardIn .6s cubic-bezier(.2,.7,.3,1) both;
+      animation-timeline:view(),auto}
+  }
+}
+@keyframes cardIn{from{opacity:0;transform:translate3d(0,20px,0) scale(.97)}
+  to{opacity:1;transform:none}}
+.js-motion .shots figure.pre{opacity:0}
+.js-motion .shots figure.pre.in{opacity:1;transition:opacity .55s ease}
+
+/* ---- the nav marks where you are ---- */
+.nav a.l.here{color:#1A0B2E;background:var(--lime)}
+
 /* the fallback's own states, used only once the script has said it is needed */
 .js-motion .rv>.pre{opacity:0;transform:translate3d(0,26px,0)}
 .js-motion .rv>.pre.in{opacity:1;transform:none;
@@ -266,7 +315,11 @@ strong{font-weight:700;color:var(--ink)}
 /* ---- motion pair ---- */
 .reels{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
   gap:14px;margin-top:clamp(30px,5vw,44px)}
-.reels video{width:100%;border-radius:3px;background:#000}
+/* the two reels were shot at different ratios, 4:5 and 9:16, so left to
+   themselves one column ran far taller than the other and the row read as
+   broken. Both are held to one ratio and cropped to it. */
+.reels video{width:100%;border-radius:3px;background:#000;
+  aspect-ratio:4/5;object-fit:cover}
 
 /* ---- the honest note ---- */
 .note{background:var(--card);border-left:3px solid var(--pink);padding:20px 22px;
@@ -390,8 +443,13 @@ strong{font-weight:700;color:var(--ink)}
 
     <div class="case">
       <div class="vid">
-        <video src="img/mintra.mp4" poster="img/mintra_poster.jpg" controls playsinline preload="metadata" aria-label="UGC video made for a footwear brand"></video>
-        <p class="cap">Mintra &middot; footwear &middot; 2026</p>
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-notch" aria-hidden="true"></div>
+            <video src="img/mintra.mp4" poster="img/mintra_poster.jpg" controls playsinline preload="metadata" aria-label="UGC video made for a footwear brand"></video>
+          </div>
+        </div>
+        <p class="phone-cap">Mintra &middot; footwear &middot; 2026</p>
       </div>
       <div>
         <h3 style="margin-bottom:16px">One video, start to finish</h3>
@@ -420,8 +478,13 @@ strong{font-weight:700;color:var(--ink)}
 
     <div class="pair">
       <div>
-        <video src="img/creator2.mp4" poster="img/creator2_poster.jpg" controls playsinline preload="metadata" aria-label="Creator talking to camera at home and showing an outfit"></video>
-        <p class="cap">Creator video &middot; apparel &middot; Cairo</p>
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-notch" aria-hidden="true"></div>
+            <video src="img/creator2.mp4" poster="img/creator2_poster.jpg" controls playsinline preload="metadata" aria-label="Creator talking to camera at home and showing an outfit"></video>
+          </div>
+        </div>
+        <p class="phone-cap">Creator video &middot; apparel &middot; Cairo</p>
       </div>
       <div class="pair-txt">
         <h3>A hallway, a phone, and somebody who talks like a person</h3>
@@ -532,13 +595,8 @@ strong{font-weight:700;color:var(--ink)}
     <p class="cap">Our own footage, from our own events</p>
 
     <h3 style="margin-top:clamp(36px,6vw,56px)">Brands that have called us in</h3>
-    <div class="names">
-      <span>L'Oréal</span><span>Garnier</span><span>Kérastase</span><span>LUX</span>
-      <span>Dell</span><span>IBM</span><span>Huawei</span><span>Honor</span><span>LG</span>
-      <span>Bosch</span><span>Emaar</span><span>SODIC</span><span>Orascom</span>
-      <span>Majid Al Futtaim</span><span>Ahmad Tea</span><span>Eucerin</span>
-      <span>ADNOC</span><span>Standard Bank</span><span>Egypt Post</span>
-      <span>The American University in Cairo</span>
+    <div class="marquee" aria-label="Brands Blend has worked with">
+      <div class="marquee-row"><span>L'Or&eacute;al</span><span>Garnier</span><span>K&eacute;rastase</span><span>LUX</span><span>Dell</span><span>IBM</span><span>Huawei</span><span>Honor</span><span>LG</span><span>Bosch</span><span>Emaar</span><span>SODIC</span><span>Orascom</span><span>Majid Al Futtaim</span><span>Ahmad Tea</span><span>Eucerin</span><span>ADNOC</span><span>Standard Bank</span><span>Egypt Post</span><span>The American University in Cairo</span><span>L'Or&eacute;al</span><span>Garnier</span><span>K&eacute;rastase</span><span>LUX</span><span>Dell</span><span>IBM</span><span>Huawei</span><span>Honor</span><span>LG</span><span>Bosch</span><span>Emaar</span><span>SODIC</span><span>Orascom</span><span>Majid Al Futtaim</span><span>Ahmad Tea</span><span>Eucerin</span><span>ADNOC</span><span>Standard Bank</span><span>Egypt Post</span><span>The American University in Cairo</span></div>
     </div>
     <p class="cap" style="margin-top:14px">Staffing, events and giveaways work</p>
   </div>
@@ -665,6 +723,20 @@ strong{font-weight:700;color:var(--ink)}
   }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
   rise.forEach(function (el) { io.observe(el); });
 
+  // the photo grid arrives card by card rather than all at once
+  var cards = [].slice.call(document.querySelectorAll('.shots figure'));
+  cards.forEach(function (el) { el.classList.add('pre'); });
+  var ioCards = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      var i = cards.indexOf(e.target);
+      e.target.style.transitionDelay = ((i % 3) * 90) + 'ms';
+      e.target.classList.add('in');
+      ioCards.unobserve(e.target);
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.06 });
+  cards.forEach(function (el) { ioCards.observe(el); });
+
   // depth: a small offset tied to how far through the viewport a thing is
   var layers = [];
   function add(sel, depth) {
@@ -699,6 +771,62 @@ strong{font-weight:700;color:var(--ink)}
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll, { passive: true });
   frame();
+})();
+
+/* Counting numbers, and a nav that says where you are. These run in every
+ * browser, because neither has a CSS equivalent. Both are observer-driven,
+ * so neither adds a second scroll listener. */
+(function () {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  // count each figure up once, when it is first seen
+  var nums = [].slice.call(document.querySelectorAll('.nums .n'));
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      io.unobserve(e.target);
+      // Split the label into what comes before the number, the number, and
+      // what comes after it. Searching for the digits one at a time got this
+      // wrong: "200+" has a 0 at index 1, so the tail was read as "0+" and
+      // the figure counted up to 2000.
+      var m = /^(\D*)([\d,]+)(\D*)$/.exec(e.target.textContent.trim());
+      if (!m) return;
+      var prefix = m[1], suffix = m[3];
+      var target = parseInt(m[2].replace(/,/g, ''), 10);
+      if (!isFinite(target)) return;
+      var t0 = null, dur = 900;
+      function step(ts) {
+        if (t0 === null) t0 = ts;
+        var k = Math.min((ts - t0) / dur, 1);
+        var eased = 1 - Math.pow(1 - k, 3);
+        var v = Math.round(target * eased);
+        e.target.textContent = prefix + v.toLocaleString('en-US') + suffix;
+        if (k < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  }, { threshold: 0.6 });
+  nums.forEach(function (el) { io.observe(el); });
+
+  // light the nav link for whichever section is on screen
+  var links = {};
+  [].slice.call(document.querySelectorAll('.nav a.l')).forEach(function (a) {
+    links[a.getAttribute('href').slice(1)] = a;
+  });
+  var spy = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      var a = links[e.target.id];
+      if (!a) return;
+      if (e.isIntersecting) {
+        Object.keys(links).forEach(function (k) { links[k].classList.remove('here'); });
+        a.classList.add('here');
+      }
+    });
+  }, { rootMargin: '-45% 0px -45% 0px' });
+  Object.keys(links).forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) spy.observe(el);
+  });
 })();
 </script>
 </body>
