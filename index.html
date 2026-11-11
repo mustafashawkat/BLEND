@@ -7,7 +7,7 @@
 <meta property="og:title" content="Blend — Cairo">
 <meta property="og:description" content="UGC video, branded giveaways, ushers and events. One team for the whole campaign.">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#1A0B2E">
+<meta name="theme-color" content="#0A0710">
 <title>Blend Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -129,7 +129,7 @@ img{max-width:100%}
 /* a little grain over everything, which is what stops a large flat gradient
    from banding on a phone screen */
 body::after{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;
-  opacity:.035;mix-blend-mode:overlay;
+  opacity:.055;mix-blend-mode:soft-light;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)'/></svg>");
   background-size:140px 140px}
 
@@ -309,29 +309,23 @@ a:focus-visible,button:focus-visible,video:focus-visible{
    default. Lime and pink are small: a rule, a label, a highlight behind three
    words. Never a field of either. */
 :root{
-  --paper:#F7F4EF; --card:#FFFFFF; --ink:#1A0B2E;
-  --ink-72:rgba(26,11,46,.72); --ink-50:rgba(26,11,46,.62);
-  --ink-14:rgba(26,11,46,.13); --ink-06:rgba(26,11,46,.05);
-  --lime:#C8FF00; --purple:#5B21A8; --pink:#EB4478; --clay:#A8553C;
-  /* the brand pink reads at 3.4:1 on paper, which fails for the 11px
-     labels it was being used on. Same hue and saturation, darker, for
-     small text only; --pink stays as it is for fills and rules. */
-  --pink-ink:#CB164E;
+  /* Committed to one dark world rather than following the reader's setting.
+     The ground is near-black with Blend's own purple bias in it, not a
+     neutral black: the nine event posts are all #1A0B2E, and on a neutral
+     ground they read as cards dropped onto a page instead of as part of it.
+     Every value below was measured against this ground; the brand's dark
+     purple came back at 2.12:1 and is replaced on dark by a lighter tone at
+     the same hue. */
+  --paper:#0A0710; --card:#161020; --ink:#F3EFE8;
+  --ink-72:rgba(243,239,232,.72); --ink-50:rgba(243,239,232,.60);
+  --ink-45:rgba(243,239,232,.60); --ink-14:rgba(243,239,232,.14);
+  --ink-06:rgba(243,239,232,.05);
+  --lime:#C8FF00; --purple:#A47BF0; --pink:#EB4478; --clay:#E0A188;
+  --pink-ink:#EB4478;
   --sans:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;
   --serif:'DM Serif Display',Georgia,'Times New Roman',serif;
+  color-scheme:dark;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --paper:#15101C; --card:#1D1726; --ink:#F3EFE8;
-  --ink-72:rgba(243,239,232,.74); --ink-50:rgba(243,239,232,.52);
-  --ink-14:rgba(243,239,232,.16); --ink-06:rgba(243,239,232,.06);
-  --purple:#C9ABF7; --pink:#F2789E; --clay:#E0A188; --pink-ink:#F2789E;
-  color-scheme:dark}}
-:root[data-theme="dark"]{
-  --paper:#15101C; --card:#1D1726; --ink:#F3EFE8;
-  --ink-72:rgba(243,239,232,.74); --ink-50:rgba(243,239,232,.52);
-  --ink-14:rgba(243,239,232,.16); --ink-06:rgba(243,239,232,.06);
-  --purple:#C9ABF7; --pink:#F2789E; --clay:#E0A188; --pink-ink:#F2789E;
-  color-scheme:dark}
 
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
@@ -372,7 +366,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 img,video{max-width:100%;display:block}
 
 /* ---- cover: the one dark surface in the document ---- */
-.cover{background:#1A0B2E;color:#F3EFE8}
+.cover{background:#140E20;color:#F3EFE8}
 .cover .wrap{padding-block:clamp(56px,11vw,112px) clamp(48px,9vw,88px)}
 .cover .mark{font-family:var(--serif);font-style:italic;
   font-size:clamp(68px,17vw,236px);line-height:.82;letter-spacing:-.03em;margin:0}
@@ -419,10 +413,11 @@ strong{font-weight:700;color:var(--ink)}
 .shots{display:grid;gap:10px;margin-top:clamp(30px,5vw,44px)}
 .g3{grid-template-columns:repeat(3,1fr)}
 .g2{grid-template-columns:repeat(2,1fr)}
+/* On a dark ground a drop shadow does nothing; a hairline of light is what
+   separates one dark picture from the dark page behind it. */
 .shots figure{margin:0;position:relative;overflow:hidden;background:var(--ink-06);
-  border-radius:2px;box-shadow:0 1px 2px rgba(26,11,46,.10),0 8px 24px rgba(26,11,46,.07)}
-:root[data-theme="dark"] .shots figure,
-:root:not([data-theme="light"]) .shots figure{box-shadow:0 1px 2px rgba(0,0,0,.4)}
+  border-radius:3px;box-shadow:0 0 0 1px rgba(243,239,232,.09),
+              0 18px 44px rgba(0,0,0,.5)}
 .shots img{width:100%;height:100%;object-fit:cover;aspect-ratio:4/5}
 .shots .wide img{aspect-ratio:16/10}
 .cap{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
@@ -499,7 +494,7 @@ strong{font-weight:700;color:var(--ink)}
 .steps p{font-size:15.5px;margin:0}
 
 /* ---- close ---- */
-.close{background:#1A0B2E;color:#F3EFE8}
+.close{background:#140E20;color:#F3EFE8}
 .close .wrap{padding-block:clamp(52px,9vw,92px)}
 .close h2{color:#F3EFE8;max-width:15ch}
 .close p{color:rgba(243,239,232,.74)}
