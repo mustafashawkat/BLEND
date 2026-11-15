@@ -3,452 +3,495 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>KHAYT · a brand page concept by Blend</title>
-<meta name="description" content="A concept page Blend made to show what a streetwear brand page can do: a 3D fitting room, the collection cut and sewn onto the model as you scroll, ordering on WhatsApp. KHAYT is not a real brand.">
-<meta property="og:title" content="KHAYT · a brand page concept by Blend">
-<meta property="og:description" content="Watch the drop get cut and sewn onto the model as you scroll, then build your own fit.">
+<title>KYGO · a brand page concept by Blend</title>
+<meta name="description" content="A concept brand page Blend built from KYGO's own photos and films: the real pieces go onto the real model as you scroll, and a fitting room switches pink and black.">
+<meta property="og:title" content="KYGO · a brand page concept by Blend">
+<meta property="og:description" content="Real pieces, real model, put on as you scroll. A brand page concept by Blend.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://blend-marketing.com/demo/streetwear/">
 <meta property="og:image" content="https://blend-marketing.com/demo/streetwear/img/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#0B0B0D">
+<meta name="theme-color" content="#0D0C0E">
 <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Lalezar&family=Space+Mono:wght@400;700&display=swap">
-<link rel="modulepreload" href="vendor/three.module.min.js">
-<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Space+Mono:wght@400;700&display=swap">
+<link rel="preload" as="image" href="img/pink.webp">
 <style>
-/* KHAYT: an invented streetwear label, built to show local brands what a page
-   can be. Layers, back to front:
-     0  the atmosphere and the giant wordmark
-     1  the WebGL canvas (fixed): the mannequin and every garment
-     2  words over the canvas, which let pointer events through
-     3  solid sections that cover the canvas (and pause it)            */
-:root{--ink:#0B0B0D;--ink2:#151518;--bone:#ECE7DD;--orange:#FF4F1A;--cobalt:#2F4FE0;--sky:#7C95FF;
-  --line:rgba(236,231,221,.16);color-scheme:dark}
+/* KYGO: a concept page built from a real label's own shoot. Everything
+   that moves is a photograph: the model is cut out of the frame, his pieces
+   are cut out of the same frame, and scrolling puts them back on him.
+   Only transform and opacity animate. No WebGL, no blur layers. */
+:root{--ink:#0D0C0E;--ink2:#18161A;--pink:#F07AA6;--room:#E7A3B8;--blush:#F6D3DE;--bone:#F1EDE8;--grey:#BEBBB8;
+  --line:rgba(241,237,232,.16);color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--ink);color:var(--bone);font-family:Archivo,system-ui,-apple-system,'Segoe UI',sans-serif;
   font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:clip}
-.disp{font-family:Archivo,Impact,sans-serif;font-weight:900;font-stretch:122%;text-transform:uppercase;letter-spacing:-.03em;line-height:.88}
-/* small labels stay in a mono, so the two voices never blur */
-.mono,.concept,.eyebrow,.btn,.tag,.steps .s,.drag,.cue,.top nav,.price,.badge,.chosen,.card .p,.foot,.chips button,.item .cost,.note{font-family:'Space Mono',ui-monospace,monospace}
+img,video{display:block;max-width:100%}
 a{color:inherit}
 button{font:inherit;color:inherit}
-:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
+.disp{font-family:Archivo,Impact,sans-serif;font-weight:900;font-stretch:122%;text-transform:uppercase;letter-spacing:-.03em;line-height:.88}
+.mono,.concept,.eyebrow,.btn,.tag,.chip,.note,.foot,.cap{font-family:'Space Mono',ui-monospace,monospace}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;margin:0 0 14px}
 
-/* the honesty strip: this is a concept, not a shop */
-.concept{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;align-items:center;justify-content:center;gap:14px;
-  min-height:34px;padding:6px 16px;background:var(--bone);color:var(--ink);font-size:12px;font-weight:700;letter-spacing:.02em}
-.concept a{color:var(--orange);text-decoration:none;white-space:nowrap}
-.concept a:hover{text-decoration:underline}
+/* the honesty strip */
+.concept{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:center;gap:14px;
+  min-height:34px;padding:6px 16px;background:var(--bone);color:var(--ink);font-size:12px;font-weight:700}
+.concept a{color:#C2185B;text-decoration:none;white-space:nowrap}
 .concept .short{display:none}
-@media (max-width:620px){.concept .long{display:none}.concept .short{display:inline}.concept{font-size:11px;gap:10px}}
+@media (max-width:640px){.concept .long{display:none}.concept .short{display:inline}.concept{font-size:11px}}
 
-/* layer 0 */
-.atmo{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.atmo i{position:absolute;border-radius:50%}
-.atmo .o{width:70vmax;height:70vmax;left:50%;top:46%;margin:-35vmax 0 0 -35vmax;
-  background:radial-gradient(closest-side,rgba(255,79,26,.42),rgba(255,79,26,.12) 55%,transparent)}
-.atmo .b{width:60vmax;height:60vmax;left:-18vmax;bottom:-22vmax;
-  background:radial-gradient(closest-side,rgba(47,79,224,.5),transparent 70%)}
-.atmo .b2{width:44vmax;height:44vmax;right:-14vmax;top:-10vmax;
-  background:radial-gradient(closest-side,rgba(47,79,224,.32),transparent 70%)}
-.atmo::after{content:"";position:absolute;inset:-50%;opacity:.09;mix-blend-mode:overlay;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
-@keyframes breathe{to{transform:scale(1.14) translateY(-3%)}}
-@keyframes drift{to{transform:translate(8vmax,-6vmax) scale(1.1)}}
-@keyframes grain{25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(-2%,-1%)}}
-
-/* layer 1 */
-#gl{position:fixed;inset:0;width:100%;height:100%;z-index:1;display:block;touch-action:pan-y;cursor:grab}
-#gl:active{cursor:grabbing}
-.no-gl #gl{display:none}
-
-/* ---------- hero ---------- */
-.hero{position:relative;min-height:100vh;min-height:100svh;padding:34px 0 0}
-.wordmark{position:absolute;inset:34px 0 0;z-index:0;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:hidden}
-.wordmark b{font-size:clamp(90px,17.5vw,330px);line-height:.8;color:var(--orange);letter-spacing:-.04em;
-  transform:translateY(-4%);text-shadow:0 0 120px rgba(255,79,26,.35)}
-.wordmark .ar{position:absolute;right:3vw;top:14%;font-family:Lalezar,sans-serif;font-size:clamp(70px,11vw,190px);line-height:1;
-  color:transparent;-webkit-text-stroke:1.5px rgba(236,231,221,.5)}
-.wordmark .ed{position:absolute;right:1.4vw;bottom:30%;font-size:12px;letter-spacing:.3em;writing-mode:vertical-rl;transform:rotate(180deg);color:rgba(236,231,221,.6)}
-.top{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;
-  padding:18px clamp(16px,4vw,48px);pointer-events:none}
-.top .logo{font-size:20px;letter-spacing:.04em;text-decoration:none;pointer-events:auto}
-.top nav{display:flex;gap:22px;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;pointer-events:auto}
-.top nav a{text-decoration:none;opacity:.8}.top nav a:hover{opacity:1;color:var(--orange)}
-@media (max-width:620px){.top nav a:not(.cta){display:none}}
-.hero .copy{position:absolute;z-index:2;left:clamp(16px,4vw,48px);bottom:clamp(120px,19vh,190px);max-width:560px;pointer-events:none}
-.eyebrow{font-size:11px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--orange);margin:0 0 14px}
-.hero h1{font-size:clamp(30px,4vw,60px);margin:0 0 16px;text-shadow:0 4px 40px rgba(0,0,0,.5)}
-.hero h1 span{color:transparent;-webkit-text-stroke:1.5px var(--bone)}
-.hero p{margin:0 0 22px;color:rgba(236,231,221,.85);font-size:16px;max-width:34ch}
-.btns{display:flex;flex-wrap:wrap;gap:10px;pointer-events:auto}
-.btn{display:inline-flex;align-items:center;gap:10px;padding:15px 22px;border:0;border-radius:999px;background:var(--orange);color:var(--ink);
-  font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;cursor:pointer;
-  transition:transform .15s ease,background .15s ease}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:15px 22px;border:0;border-radius:999px;
+  background:var(--pink);color:var(--ink);font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  text-decoration:none;cursor:pointer;transition:transform .15s ease,background .15s ease}
 .btn:hover{background:var(--bone)}.btn:active{transform:scale(.97)}
-.btn.ghost{background:transparent;color:var(--bone);box-shadow:inset 0 0 0 1.5px rgba(236,231,221,.5)}
-.btn.ghost:hover{box-shadow:inset 0 0 0 1.5px var(--bone);background:rgba(236,231,221,.08)}
-.hero .tags{position:absolute;z-index:2;right:clamp(16px,4vw,48px);bottom:clamp(140px,22vh,220px);display:grid;gap:10px;pointer-events:none}
-.tag{display:flex;align-items:center;gap:10px;padding:8px 12px 8px 8px;border-radius:999px;background:rgba(11,11,13,.78);
-  box-shadow:inset 0 0 0 1px var(--line);font-size:11px;letter-spacing:.06em}
-.tag:nth-child(2){animation-delay:-1.6s}.tag:nth-child(3){animation-delay:-3.2s}
-.tag b{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--orange);color:var(--ink);font-size:10px}
-.tag:nth-child(2) b{background:var(--cobalt);color:var(--bone)}.tag:nth-child(3) b{background:var(--bone)}
-@keyframes float{50%{transform:translateY(-6px)}}
-@media (max-width:760px){
-  .hero .copy{bottom:150px;right:16px}
-  .hero .tags{display:none}
-  .wordmark{align-items:flex-start;padding-top:64px}
-  .wordmark b{font-size:22vw;transform:none}
-  .wordmark .ar{top:auto;bottom:34%;right:4vw}
-  .wordmark .ed{display:none}
-}
-/* two crossing tapes */
-.tapes{position:absolute;z-index:2;left:-5vw;right:-5vw;bottom:34px;height:110px;pointer-events:none}
-.tape{position:absolute;left:0;right:0;overflow:hidden;white-space:nowrap;font-family:Archivo,Impact,sans-serif;font-weight:800;font-stretch:118%;letter-spacing:-.01em;text-transform:uppercase;
-  font-size:clamp(14px,1.45vw,20px);line-height:1;padding:12px 0;box-shadow:0 14px 40px rgba(0,0,0,.35)}
-.tape .run{display:inline-flex;animation:run 48s linear infinite}
-.tape .run span{padding-right:.6em}
-.tape.a{top:10px;background:var(--orange);color:var(--ink);transform:rotate(-3.5deg)}
-.tape.b{top:52px;background:var(--bone);color:var(--ink);transform:rotate(2.2deg)}
-.tape.b .run{animation-direction:reverse;animation-duration:60s}
-.tape em{font-style:normal;font-family:Lalezar,sans-serif;font-size:1.15em}
-.tape i{font-style:normal;color:var(--cobalt)}
+.btn.ghost{background:transparent;color:var(--bone);box-shadow:inset 0 0 0 1.5px rgba(241,237,232,.55)}
+.btn.ghost:hover{background:rgba(241,237,232,.1)}
+
+/* ---------- 1. hero: the desert film ---------- */
+.hero{position:relative;height:100vh;height:100svh;min-height:560px;overflow:hidden;background:#3a2a20}
+.hero video,.hero .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,12,14,.5) 0%,rgba(13,12,14,0) 28%,rgba(13,12,14,0) 50%,rgba(13,12,14,.85) 100%)}
+.hero .top{position:absolute;z-index:2;top:34px;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:18px clamp(16px,4vw,48px)}
+.hero .top b{font-size:20px}
+.hero .top nav{display:flex;gap:22px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.hero .top nav a{text-decoration:none;opacity:.85}.hero .top nav a:hover{opacity:1;color:var(--pink)}
+@media (max-width:640px){.hero .top nav a:not(:last-child){display:none}}
+.hero .word{position:absolute;z-index:2;left:clamp(12px,3vw,40px);right:clamp(12px,3vw,40px);bottom:clamp(110px,16vh,150px);
+  font-size:clamp(84px,24vw,420px);margin:0;color:var(--bone);text-align:center;letter-spacing:-.05em;
+  transform:translate3d(0,calc(var(--hp,0) * 60px),0);opacity:calc(1 - var(--hp,0) * 1.2)}
+.hero .line{position:absolute;z-index:2;left:clamp(16px,4vw,48px);right:clamp(16px,4vw,48px);bottom:34px;display:flex;flex-wrap:wrap;
+  align-items:center;justify-content:space-between;gap:14px}
+.hero .line p{margin:0;max-width:36ch;font-size:15px;color:rgba(241,237,232,.88)}
+
+/* ---------- 2. the pink room: he reaches for you ---------- */
+.room{position:relative;height:220vh;background:var(--room)}
+.room .pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;display:grid;place-items:center}
+.room .big{position:absolute;inset:auto 0 50% 0;transform:translateY(50%);text-align:center;font-size:clamp(110px,30vw,560px);
+  color:var(--pink);margin:0;letter-spacing:-.06em;white-space:nowrap}
+.room .big span{display:inline-block;transform:translate3d(calc(var(--rp,0) * -14vw),0,0)}
+.room .big span+span{transform:translate3d(calc(var(--rp,0) * 14vw),0,0)}
+.room .reach{position:relative;z-index:2;height:min(92vh,980px);width:auto;max-width:none;
+  transform:translate3d(0,calc((1 - var(--rp,0)) * 8vh),0) scale(calc(.82 + var(--rp,0) * .34));transform-origin:50% 60%}
+.room .say{position:absolute;z-index:3;left:clamp(16px,4vw,48px);bottom:clamp(90px,14vh,140px);color:var(--ink);max-width:340px}
+.room .say h2{font-size:clamp(30px,4vw,56px);margin:0 0 10px}
+.room .say p{margin:0;font-size:15px}
+.tapes{position:absolute;z-index:3;left:-6vw;right:-6vw;bottom:22px;height:96px;pointer-events:none}
+.tape{position:absolute;left:0;right:0;overflow:hidden;white-space:nowrap;font-weight:800;font-stretch:118%;text-transform:uppercase;
+  font-size:clamp(14px,1.45vw,20px);line-height:1;padding:12px 0}
+.tape .run{display:inline-flex;animation:run 50s linear infinite}
+.tape .run span{padding-right:.7em}
+.tape.a{top:6px;background:var(--ink);color:var(--bone);transform:rotate(-3deg)}
+.tape.b{top:48px;background:var(--bone);color:var(--ink);transform:rotate(2deg)}
+.tape.b .run{animation-direction:reverse;animation-duration:62s}
+.tape i{font-style:normal;color:var(--pink)}
 @keyframes run{to{transform:translateX(-50%)}}
-.cue{position:absolute;z-index:2;left:50%;bottom:150px;transform:translateX(-50%);font-size:10px;letter-spacing:.3em;text-transform:uppercase;opacity:.7;pointer-events:none}
-@media (max-width:760px){.cue{display:none}}
-
-/* ---------- the story: a tall section with words pinned over the canvas ---------- */
-#story{position:relative;z-index:2;height:600vh;pointer-events:none}
-.pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
-.chapter{position:absolute;left:clamp(16px,4vw,48px);top:50%;width:min(380px,40vw);transform:translateY(-40%);opacity:0;
-  transition:opacity .45s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
-.chapter.on{opacity:1;transform:translateY(-50%)}
-.chapter.right{left:auto;right:clamp(16px,4vw,48px)}
-/* while the table stands on the left, the words sit above it */
-.chapter.tl{top:96px;transform:translateY(12px)}
-.chapter.tl.on{transform:none}
-@media (min-width:761px){.chapter{padding:22px 24px 24px;border-radius:20px;background:rgba(11,11,13,.82);box-shadow:inset 0 0 0 1px var(--line)}}
-.chapter .n{font-family:Archivo,sans-serif;font-weight:900;font-stretch:122%;font-size:clamp(52px,5.6vw,92px);line-height:.8;color:transparent;-webkit-text-stroke:1.5px var(--orange);display:block;margin-bottom:8px}
-.chapter h2{font-size:clamp(26px,2.9vw,44px);margin:0 0 12px}
-.chapter p{margin:0;font-size:16px;color:rgba(236,231,221,.82)}
-.chapter .price{display:inline-block;margin-top:14px;padding:7px 12px;border-radius:999px;background:var(--bone);color:var(--ink);font-weight:700;font-size:13px}
-.chapter .price small{font-weight:400;opacity:.6;margin-left:6px;font-size:10px}
-.chapter .btns{margin-top:18px}
 @media (max-width:760px){
-  .chapter,.chapter.right,.chapter.tl{left:16px;right:16px;width:auto;top:auto;bottom:96px;transform:translateY(16px);
-    padding:16px 16px 18px;border-radius:18px;background:rgba(11,11,13,.86);
-    box-shadow:inset 0 0 0 1px var(--line)}
-  .chapter.on,.chapter.tl.on{transform:none}
-  .chapter .n{font-size:30px;display:inline-block;margin:0 10px 0 0;vertical-align:baseline}
-  .chapter h2{font-size:22px;display:inline}
-  .chapter p{margin-top:10px;font-size:13px}
+  .room .say{top:80px;bottom:auto;right:16px}
+  .room .pin{place-items:end center;padding-bottom:104px}
+  .room .reach{height:60vh;height:60svh}
+  .room .big{font-size:36vw}
 }
-.steps{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);display:flex;gap:4px;margin:0;padding:0;list-style:none;width:min(560px,calc(100% - 32px))}
-.steps .s{flex:1;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;text-align:center;padding-top:10px;color:rgba(236,231,221,.4);transition:color .3s}
-.steps .s.on{color:var(--bone)}
-.steps .track{position:absolute;left:0;right:0;top:0;height:2px;background:var(--line)}
-.steps .fill{position:absolute;inset:0;background:var(--orange);transform-origin:0 50%;transform:scaleX(0)}
-@media (max-width:420px){.steps .s{font-size:8.5px;letter-spacing:.06em}}
-.no-gl #story{display:none}
 
-/* ---------- the fitting room ---------- */
-#fit{position:relative;z-index:2;min-height:100vh;padding:120px clamp(16px,4vw,48px) 80px;display:flex;justify-content:flex-end;align-items:center;pointer-events:none}
-.room{pointer-events:auto;width:min(420px,100%);padding:26px 24px;border-radius:24px;background:rgba(17,17,20,.9);
-  box-shadow:inset 0 0 0 1px var(--line),0 30px 80px rgba(0,0,0,.45)}
-.room h2{font-size:clamp(26px,2.6vw,36px);margin:0 0 8px}
-.room .lede{margin:0 0 20px;font-size:15px;color:rgba(236,231,221,.75)}
-.item{padding:16px 0;border-top:1px solid var(--line)}
-.item header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
-.toggle{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;cursor:pointer;font-family:Archivo,sans-serif;font-weight:800;font-stretch:115%;font-size:15px;text-transform:uppercase;letter-spacing:0}
-.toggle i{width:22px;height:22px;border-radius:6px;box-shadow:inset 0 0 0 1.5px rgba(236,231,221,.5);display:inline-grid;place-items:center;font-style:normal;font-size:13px;color:var(--ink)}
-.toggle[aria-pressed="true"] i{background:var(--orange);box-shadow:none}
-.toggle[aria-pressed="true"] i::before{content:"✓"}
-.toggle[aria-pressed="false"]{opacity:.55}
-.item .cost{font-weight:700;font-size:13px}
-.sw{display:flex;flex-wrap:wrap;gap:8px}
-.sw button{width:34px;height:34px;border-radius:50%;border:0;cursor:pointer;background:var(--c);box-shadow:inset 0 0 0 1px rgba(255,255,255,.18);transition:transform .15s}
-.sw button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink2),0 0 0 4px var(--orange)}
-.sw button:hover{transform:scale(1.08)}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.chips button{padding:8px 13px;border-radius:999px;border:0;background:rgba(236,231,221,.08);box-shadow:inset 0 0 0 1px var(--line);cursor:pointer;font-size:12px;font-weight:700}
-.chips button[aria-pressed="true"]{background:var(--bone);color:var(--ink)}
-.chips .ar{font-family:Lalezar,sans-serif;font-size:15px;font-weight:400;line-height:1}
-.chosen{font-size:11px;color:rgba(236,231,221,.6);margin-left:2px}
+/* ---------- figures: a ghost of the model, and his pieces ---------- */
+.fig{position:relative;aspect-ratio:3/4;height:100%;max-width:100%;pointer-events:none}
+/* pieces that have flown off stay invisible; they must never catch a tap */
+.fig img,.fig .tag{pointer-events:none}
+.fig img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;max-width:none}
+.fig .ghost{filter:brightness(0) invert(1);opacity:.1}
+.on-pink .fig .ghost{filter:brightness(0);opacity:.13}
+.fig .pc{will-change:transform,opacity}
+.tag{position:absolute;z-index:3;display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.06em;white-space:nowrap;
+  opacity:0;transform:translateY(8px);transition:opacity .4s ease,transform .5s ease}
+.tag.show{opacity:1;transform:none}
+.tag::before{content:"";width:46px;height:1.5px;background:currentColor;flex:none}
+.tag.left{flex-direction:row-reverse;text-align:right;transform:translate(-100%,8px)}
+.tag.left.show{transform:translate(-100%,0)}
+.tag b{display:block;font-family:Archivo,sans-serif;font-weight:800;font-stretch:115%;font-size:15px;letter-spacing:0;text-transform:uppercase}
+.tag span{display:block}
+
+/* ---------- 3. the dress: pieces land on the ghost ---------- */
+.dress{position:relative;height:340vh;background:var(--ink)}
+.dress .pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+  padding:60px clamp(16px,4vw,48px) 30px;gap:20px}
+.dress .stage{height:min(84vh,900px);display:flex;justify-content:center}
+.dress .copy{max-width:330px}
+.dress .copy .n{font-size:clamp(48px,5vw,84px);color:transparent;-webkit-text-stroke:1.5px var(--pink);display:block;margin-bottom:6px}
+.dress .copy h2{font-size:clamp(26px,2.8vw,42px);margin:0 0 12px}
+.dress .copy p{margin:0;color:rgba(241,237,232,.8)}
+.dress .steps{justify-self:end;display:grid;gap:10px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.dress .steps span{display:flex;align-items:center;gap:10px;color:rgba(241,237,232,.38);transition:color .3s}
+.dress .steps span::before{content:"";width:9px;height:9px;border-radius:50%;box-shadow:inset 0 0 0 1.5px currentColor}
+.dress .steps span.on{color:var(--bone)}
+.dress .steps span.on::before{background:var(--pink);box-shadow:none}
+.dress .price{display:inline-block;margin-top:16px;padding:7px 12px;border-radius:999px;background:var(--bone);color:var(--ink);font-family:'Space Mono',monospace;font-weight:700;font-size:13px}
+.dress .price small{font-weight:400;opacity:.6;margin-left:6px;font-size:10px}
+.dress .copy>div{transition:opacity .35s ease}
+@media (max-width:860px){
+  .dress .pin{grid-template-columns:1fr;grid-template-rows:1fr auto;padding:44px 16px 22px;gap:8px}
+  .dress .stage{height:62vh;order:0}
+  .dress .copy{order:1;max-width:none;min-height:150px}
+  .dress .steps{display:none}
+  .tag{font-size:9.5px}.tag b{font-size:12px}.tag::before{width:22px}
+}
+
+/* ---------- 4. films ---------- */
+.films{background:var(--ink);padding:clamp(70px,10vw,130px) clamp(16px,4vw,48px)}
+.films .head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:30px}
+.films h2{font-size:clamp(40px,6vw,96px);margin:0}
+.films h2 span{color:var(--pink)}
+.films .head p{margin:0;max-width:36ch;color:rgba(241,237,232,.75)}
+.reel{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,1.6vw,20px)}
+.reel figure{margin:0;position:relative;border-radius:20px;overflow:hidden;aspect-ratio:9/16;background:#222}
+.reel video,.reel img{width:100%;height:100%;object-fit:cover}
+.reel figcaption{position:absolute;left:14px;bottom:12px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+@media (max-width:760px){.reel{grid-template-columns:repeat(3,72vw);overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -16px;padding:0 16px;scrollbar-width:none}
+  .reel figure{scroll-snap-align:center}}
+
+/* ---------- 5. the boot ---------- */
+.boot{position:relative;height:200vh;background:radial-gradient(70% 60% at 50% 45%,#F2B5C8,#C9798F 70%,#8E4A5E)}
+.boot .pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;display:grid;place-items:center}
+.boot img{height:min(90vh,980px);width:auto;max-width:none;transform:scale(calc(.78 + var(--bp,0) * .5)) translate3d(0,calc((1 - var(--bp,0)) * 6vh),0);transform-origin:62% 40%}
+.boot h2{position:absolute;z-index:2;left:clamp(16px,4vw,48px);bottom:clamp(40px,8vh,90px);margin:0;font-size:clamp(44px,8vw,140px);color:var(--ink);
+  opacity:calc(var(--bp,0) * 2 - .3)}
+
+/* ---------- 6. the fitting room ---------- */
+.fit{position:relative;min-height:100vh;display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:clamp(20px,4vw,60px);
+  padding:80px clamp(16px,4vw,48px) 60px;background:var(--ink);transition:background-color .6s ease}
+.fit.on-pink{background:var(--room)}
+.fit .stage{height:min(86vh,920px);display:flex;justify-content:center;position:relative}
+.fit .stage .fig{position:absolute;height:100%}
+.panel{padding:26px 24px;border-radius:24px;background:var(--ink2);box-shadow:inset 0 0 0 1px var(--line),0 30px 80px rgba(0,0,0,.35);max-width:440px}
+.panel h2{font-size:clamp(28px,2.8vw,40px);margin:0 0 8px}
+.panel .lede{margin:0 0 18px;color:rgba(241,237,232,.75);font-size:15px}
+.group{padding:16px 0;border-top:1px solid var(--line)}
+.group>span{display:block;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(241,237,232,.6);margin-bottom:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:9px;padding:10px 14px;border-radius:999px;border:0;background:rgba(241,237,232,.07);
+  box-shadow:inset 0 0 0 1px var(--line);cursor:pointer;font-size:12px;font-weight:700}
+.chip[aria-pressed="true"]{background:var(--bone);color:var(--ink)}
+.chip i{width:16px;height:16px;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
+.chip small{font-weight:400;opacity:.7}
 .total{display:flex;justify-content:space-between;align-items:baseline;padding:16px 0 18px;border-top:1px solid var(--line)}
-.total b{font-family:Archivo,sans-serif;font-weight:900;font-stretch:118%;font-size:22px}
-.room .btn{width:100%;justify-content:center}
-.note{margin:12px 0 0;font-size:12px;color:rgba(236,231,221,.75);min-height:0}
+.total b{font-weight:900;font-stretch:118%;font-size:24px}
+.panel .btn{width:100%}
+.note{margin:12px 0 0;font-size:12px;color:rgba(241,237,232,.78)}
 .note:empty{display:none}
-.note blockquote{margin:8px 0;padding:10px 12px;border-left:3px solid var(--orange);background:rgba(236,231,221,.06);font-size:12px}
-.drag{display:flex;align-items:center;gap:8px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(236,231,221,.55);margin:0 0 16px}
-@media (max-width:760px){
-  #fit{display:block;padding:62vh 16px 60px}
-  .room{width:100%}
+.note blockquote{margin:8px 0;padding:10px 12px;border-left:3px solid var(--pink);background:rgba(241,237,232,.06)}
+.fit .pc{transition:transform .75s cubic-bezier(.2,.75,.2,1),opacity .45s ease}
+.fit .ghost{transition:opacity .5s ease}
+@media (max-width:860px){
+  /* on a phone the model and the choices share one screen */
+  .fit{grid-template-columns:1fr;gap:10px;padding:44px 12px 18px;min-height:100svh;align-content:start}
+  .fit .stage{height:48vh;height:48svh}
+  .panel{max-width:none;padding:14px 16px 16px;border-radius:20px}
+  .panel .eyebrow,.panel .lede{display:none}
+  .panel h2{font-size:22px;margin:0 0 4px}
+  .group{padding:9px 0}.group>span{margin-bottom:7px}
+  .chip{padding:9px 12px}
+  .total{padding:10px 0 12px}.total b{font-size:20px}
 }
 
-/* ---------- solid sections ---------- */
-.solid{position:relative;z-index:3}
-.drop{background:var(--bone);color:var(--ink);padding:clamp(64px,10vw,120px) clamp(16px,4vw,48px)}
-.drop .head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:36px}
-.drop h2{font-size:clamp(44px,7.5vw,120px);margin:0}
-.drop h2 span{color:var(--orange)}
-.drop .head p{max-width:34ch;margin:0;font-size:13px}
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,2vw,24px)}
-@media (max-width:860px){.cards{grid-template-columns:1fr}}
-.card{position:relative;border-radius:22px;overflow:hidden;background:#dcd5c6;isolation:isolate}
-.card .ph{position:relative;aspect-ratio:4/5;overflow:hidden}
-.card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
-.card:hover img{transform:scale(1.04)}
-.card .no{position:absolute;top:14px;left:16px;font-family:Archivo,sans-serif;font-weight:900;font-stretch:122%;font-size:40px;line-height:.8;color:transparent;-webkit-text-stroke:1.5px var(--ink);opacity:.5}
-.card .badge{position:absolute;top:16px;right:16px;padding:6px 10px;border-radius:999px;background:var(--ink);color:var(--bone);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
-.card .meta{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px 18px;background:var(--ink);color:var(--bone)}
-.card h3{font-size:19px;margin:0 0 4px}
-.card .p{font-size:13px;font-weight:700}
-.card .p small{display:block;font-weight:400;font-size:10px;opacity:.6}
-.card .try{padding:11px 15px;font-size:11px}
-.pitch{background:var(--ink);padding:clamp(72px,10vw,130px) clamp(16px,4vw,48px);display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,5vw,80px);align-items:start;
-  background-image:radial-gradient(50% 60% at 100% 0%,rgba(47,79,224,.35),transparent 70%),radial-gradient(40% 50% at 0% 100%,rgba(255,79,26,.22),transparent 70%)}
+/* ---------- 7. lookbook ---------- */
+.look{background:var(--bone);color:var(--ink);padding:clamp(70px,10vw,130px) clamp(16px,4vw,48px)}
+.look h2{font-size:clamp(44px,7vw,120px);margin:0 0 30px}
+.look h2 span{color:#D9487C}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(10px,1.4vw,18px)}
+.grid figure{margin:0;border-radius:18px;overflow:hidden;background:#ddd;opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
+.grid figure.in{opacity:1;transform:none}
+.grid img{width:100%;height:100%;object-fit:cover}
+.g1{grid-column:span 7;aspect-ratio:1}.g2{grid-column:span 5;aspect-ratio:3/4}.g3{grid-column:span 4;aspect-ratio:3/4}
+.g4{grid-column:span 4;aspect-ratio:3/4}.g5{grid-column:span 4;aspect-ratio:3/4}.g6{grid-column:span 12;aspect-ratio:2/1}
+.g6 img{object-position:50% 60%}
+@media (max-width:760px){.g1,.g6{grid-column:span 12}.g2,.g3,.g4,.g5{grid-column:span 6}}
+
+/* ---------- 8. for brands ---------- */
+.pitch{background:var(--ink);padding:clamp(72px,10vw,130px) clamp(16px,4vw,48px);display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,5vw,80px);
+  background-image:radial-gradient(50% 60% at 100% 0%,rgba(240,122,166,.28),transparent 70%)}
 @media (max-width:860px){.pitch{grid-template-columns:1fr}}
 .pitch h2{font-size:clamp(38px,5.4vw,84px);margin:0}
-.pitch h2 span{color:var(--orange)}
-.pitch p{font-size:14px;color:rgba(236,231,221,.8);margin:0 0 14px;max-width:46ch}
+.pitch h2 span{color:var(--pink)}
+.pitch p{color:rgba(241,237,232,.82);margin:0 0 14px;max-width:46ch}
 .pitch ul{list-style:none;margin:22px 0 28px;padding:0;display:grid;gap:10px}
-.pitch li{display:flex;gap:12px;align-items:baseline;font-size:14px}
-.pitch li::before{content:"";flex:none;width:9px;height:9px;border-radius:2px;background:var(--orange);transform:rotate(45deg) translateY(-1px)}
-.foot{position:relative;z-index:3;background:var(--ink);border-top:1px solid var(--line);display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;
-  padding:22px clamp(16px,4vw,48px) 30px;font-size:11px;color:rgba(236,231,221,.6)}
-.foot a{color:var(--orange)}
+.pitch li{display:flex;gap:12px;align-items:baseline}
+.pitch li::before{content:"";flex:none;width:9px;height:9px;border-radius:2px;background:var(--pink);transform:rotate(45deg) translateY(-1px)}
+.foot{border-top:1px solid var(--line);display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;padding:22px clamp(16px,4vw,48px) 30px;font-size:11px;color:rgba(241,237,232,.6)}
+.foot a{color:var(--pink)}
 
-/* product photography mode */
-.shot body>*:not(#gl){display:none!important}
-.shot body{background:var(--shotbg,#E4DDD0)}
-
-@media (prefers-reduced-motion:reduce){
-  .atmo i,.atmo::after,.tape .run,.tag{animation:none}
-  .chapter{transition:none}
-}
+@media (prefers-reduced-motion:reduce){.tape .run{animation:none}.fit .pc,.grid figure{transition:none}}
 </style>
 </head>
 <body>
 <div class="concept">
-  <span class="long">Concept page by Blend. KHAYT is not a real brand and nothing here is for sale.</span>
-  <span class="short">Concept by Blend &middot; not a real brand</span>
+  <span class="long">Concept page by Blend, built from KYGO's own photos and films. Nothing here is for sale.</span>
+  <span class="short">Concept by Blend &middot; not a shop</span>
   <a href="#pitch">Want one?</a>
 </div>
 
-<div class="atmo" aria-hidden="true"><i class="o"></i><i class="b"></i><i class="b2"></i></div>
-<canvas id="gl" aria-label="A faceless mannequin wearing the KHAYT drop. Drag to turn it."></canvas>
-
-<header class="hero" id="hero">
-  <div class="wordmark" aria-hidden="true">
-    <b class="disp">Khayt</b>
-    <span class="ar">خيط</span>
-    <span class="ed">Drop 03 · Cairo · 150 pieces each</span>
-  </div>
-  <div class="top">
-    <a class="logo disp" href="#hero">Khayt</a>
-    <nav><a href="#story">The making</a><a href="#drop">The drop</a><a class="cta" href="#fit">Build your fit</a></nav>
-  </div>
-  <div class="copy">
-    <p class="eyebrow">Drop 03 &middot; Cairo</p>
-    <h1 class="disp">Cut in Cairo.<br><span>Worn everywhere.</span></h1>
-    <p>Three pieces, 150 of each. Scroll and watch them cut from the roll and sewn onto him.</p>
-    <div class="btns">
-      <a class="btn" href="#fit">Build your fit</a>
-      <a class="btn ghost" href="#story">See it made</a>
-    </div>
-  </div>
-  <div class="tags" aria-hidden="true">
-    <span class="tag"><b>01</b>Box tee &middot; EGP 850</span>
-    <span class="tag"><b>02</b>Field cargo &middot; EGP 1,250</span>
-    <span class="tag"><b>03</b>Hood jacket &middot; EGP 1,900</span>
-  </div>
-  <p class="cue">Scroll</p>
-  <div class="tapes" aria-hidden="true">
-    <div class="tape a"><div class="run"></div></div>
-    <div class="tape b"><div class="run"></div></div>
+<header class="hero" id="top">
+  <img class="poster" src="film/hero-tall.jpg" alt="" aria-hidden="true">
+  <video id="herovid" muted loop playsinline autoplay preload="auto" aria-label="KYGO in the desert"></video>
+  <div class="top"><b class="disp">KYGO</b>
+    <nav><a href="#dress">The fit</a><a href="#films">Films</a><a href="#fit">Fitting room</a></nav></div>
+  <h1 class="word disp">KYGO</h1>
+  <div class="line">
+    <p>Zip hoodie and wide pants, in pink and black. Scroll and watch them go on.</p>
+    <a class="btn" href="#fit">Fitting room</a>
   </div>
 </header>
 
-<section id="story" aria-label="How the drop is made">
+<section class="room" id="room" aria-label="The pink room">
   <div class="pin">
-    <article class="chapter right"><span class="n">01</span><h2 class="disp">Fabric.</h2><p>Every fit starts flat. Jersey for the tee, twill for the cargo, denim for the jacket.</p></article>
-    <article class="chapter right"><span class="n">02</span><h2 class="disp">Cut.</h2><p>Every pattern piece marked on the roll and cut to size.</p></article>
-    <article class="chapter tl"><span class="n">03</span><h2 class="disp">Box tee.</h2><p>Heavy jersey, dropped shoulder, the print on the chest.</p><span class="price">EGP 850<small>concept price</small></span></article>
-    <article class="chapter tl"><span class="n">04</span><h2 class="disp">Field cargo.</h2><p>Twill, side pockets, a little stack at the ankle.</p><span class="price">EGP 1,250<small>concept price</small></span></article>
-    <article class="chapter tl"><span class="n">05</span><h2 class="disp">Hood jacket.</h2><p>Denim, worn open, hood up.</p><span class="price">EGP 1,900<small>concept price</small></span></article>
-    <article class="chapter"><span class="n">06</span><h2 class="disp">The drop.</h2><p>Three pieces, 150 of each. Now make it yours.</p></article>
-    <div class="steps" aria-hidden="true">
-      <span class="track"><span class="fill"></span></span>
-      <span class="s">Fabric</span><span class="s">Cut</span><span class="s">Tee</span><span class="s">Cargo</span><span class="s">Jacket</span><span class="s">Drop</span>
-    </div>
+    <p class="big disp" aria-hidden="true"><span>KY</span><span>GO</span></p>
+    <img class="reach" src="img/reach.webp" alt="The model in the pink set, reaching toward the camera" width="1100" height="1400">
+    <div class="say"><h2 class="disp">Made to be seen.</h2><p>Fleece, an embroidered mark, a wide leg that stacks over the boot.</p></div>
+    <div class="tapes" aria-hidden="true"><div class="tape a"><div class="run"></div></div><div class="tape b"><div class="run"></div></div></div>
   </div>
 </section>
 
-<section id="fit" aria-labelledby="t-fit">
-  <div class="room">
-    <p class="eyebrow">The fitting room</p>
-    <h2 class="disp" id="t-fit">Build your fit.</h2>
-    <p class="lede">Pick a colour and watch it go on him.</p>
-    <p class="drag" aria-hidden="true">&larr; drag him to turn &rarr;</p>
+<section class="dress" id="dress" aria-label="The pieces going on">
+  <div class="pin">
+    <div class="copy" id="dcopy">
+      <div data-s="0"><span class="n disp">01</span><h2 class="disp">Start with him.</h2><p>The model, with nothing on him yet. Scroll, and the pieces go on one by one.</p></div>
+      <div data-s="1" hidden><span class="n disp">02</span><h2 class="disp">Wide pants.</h2><p>Fleece, a wide straight leg, an appliqué that runs down the outside.</p></div>
+      <div data-s="2" hidden><span class="n disp">03</span><h2 class="disp">Zip hoodie.</h2><p>Boxy, dropped shoulder, the mark embroidered across the chest.</p></div>
+      <div data-s="3" hidden><span class="n disp">04</span><h2 class="disp">The pink set.</h2><p>Both pieces, as shot. Also in black.</p><span class="price">EGP 2,700<small>concept price</small></span></div>
+    </div>
+    <div class="stage"><div class="fig" id="dfig"></div></div>
+    <div class="steps" aria-hidden="true"><span>The model</span><span>Pants</span><span>Hoodie</span><span>The set</span></div>
+  </div>
+</section>
 
-    <div class="item" data-g="tee">
-      <header><button class="toggle" type="button" aria-pressed="true"><i></i>Box tee</button><span class="cost">EGP 850</span></header>
-      <div class="sw" role="group" aria-label="Tee colour"></div>
-      <div class="chips" role="group" aria-label="Print">
-        <button type="button" data-print="">Clean</button>
-        <button type="button" data-print="KHAYT">KHAYT</button>
-        <button type="button" data-print="خيط" class="ar" aria-pressed="true">خيط</button>
-      </div>
-    </div>
-    <div class="item" data-g="cargo">
-      <header><button class="toggle" type="button" aria-pressed="true"><i></i>Field cargo</button><span class="cost">EGP 1,250</span></header>
-      <div class="sw" role="group" aria-label="Cargo colour"></div>
-    </div>
-    <div class="item" data-g="jacket">
-      <header><button class="toggle" type="button" aria-pressed="true"><i></i>Hood jacket</button><span class="cost">EGP 1,900</span></header>
-      <div class="sw" role="group" aria-label="Jacket colour"></div>
-    </div>
-    <div class="item">
-      <header><span class="toggle" style="cursor:default">Size</span><span class="chosen" id="chosen"></span></header>
-      <div class="chips" role="group" aria-label="Size" id="sizes">
-        <button type="button">S</button><button type="button">M</button><button type="button" aria-pressed="true">L</button><button type="button">XL</button>
-      </div>
-    </div>
-    <div class="total"><span>Your fit</span><b id="total">EGP 4,000</b></div>
-    <button class="btn" type="button" id="order">Order this fit on WhatsApp</button>
+<section class="films" id="films" aria-labelledby="t-films">
+  <div class="head"><h2 class="disp" id="t-films">Shot in <span>the desert.</span></h2>
+    <p>The films from the same drop. On a brand page, they play as you reach them and stop when you leave.</p></div>
+  <div class="reel">
+    <figure><video data-src="film/reel-2.mp4" poster="film/reel-2.jpg" muted loop playsinline preload="none"></video><figcaption>On the ridge</figcaption></figure>
+    <figure><video data-src="film/hero-tall.mp4" poster="film/hero-tall.jpg" muted loop playsinline preload="none"></video><figcaption>The arrival</figcaption></figure>
+    <figure><video data-src="film/flying.mp4" poster="film/flying.jpg" muted loop playsinline preload="none"></video><figcaption>Above it</figcaption></figure>
+  </div>
+</section>
+
+<section class="boot" id="boot" aria-label="The boot">
+  <div class="pin">
+    <h2 class="disp">Step in.</h2>
+    <img src="img/boot.webp" alt="The model in the pink set, lifting a boot toward the camera" width="1300" height="1300" loading="lazy">
+  </div>
+</section>
+
+<section class="fit" id="fit" aria-labelledby="t-fit">
+  <div class="stage" id="fstage"></div>
+  <div class="panel">
+    <p class="eyebrow" style="color:var(--pink)">The fitting room</p>
+    <h2 class="disp" id="t-fit">Pick yours.</h2>
+    <p class="lede">Choose the colour and the pieces, and they go on him.</p>
+    <div class="group"><span>Colour</span><div class="chips" id="colours">
+      <button class="chip" type="button" data-c="pink" aria-pressed="true" style="--c:#F07AA6"><i></i>Pink</button>
+      <button class="chip" type="button" data-c="black" aria-pressed="false" style="--c:#151417"><i></i>Black</button>
+    </div></div>
+    <div class="group"><span>Pieces</span><div class="chips" id="pieces">
+      <button class="chip" type="button" data-p="top" aria-pressed="true">Zip hoodie <small>EGP 1,450</small></button>
+      <button class="chip" type="button" data-p="bottom" aria-pressed="true">Wide pants <small>EGP 1,250</small></button>
+    </div></div>
+    <div class="group"><span>Size</span><div class="chips" id="sizes">
+      <button class="chip" type="button">S</button><button class="chip" type="button">M</button><button class="chip" type="button" aria-pressed="true">L</button><button class="chip" type="button">XL</button>
+    </div></div>
+    <div class="total"><span>Your fit <small class="mono" style="opacity:.6;font-size:10px">concept prices</small></span><b id="total">EGP 2,700</b></div>
+    <button class="btn" type="button" id="order">Order on WhatsApp</button>
     <div class="note" id="note" role="status" aria-live="polite"></div>
   </div>
 </section>
 
-<section class="solid drop" id="drop" data-cover aria-labelledby="t-drop">
-  <div class="head">
-    <h2 class="disp" id="t-drop">The <span>drop.</span></h2>
-    <p>Photographed on the same mannequin you just dressed. On a real brand's page, these are your own product photos.</p>
-  </div>
-  <div class="cards">
-    <article class="card"><div class="ph"><img src="img/tee.jpg" alt="The box tee on the mannequin" loading="lazy" width="800" height="1000"><span class="no">01</span><span class="badge">150 pieces</span></div>
-      <div class="meta"><div><h3 class="disp">Box tee</h3><span class="p">EGP 850<small>concept price</small></span></div><a class="btn try" href="#fit" data-try="tee">Try it on</a></div></article>
-    <article class="card"><div class="ph"><img src="img/cargo.jpg" alt="The field cargo on the mannequin" loading="lazy" width="800" height="1000"><span class="no">02</span><span class="badge">150 pieces</span></div>
-      <div class="meta"><div><h3 class="disp">Field cargo</h3><span class="p">EGP 1,250<small>concept price</small></span></div><a class="btn try" href="#fit" data-try="cargo">Try it on</a></div></article>
-    <article class="card"><div class="ph"><img src="img/jacket.jpg" alt="The hood jacket on the mannequin" loading="lazy" width="800" height="1000"><span class="no">03</span><span class="badge">150 pieces</span></div>
-      <div class="meta"><div><h3 class="disp">Hood jacket</h3><span class="p">EGP 1,900<small>concept price</small></span></div><a class="btn try" href="#fit" data-try="jacket">Try it on</a></div></article>
+<section class="look" id="look" aria-labelledby="t-look">
+  <h2 class="disp" id="t-look">The <span>lookbook.</span></h2>
+  <div class="grid">
+    <figure class="g1"><img src="img/window.webp" alt="The pink room with its single window" loading="lazy"></figure>
+    <figure class="g2"><img src="img/duo.webp" alt="Two models in the pink pants" loading="lazy"></figure>
+    <figure class="g3"><img src="img/detail-hoodie.webp" alt="The embroidered mark on the black hoodie" loading="lazy"></figure>
+    <figure class="g4"><img src="img/detail-pants.webp" alt="The appliqué on the pink pants" loading="lazy"></figure>
+    <figure class="g5"><img src="img/kneel.webp" alt="A model kneeling on a white plinth in the black set" loading="lazy"></figure>
+    <figure class="g6"><img src="img/plinth.webp" alt="A model standing on a white plinth in the black set" loading="lazy"></figure>
   </div>
 </section>
 
-<section class="solid pitch" id="pitch" data-cover aria-labelledby="t-pitch">
+<section class="pitch" id="pitch" aria-labelledby="t-pitch">
+  <div><p class="eyebrow" style="color:var(--pink)">For local brands</p>
+    <h2 class="disp" id="t-pitch">Your brand, <span>built like this.</span></h2></div>
   <div>
-    <p class="eyebrow">For local brands</p>
-    <h2 class="disp" id="t-pitch">Your brand, <span>built like this.</span></h2>
-  </div>
-  <div>
-    <p>This page is a concept. Blend made it to show what a local brand's page can do when it is built for the product rather than from a template.</p>
-    <p>Yours would carry your own pieces, photos and prices, on your own domain, with every order landing in your WhatsApp already written out.</p>
-    <ul>
-      <li>Your collection, built to be scrolled</li>
-      <li>Order on WhatsApp under every piece</li>
-      <li>A link for your Instagram bio</li>
-      <li>UGC videos of real people wearing it</li>
-    </ul>
+    <p>This page is a concept. Blend built it from one shoot: the photos and films a brand already has, cut out and put to work.</p>
+    <p>Yours would carry your pieces, your shoot and your prices, on your own domain, with every order landing in your WhatsApp already written out.</p>
+    <ul><li>Your pieces going on your model as people scroll</li><li>A fitting room for colours and sizes</li><li>Order on WhatsApp, written for them</li><li>UGC videos of real people wearing it</li></ul>
     <a class="btn" href="/start/?src=demo-streetwear">Tell us about your brand</a>
   </div>
 </section>
 <footer class="foot">
-  <span>KHAYT is invented. Concept and build by <a href="/">Blend</a>, Cairo.</span>
-  <span>The mannequin and every garment are 3D models, not photographs.</span>
+  <span>Photos and films: KYGO. Concept and build by <a href="/">Blend</a>, Cairo.</span>
+  <span>Prices on this page are placeholders.</span>
 </footer>
 
 <script>
-/* everything on the page that is not the 3D scene */
 (function () {
-  // tapes
-  var A = ['Drop 03', '150 pieces each', 'Order on WhatsApp', 'Cut in Cairo'];
-  var B = ['<em>خيط</em>', 'Khayt', 'Box tee 850', 'Field cargo 1,250', 'Hood jacket 1,900'];
-  function fill(el, words) {
-    var one = words.map(function (w) { return '<span>' + w + ' <i>✶</i></span>'; }).join('');
-    el.innerHTML = one + one + one + one;
-  }
-  var runs = document.querySelectorAll('.tape .run');
-  fill(runs[0], A); fill(runs[1], B);
+  var REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return [].slice.call((r || document).querySelectorAll(s)); };
+  var clamp = function (x) { return Math.max(0, Math.min(1, x)); };
+  var seg = function (p, a, b) { return clamp((p - a) / (b - a)); };
+  var ease = function (t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
 
-  var COLORS = {
-    tee: [['Washed black', '#2a2a2d'], ['Bone', '#e7e0d2'], ['Safety orange', '#ff5a1f'], ['Cobalt', '#2f4fe0']],
-    cargo: [['Olive', '#5d6142'], ['Black', '#232325'], ['Sand', '#b9a888']],
-    jacket: [['Indigo', '#2a3d63'], ['Black', '#26272c'], ['Ice', '#8fa3bd']]
+  /* hero film: the wide cut on a wide screen, the tall cut on a phone */
+  var hv = $('#herovid');
+  var wide = innerWidth / innerHeight > 1;
+  hv.poster = wide ? 'film/hero-wide.jpg' : 'film/hero-tall.jpg';
+  $('.hero .poster').src = hv.poster;
+  hv.src = wide ? 'film/hero-wide.mp4' : 'film/hero-tall.mp4';
+  if (REDUCE) hv.removeAttribute('autoplay'); else hv.play().catch(function () {});
+
+  /* tapes */
+  function fill(el, words) { var one = words.map(function (w) { return '<span>' + w + ' <i>✶</i></span>'; }).join(''); el.innerHTML = one + one + one + one; }
+  var runs = $$('.tape .run');
+  fill(runs[0], ['KYGO', 'Zip hoodie', 'Wide pants', 'Pink', 'Black']);
+  fill(runs[1], ['Order on WhatsApp', 'Cairo', 'Fleece', 'Embroidered mark']);
+
+  /* The two colourways. Each is one cut-out photo, used three ways: a ghost
+     of the whole figure, and the same photo clipped to the hoodie and to the
+     pants. Outlines are in % of the photo, traced along the hem and round the
+     hands so the pieces meet with no gap. */
+  var LOOKS = {
+    pink: { src: 'img/pink.webp', alt: 'The pink zip hoodie and wide pants on the model',
+      top: '0 0,100% 0,100% 50%,59.3% 50%,59.3% 56.25%,50.7% 56.25%,50.7% 50.5%,43.3% 50.25%,43.3% 56.5%,37.7% 56.5%,37.7% 50%,0 50%',
+      bottom: '0 50%,37.7% 50%,37.7% 56.5%,43.3% 56.5%,43.3% 50.25%,50.7% 50.5%,50.7% 56.25%,59.3% 56.25%,59.3% 50%,100% 50%,100% 100%,0 100%',
+      head: null,
+      tags: { bottom: { x: 64, y: 74, side: 'right', t: 'Wide pants', s: 'Appliqué down the leg' },
+              top: { x: 62, y: 30, side: 'right', t: 'Zip hoodie', s: 'Embroidered mark' } } },
+    black: { src: 'img/black.webp', alt: 'The black zip hoodie and wide pants on the model',
+      top: '0 0,38% 0,38% 21%,60% 21%,60% 0,100% 0,100% 49%,41.3% 49%,41.3% 58.5%,32.7% 58.5%,32.7% 49%,0 49%',
+      bottom: '0 49%,32.7% 49%,32.7% 58.5%,41.3% 58.5%,41.3% 49%,100% 49%,100% 100%,0 100%',
+      head: '38% 0,60% 0,60% 21%,38% 21%',
+      tags: { bottom: { x: 66, y: 74, side: 'right', t: 'Wide pants', s: 'Appliqué down the leg' },
+              top: { x: 66, y: 30, side: 'right', t: 'Zip hoodie', s: 'Embroidered mark' } } }
   };
-  var PRICE = { tee: 850, cargo: 1250, jacket: 1900 };
-  var NAME = { tee: 'Box tee', cargo: 'Field cargo', jacket: 'Hood jacket' };
-  var st = { on: { tee: true, cargo: true, jacket: true }, color: { tee: 'Washed black', cargo: 'Olive', jacket: 'Indigo' }, print: 'خيط', size: 'L' };
-  var K = function () { return window.KHAYT; };
-  var fmt = function (n) { return 'EGP ' + n.toLocaleString('en-US'); };
+  // where each piece comes from before it lands
+  var FROM = { bottom: [-34, 62, -10, 1.08], top: [30, -58, 9, 1.08], head: [0, 0, 0, 1] };
 
-  function press(group, btn) {
-    [].forEach.call(group.querySelectorAll('button'), function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
-  }
-  function total() {
-    var t = 0; for (var g in st.on) if (st.on[g]) t += PRICE[g];
-    document.getElementById('total').textContent = fmt(t);
-    document.getElementById('order').disabled = t === 0;
-    document.getElementById('note').innerHTML = '';
-  }
-  [].forEach.call(document.querySelectorAll('.item[data-g]'), function (item) {
-    var g = item.getAttribute('data-g'), sw = item.querySelector('.sw');
-    COLORS[g].forEach(function (c, i) {
-      var b = document.createElement('button');
-      b.type = 'button'; b.style.setProperty('--c', c[1]); b.setAttribute('aria-label', c[0]); b.title = c[0];
-      b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
-      b.addEventListener('click', function () {
-        press(sw, b); st.color[g] = c[0];
-        if (!st.on[g]) setOn(g, true);
-        K() && K().setColor(g, c[0]);
-      });
-      sw.appendChild(b);
+  function figure(host, key, withTags) {
+    var L = LOOKS[key], f = document.createElement('div');
+    f.className = 'fig'; f.dataset.look = key;
+    var g = document.createElement('img'); g.className = 'ghost'; g.src = L.src; g.alt = ''; g.setAttribute('aria-hidden', 'true'); f.appendChild(g);
+    var pcs = {};
+    ['bottom', 'top', 'head'].forEach(function (k) {
+      if (!L[k]) return;
+      var im = document.createElement('img');
+      im.className = 'pc'; im.src = L.src; im.alt = k === 'top' ? L.alt : ''; if (k !== 'top') im.setAttribute('aria-hidden', 'true');
+      im.style.clipPath = im.style.webkitClipPath = 'polygon(' + L[k] + ')';
+      f.appendChild(im); pcs[k] = im;
     });
-    var tg = item.querySelector('.toggle');
-    function setOn(g2, on) { st.on[g2] = on; tg.setAttribute('aria-pressed', on ? 'true' : 'false'); K() && K().setOn(g2, on); total(); }
-    tg.addEventListener('click', function () { setOn(g, !st.on[g]); });
-    item._setOn = setOn;
-    [].forEach.call(item.querySelectorAll('[data-print]'), function (b) {
-      b.addEventListener('click', function () {
-        press(b.parentNode, b); st.print = b.getAttribute('data-print');
-        if (!st.on.tee) setOn('tee', true);
-        K() && K().setPrint(st.print);
-      });
+    var tags = {};
+    if (withTags) Object.keys(L.tags).forEach(function (k) {
+      var d = L.tags[k], t = document.createElement('div');
+      if (innerWidth < 760) d = { x: k === 'top' ? 36 : 40, y: d.y, side: 'left', t: d.t, s: d.s };
+      t.className = 'tag ' + d.side; t.style.left = d.x + '%'; t.style.top = d.y + '%';
+      t.innerHTML = '<div><b>' + d.t + '</b><span>' + d.s + '</span></div>';
+      f.appendChild(t); tags[k] = t;
     });
+    host.appendChild(f);
+    return { el: f, ghost: g, pcs: pcs, tags: tags };
+  }
+  function place(im, k, t) {           // t: 0 = away, 1 = on the body
+    var F = FROM[k], e = ease(t), r = 1 - e;
+    im.style.transform = 'translate3d(' + (F[0] * r) + '%,' + (F[1] * r) + '%,0) rotate(' + (F[2] * r) + 'deg) scale(' + (1 + (F[3] - 1) * r) + ')';
+    im.style.opacity = Math.min(1, t * 2.2);
+  }
+
+  /* ---------- the dress story ---------- */
+  var D = figure($('#dfig'), 'pink', true);
+  $('#dfig').replaceWith(D.el);
+  var dcopy = $$('#dcopy > div'), dsteps = $$('.dress .steps span'), lastStage = -1;
+
+  /* ---------- the fitting room ---------- */
+  var fstage = $('#fstage'), FIG = { pink: figure(fstage, 'pink'), black: figure(fstage, 'black') };
+  var st = { c: 'pink', on: { top: true, bottom: true }, size: 'L' };
+  var PRICE = { top: 1450, bottom: 1250 }, NAME = { top: 'Zip hoodie', bottom: 'Wide pants' };
+  function setFigure(key, on, delay) {
+    var F = FIG[key];
+    F.ghost.style.opacity = on ? '' : '0';
+    Object.keys(F.pcs).forEach(function (k, i) {
+      var im = F.pcs[k], show = on && (k === 'head' || st.on[k]);
+      im.style.transitionDelay = show ? (delay + (k === 'top' ? .18 : 0)) + 's' : '0s';
+      place(im, k, show ? 1 : 0);
+    });
+  }
+  function render() {
+    setFigure('pink', st.c === 'pink', .25);
+    setFigure('black', st.c === 'black', .25);
+    $('#fit').classList.toggle('on-pink', st.c === 'black');
+    var t = 0; for (var k in st.on) if (st.on[k]) t += PRICE[k];
+    $('#total').textContent = 'EGP ' + t.toLocaleString('en-US');
+    $('#order').disabled = t === 0;
+    $('#note').innerHTML = '';
+  }
+  function press(group, btn) { $$('button', group).forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); }); }
+  $$('#colours .chip').forEach(function (b) { b.addEventListener('click', function () { press($('#colours'), b); st.c = b.dataset.c; render(); }); });
+  $$('#pieces .chip').forEach(function (b) { b.addEventListener('click', function () {
+    var k = b.dataset.p; st.on[k] = !st.on[k]; b.setAttribute('aria-pressed', st.on[k] ? 'true' : 'false'); render(); }); });
+  $$('#sizes .chip').forEach(function (b) { b.addEventListener('click', function () { press($('#sizes'), b); st.size = b.textContent; $('#note').innerHTML = ''; }); });
+  $('#order').addEventListener('click', function () {
+    var items = []; for (var k in st.on) if (st.on[k]) items.push(NAME[k]);
+    var t = 0; for (var k2 in st.on) if (st.on[k2]) t += PRICE[k2];
+    var msg = 'Hi KYGO, I would like the ' + items.join(' and ') + ' in ' + st.c + ', size ' + st.size + '. Total EGP ' + t.toLocaleString('en-US') + '.';
+    $('#note').innerHTML = 'On a real brand page this opens WhatsApp with the order written:<blockquote>' + msg + '</blockquote>This is a concept, so nothing was sent.';
   });
-  var sizes = document.getElementById('sizes');
-  [].forEach.call(sizes.querySelectorAll('button'), function (b) {
-    b.addEventListener('click', function () { press(sizes, b); st.size = b.textContent; document.getElementById('note').innerHTML = ''; });
-  });
-  document.getElementById('order').addEventListener('click', function () {
-    var lines = [];
-    for (var g in st.on) if (st.on[g]) {
-      var extra = g === 'tee' ? (st.print ? ', ' + st.print + ' print' : ', no print') : '';
-      lines.push(NAME[g] + ' (' + st.color[g] + extra + ')');
+  // the room starts empty; the set goes on when you arrive
+  setFigure('pink', false, 0); setFigure('black', false, 0);
+  new IntersectionObserver(function (es, ob) { es.forEach(function (e) { if (e.isIntersecting) { render(); ob.disconnect(); } }); }, { threshold: .35 }).observe($('#fit'));
+
+  /* ---------- films play only while on screen ---------- */
+  var vio = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      var v = e.target;
+      if (e.isIntersecting) { if (!v.src) v.src = v.dataset.src; if (!REDUCE) v.play().catch(function () {}); }
+      else v.pause();
+    });
+  }, { threshold: .4 });
+  $$('.reel video').forEach(function (v) { vio.observe(v); });
+  // the hero film pauses once it is scrolled away
+  new IntersectionObserver(function (es) { es.forEach(function (e) { if (REDUCE) return; e.isIntersecting ? hv.play().catch(function () {}) : hv.pause(); }); }).observe($('.hero'));
+
+  /* lookbook reveals once */
+  var lio = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); lio.unobserve(e.target); } }); }, { threshold: .15 });
+  $$('.grid figure').forEach(function (f) { lio.observe(f); });
+
+  /* ---------- scroll: one read, one write, per frame ---------- */
+  var hero = $('.hero'), room = $('#room'), dress = $('#dress'), boot = $('#boot'), ticking = false;
+  function prog(el) { var r = el.getBoundingClientRect(), h = innerHeight; return clamp(-r.top / Math.max(1, r.height - h)); }
+  function frame() {
+    ticking = false;
+    var h = innerHeight;
+    var hp = clamp(-hero.getBoundingClientRect().top / h), rp = prog(room), dp = prog(dress), bp = prog(boot);
+    hero.style.setProperty('--hp', hp.toFixed(3));
+    room.style.setProperty('--rp', rp.toFixed(3));
+    boot.style.setProperty('--bp', bp.toFixed(3));
+    // dress: ghost, then pants, then hoodie, then the tags
+    D.ghost.style.opacity = (.04 + .1 * seg(dp, 0, .1)).toFixed(3);
+    place(D.pcs.bottom, 'bottom', seg(dp, .14, .42));
+    place(D.pcs.top, 'top', seg(dp, .46, .74));
+    D.tags.bottom.classList.toggle('show', dp > .4);
+    D.tags.top.classList.toggle('show', dp > .72);
+    var s = dp < .14 ? 0 : dp < .46 ? 1 : dp < .78 ? 2 : 3;
+    if (s !== lastStage) {
+      dcopy.forEach(function (d, i) { d.hidden = i !== s; });
+      dsteps.forEach(function (d, i) { d.classList.toggle('on', i <= s); });
+      lastStage = s;
     }
-    var t = 0; for (var g2 in st.on) if (st.on[g2]) t += PRICE[g2];
-    var msg = 'Hi KHAYT, I would like: ' + lines.join(', ') + '. Size ' + st.size + '. Total ' + fmt(t) + '.';
-    var esc = function (s) { return s.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); };
-    document.getElementById('note').innerHTML = 'On a real brand page this opens WhatsApp with the order already written:' +
-      '<blockquote>' + esc(msg) + '</blockquote>KHAYT is a concept, so nothing was sent.';
-  });
-  // "Try it on" puts that piece on and takes you to the fitting room
-  [].forEach.call(document.querySelectorAll('[data-try]'), function (a) {
-    a.addEventListener('click', function () {
-      var g = a.getAttribute('data-try'), item = document.querySelector('.item[data-g="' + g + '"]');
-      if (!st.on[g]) item._setOn(g, true);
-    });
-  });
-  total();
+  }
+  function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', onScroll);
+  frame();
 })();
 </script>
-<script type="module" src="app.js?v=daf6b820"></script>
 </body>
 </html>
