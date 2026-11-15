@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Start a project · Blend, Cairo</title>
+<meta name="description" content="Tell Blend what you need: UGC video, branded giveaways, ushers and events. Or apply to film for brands as a creator.">
+<meta property="og:title" content="Start a project with Blend">
+<meta property="og:description" content="One form, and we reply on WhatsApp.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://blend-marketing.com/start/">
+<meta property="og:image" content="https://blend-marketing.com/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0A0710">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=DM+Serif+Display:ital@1&display=swap">
+<link rel="stylesheet" href="/assets/lead.css">
+<style>
+/* The page somebody lands on from a link: a WhatsApp message, an ad, the
+   bio. Nothing to read before the form, nothing to scroll past, one way out
+   to the rest of the site. Same ground, type and colours as the home page,
+   none of its motion: this page has one job. */
+:root{--paper:#0A0710;--ink:#F3EFE8;--lime:#C8FF00;--purple:#A47BF0;--pink:#EB4478;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--paper);color:var(--ink);
+  font-family:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:17px;
+  line-height:1.6;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(60% 50% at 12% 0%,rgba(91,33,168,.55),transparent 70%),
+                   radial-gradient(50% 40% at 100% 10%,rgba(235,68,120,.22),transparent 70%);
+  background-repeat:no-repeat}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  max-width:760px;margin:0 auto;padding:18px max(16px,env(safe-area-inset-left,0px))}
+.logo{font-family:'DM Serif Display',Georgia,serif;font-style:italic;font-size:28px;
+  color:var(--ink);text-decoration:none;line-height:1}
+.back{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(243,239,232,.75);text-decoration:none;padding:10px 0}
+.back:hover{color:var(--lime)}
+main{max-width:760px;margin:0 auto;
+  padding:clamp(24px,6vw,56px) max(16px,env(safe-area-inset-left,0px)) 64px}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--lime);margin:0 0 14px}
+h1{font-size:clamp(36px,7vw,60px);line-height:1.02;letter-spacing:-.035em;margin:0 0 14px;
+  font-weight:700;text-wrap:balance}
+.sub{font-size:clamp(17px,2.2vw,20px);color:rgba(243,239,232,.8);margin:0 0 32px;max-width:46ch}
+.btn{display:inline-flex;align-items:center;gap:9px;background:var(--lime);color:#1A0B2E;
+  font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  padding:16px 28px;border-radius:3px;transition:background .18s ease,transform .12s ease}
+.btn:hover{background:#F3EFE8}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.6;cursor:wait}
+.alt{margin:40px 0 0;padding-top:22px;border-top:1px solid rgba(243,239,232,.16);
+  font-size:15px;color:rgba(243,239,232,.7)}
+.alt a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--lime);
+  text-decoration-thickness:2px;text-underline-offset:4px}
+a:focus-visible,button:focus-visible{outline:3px solid var(--purple);outline-offset:3px}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="logo" href="/" aria-label="Blend, home">blend</a>
+  <a class="back" href="/">See our work</a>
+</header>
+<main>
+  <p class="eyebrow" data-copy="client">Start a project</p>
+  <p class="eyebrow" data-copy="creator" hidden>Creators in Egypt</p>
+  <h1 data-copy="client">Tell us what you need.</h1>
+  <h1 data-copy="creator" hidden>Film for brands, at home.</h1>
+  <p class="sub" data-copy="client">UGC video, branded giveaways, ushers and events. One form, and we reply on WhatsApp.</p>
+  <p class="sub" data-copy="creator" hidden>You do not need a following. We send the product, you film it where you actually live, and you are paid per video, not per view.</p>
+
+  <div id="lead-root" data-type="client"></div>
+
+  <p class="alt">Rather talk first? <a href="https://wa.me/201107409572">WhatsApp</a> or
+    <a href="https://www.instagram.com/blendmarketingeg/">Instagram</a>.</p>
+</main>
+<script>
+/* the heading follows the brand / creator switch in the form */
+document.addEventListener('lead:who', function (e) {
+  [].forEach.call(document.querySelectorAll('[data-copy]'), function (el) {
+    el.hidden = el.getAttribute('data-copy') !== e.detail;
+  });
+});
+</script>
+<script src="/assets/lead.js" defer></script>
+</body>
+</html>

@@ -789,46 +789,7 @@ html{overflow-x:clip}
 .idle .marquee-row,.idle .shots img{animation-play-state:paused!important}
 </style>
 
-<style>
-/* ---- the enquiry form ----
-   Sixteen-pixel type in every field, because anything smaller makes an
-   iPhone zoom the page when the field is tapped. Every control is at least
-   48px tall for a thumb. The lime focus ring is the same one the rest of
-   the page uses. */
-.lead{margin-top:32px;max-width:720px}
-.lf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 18px}
-@media (max-width:620px){.lf-grid{grid-template-columns:1fr}}
-.lead label{display:block;font-size:11px;font-weight:700;letter-spacing:.16em;
-  text-transform:uppercase;color:rgba(243,239,232,.72)}
-.lead .opt{letter-spacing:.08em;text-transform:none;font-weight:600;
-  color:rgba(243,239,232,.5)}
-.lead input:not([type=checkbox]),.lead textarea{display:block;width:100%;margin-top:8px;
-  min-height:48px;padding:12px 14px;font:inherit;font-size:16px;letter-spacing:0;
-  text-transform:none;color:#F3EFE8;background:rgba(243,239,232,.06);
-  border:1px solid rgba(243,239,232,.22);border-radius:3px;
-  transition:border-color .18s ease,background .18s ease}
-.lead textarea{resize:vertical;min-height:112px}
-.lead input::placeholder{color:rgba(243,239,232,.38)}
-.lead input:focus,.lead textarea:focus{outline:none;border-color:var(--lime);
-  background:rgba(243,239,232,.09)}
-.lead input[aria-invalid=true]{border-color:var(--pink)}
-.lf-needs{border:0;padding:0;margin:20px 0 0;display:flex;flex-wrap:wrap;gap:10px}
-.lf-needs legend{font-size:11px;font-weight:700;letter-spacing:.16em;
-  text-transform:uppercase;color:rgba(243,239,232,.72);margin-bottom:10px;padding:0}
-.lf-needs label{position:relative;letter-spacing:0;text-transform:none;font-size:15px;
-  font-weight:600;color:#F3EFE8}
-.lf-needs input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
-.lf-needs span{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;
-  border:1px solid rgba(243,239,232,.28);border-radius:999px;cursor:pointer;
-  transition:background .18s ease,color .18s ease,border-color .18s ease}
-.lf-needs input:checked+span{background:var(--lime);color:#1A0B2E;border-color:var(--lime)}
-.lf-needs input:focus-visible+span{outline:3px solid var(--purple);outline-offset:3px}
-.lf-msg{margin-top:20px}
-.lf-hp{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
-.lead .btn{margin-top:22px;border:0;cursor:pointer;font-family:inherit}
-.lf-status{margin:14px 0 0;font-size:15px;color:#F3EFE8;min-height:1.5em}
-.lf-status.err{color:#ff8fb1}
-</style>
+<link rel="stylesheet" href="/assets/lead.css">
 </head>
 <body>
 
@@ -1222,33 +1183,7 @@ html{overflow-x:clip}
     <div class="rule"></div>
     <h2>Send us the product.</h2>
     <p>One message and we will map it out. Content, merch, staff, or all three.</p>
-    <form class="lead" id="lead-form" novalidate>
-      <div class="lf-grid">
-        <label>Name
-          <input name="name" autocomplete="name" maxlength="120" required></label>
-        <label>Company
-          <input name="company" autocomplete="organization" maxlength="120"></label>
-        <label>WhatsApp
-          <input name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="40"
-                 placeholder="+20" required></label>
-        <label>Email <span class="opt">optional</span>
-          <input name="email" type="email" autocomplete="email" maxlength="160"></label>
-      </div>
-      <fieldset class="lf-needs">
-        <legend>What do you need?</legend>
-        <label><input type="checkbox" name="needs" value="UGC video"><span>UGC video</span></label>
-        <label><input type="checkbox" name="needs" value="Branded giveaways"><span>Branded giveaways</span></label>
-        <label><input type="checkbox" name="needs" value="Ushers and events"><span>Ushers and events</span></label>
-      </fieldset>
-      <label class="lf-msg">The product, the dates, anything we should know
-        <textarea name="message" rows="4" maxlength="2000"></textarea></label>
-      <!-- people never see this field; bots fill in every field they find -->
-      <div class="lf-hp" aria-hidden="true">
-        <label>Website <input name="website" tabindex="-1" autocomplete="off"></label>
-      </div>
-      <button class="btn" type="submit">Send</button>
-      <p class="lf-status" role="status" aria-live="polite"></p>
-    </form>
+    <div id="lead-root" data-type="client"></div>
     <div class="contact">
       <div>
         <p class="k">Instagram</p>
@@ -1578,87 +1513,6 @@ html{overflow-x:clip}
 })();
 </script>
 
-<script>
-/* The enquiry form.
- *
- * FORM_ENDPOINT is the address of the Google Apps Script attached to the
- * "Blend Leads" sheet. Until it is set the form still works: it opens
- * WhatsApp with the enquiry already written, so nobody who fills it in is
- * lost while the sheet is being connected. Once it is set, the enquiry is
- * written into the sheet and Moustafa gets an email.
- *
- * The request is sent no-cors, as a plain form body, which is what Apps
- * Script accepts without a preflight. The browser cannot read the reply in
- * that mode, so a request that leaves without a network error is treated
- * as delivered; the script itself never returns anything but "ok". */
-(function () {
-  var FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyFD7F0MMl8nRFJJi4WUnvU8_FBvqMsXvywWxruSUJOggrbTFpK3ZZksiEzAxlUmLJi/exec';
-  var WHATSAPP = '201107409572';
-  var form = document.getElementById('lead-form');
-  if (!form) return;
-  var opened = Date.now();
-  var status = form.querySelector('.lf-status');
-  var button = form.querySelector('button[type=submit]');
-
-  function say(text, bad) {
-    status.textContent = text;
-    status.classList.toggle('err', !!bad);
-  }
-
-  // a field marked wrong stops looking wrong the moment it is filled in,
-  // rather than staying pink until the next press of Send
-  form.addEventListener('input', function (ev) {
-    var t = ev.target;
-    if (t.getAttribute('aria-invalid') === 'true' && t.value.trim()) {
-      t.setAttribute('aria-invalid', 'false');
-      if (status.classList.contains('err')) say('');
-    }
-  });
-
-  form.addEventListener('submit', function (ev) {
-    ev.preventDefault();
-    var f = form.elements;
-    var needs = [].slice.call(form.querySelectorAll('input[name=needs]:checked'))
-      .map(function (c) { return c.value; }).join(', ');
-    var data = {
-      name: f.name.value.trim(), company: f.company.value.trim(),
-      phone: f.phone.value.trim(), email: f.email.value.trim(),
-      needs: needs, message: f.message.value.trim(),
-      website: f.website.value, elapsed: String(Date.now() - opened)
-    };
-
-    f.name.setAttribute('aria-invalid', data.name ? 'false' : 'true');
-    f.phone.setAttribute('aria-invalid', data.phone ? 'false' : 'true');
-    if (!data.name || !data.phone) {
-      say('Your name and a WhatsApp number, so we can reply.', true);
-      (data.name ? f.phone : f.name).focus();
-      return;
-    }
-
-    if (!FORM_ENDPOINT) {
-      var text = 'Hi Blend, I am ' + data.name +
-        (data.company ? ' from ' + data.company : '') + '.' +
-        (needs ? '\nWe need: ' + needs + '.' : '') +
-        (data.message ? '\n\n' + data.message : '');
-      say('Opening WhatsApp with your message.');
-      window.location.href = 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(text);
-      return;
-    }
-
-    button.disabled = true;
-    say('Sending.');
-    fetch(FORM_ENDPOINT, { method: 'POST', mode: 'no-cors',
-                           body: new URLSearchParams(data) })
-      .then(function () {
-        form.reset();
-        say('Thank you. It is with us, and we will reply on WhatsApp.');
-      })
-      .catch(function () {
-        say('That did not go through. Message us on WhatsApp instead: +20 110 740 9572', true);
-      })
-      .then(function () { button.disabled = false; });
-  });
-})();
-</script>
+<script src="/assets/lead.js" defer></script>
 </body>
 </html>

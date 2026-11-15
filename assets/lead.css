@@ -1,0 +1,63 @@
+/* The enquiry form, shared by the home page and /start.
+
+   Sixteen-pixel type in every field, because anything smaller makes an
+   iPhone zoom the page when a field is tapped. Every control is at least
+   44px tall for a thumb. Dark ground throughout, lime for what is chosen,
+   the same focus ring as the rest of the site. */
+.lead{max-width:720px}
+.lf-who{display:inline-flex;padding:4px;border-radius:999px;margin:0 0 22px;
+  background:rgba(243,239,232,.06);border:1px solid rgba(243,239,232,.16)}
+.lf-who button{font:inherit;font-size:14px;font-weight:700;letter-spacing:.02em;
+  min-height:42px;padding:0 18px;border:0;border-radius:999px;cursor:pointer;
+  background:transparent;color:rgba(243,239,232,.78);
+  transition:background .18s ease,color .18s ease}
+.lf-who button[aria-pressed=true]{background:var(--lime,#C8FF00);color:#1A0B2E}
+.lf-who button:focus-visible{outline:3px solid var(--purple,#A47BF0);outline-offset:3px}
+.lf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 18px}
+@media (max-width:620px){.lf-grid{grid-template-columns:1fr}}
+.lead label{display:block;font-size:11px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;color:rgba(243,239,232,.72)}
+.lead .opt{letter-spacing:.08em;text-transform:none;font-weight:600;color:rgba(243,239,232,.5)}
+.lead input:not([type=checkbox]):not([type=radio]),.lead textarea,.lead select{
+  display:block;width:100%;margin-top:8px;min-height:48px;padding:12px 14px;
+  font:inherit;font-size:16px;letter-spacing:0;text-transform:none;color:#F3EFE8;
+  background:rgba(243,239,232,.06);border:1px solid rgba(243,239,232,.22);border-radius:3px;
+  transition:border-color .18s ease,background .18s ease}
+.lead select{appearance:none;-webkit-appearance:none;padding-right:40px;
+  background-image:linear-gradient(45deg,transparent 50%,#F3EFE8 50%),linear-gradient(135deg,#F3EFE8 50%,transparent 50%);
+  background-position:calc(100% - 20px) 21px,calc(100% - 15px) 21px;background-size:5px 5px;
+  background-repeat:no-repeat}
+.lead select option{color:#1A0B2E}
+.lead textarea{resize:vertical;min-height:112px}
+.lead input::placeholder,.lead textarea::placeholder{color:rgba(243,239,232,.38)}
+.lead input:focus,.lead textarea:focus,.lead select:focus{outline:none;border-color:var(--lime,#C8FF00);
+  background-color:rgba(243,239,232,.09)}
+.lead [aria-invalid=true]{border-color:var(--pink,#EB4478)!important}
+.lf-chips{border:0;padding:0;margin:20px 0 0;display:flex;flex-wrap:wrap;gap:10px}
+.lf-chips legend{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(243,239,232,.72);margin-bottom:10px;padding:0}
+.lf-chips label{position:relative;letter-spacing:0;text-transform:none;font-size:15px;
+  font-weight:600;color:#F3EFE8}
+.lf-chips input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.lf-chips span{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;
+  border:1px solid rgba(243,239,232,.28);border-radius:999px;cursor:pointer;
+  transition:background .18s ease,color .18s ease,border-color .18s ease}
+.lf-chips input:checked+span{background:var(--lime,#C8FF00);color:#1A0B2E;border-color:var(--lime,#C8FF00)}
+.lf-chips input:focus-visible+span{outline:3px solid var(--purple,#A47BF0);outline-offset:3px}
+.lf-chips.bad span{border-color:var(--pink,#EB4478)}
+.lf-wide{margin-top:20px}
+.lf-parent{margin-top:18px;padding:16px;border-left:3px solid var(--pink,#EB4478);
+  background:rgba(235,68,120,.07);border-radius:0 3px 3px 0}
+.lf-parent p{margin:0 0 12px;font-size:14px;color:#F3EFE8;max-width:none}
+.lf-consent{display:flex!important;gap:10px;align-items:flex-start;margin-top:14px;
+  letter-spacing:0!important;text-transform:none!important;font-size:14px!important;
+  font-weight:600!important;color:#F3EFE8!important}
+.lf-consent input{width:22px;height:22px;margin:1px 0 0;flex:0 0 auto;accent-color:#C8FF00}
+.lf-hp{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+.lead .lf-send{margin-top:22px;border:0;cursor:pointer;font-family:inherit}
+.lf-status{margin:14px 0 0;font-size:15px;color:#F3EFE8;min-height:1.5em;max-width:none}
+.lf-status.err{color:#ff8fb1}
+[hidden]{display:none!important}
+
+/* on the home page the form sits under the closing heading */
+.close #lead-root{margin-top:32px}
