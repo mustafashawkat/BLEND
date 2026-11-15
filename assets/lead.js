@@ -88,7 +88,8 @@
     ' </div>' +
     ' <fieldset class="lf-chips" data-for="client" data-group="needs">' +
     '  <legend>What do you need?</legend>' +
-    chip('needs', 'UGC video') + chip('needs', 'Branded giveaways') + chip('needs', 'Ushers and events') +
+    chip('needs', 'UGC video') + chip('needs', 'Brand page') + chip('needs', 'Page audit') +
+    chip('needs', 'Branded giveaways') + chip('needs', 'Ushers and events') +
     ' </fieldset>' +
     ' <label class="lf-wide" data-for="client">Budget <span class="opt">roughly, in EGP</span>' +
     '  <select name="budget">' +

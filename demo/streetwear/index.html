@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>KHAYT · a brand page concept by Blend</title>
+<meta name="description" content="A concept page Blend made to show what a streetwear brand page can do: the collection, built from the fabric up as you scroll, with ordering on WhatsApp. KHAYT is not a real brand.">
+<meta name="robots" content="noindex">
+<meta property="og:title" content="KHAYT · a brand page concept by Blend">
+<meta property="og:description" content="From fabric to fit, as you scroll. A concept page for a streetwear brand.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#ECE7DD">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&display=swap">
+<style>
+/* A concept page for an invented streetwear label, to show local brands
+   what a brand page can do for them. Its own look on purpose: bone ground,
+   black type, one safety orange. Nothing here is Blend's palette, because
+   the point is that the page belongs to the brand.
+
+   The signature is the build: a swatch of fabric gets its cutting lines,
+   the pieces lift off it, fly together into the garment, get stitched, and
+   the price and the order button arrive. Driven by the scroll position,
+   one requestAnimationFrame, transforms and opacity only. Every garment is
+   drawn in SVG, so the whole page is a few kilobytes of drawing rather
+   than megabytes of video. */
+:root{--bone:#ECE7DD;--ink:#121212;--orange:#FF4F1A;--mute:#6b6760;--card:#E2DCD0;
+  color-scheme:light}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bone);color:var(--ink);
+  font-family:'Space Mono',ui-monospace,Menlo,monospace;font-size:15px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;overflow-x:clip}
+a{color:inherit}
+.disp{font-family:'Anton',Impact,'Arial Narrow',sans-serif;font-weight:400;
+  text-transform:uppercase;letter-spacing:.01em;line-height:.9}
+
+/* the honesty strip: this is a concept, not a shop */
+.concept{position:sticky;top:0;z-index:20;display:flex;align-items:center;
+  justify-content:center;gap:12px;flex-wrap:wrap;padding:9px 16px;background:var(--ink);
+  color:var(--bone);font-size:11.5px;letter-spacing:.06em;text-align:center}
+.concept a{color:var(--orange);font-weight:700;text-decoration:none}
+.concept a:hover{text-decoration:underline}
+.concept .short{display:none}
+@media (max-width:620px){.concept .long{display:none}.concept .short{display:inline}
+  .concept{flex-wrap:nowrap;gap:10px;font-size:11px}}
+
+/* ---- cover ---- */
+.cover{min-height:calc(100svh - 38px);display:grid;align-content:space-between;
+  padding:22px max(16px,env(safe-area-inset-left,0px)) 26px;position:relative;overflow:hidden}
+.top{display:flex;justify-content:space-between;align-items:center;font-size:12px;
+  letter-spacing:.14em;text-transform:uppercase}
+.top b{font-family:'Anton',sans-serif;font-weight:400;font-size:22px;letter-spacing:.04em}
+.mark{font-size:clamp(96px,30vw,420px);margin:0;letter-spacing:-.01em}
+.mark span{color:var(--orange)}
+.coverline{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
+.coverline p{margin:0;max-width:30ch;font-size:14px}
+.cue{font-size:12px;letter-spacing:.2em;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.cue i{display:block;width:1px;height:34px;background:var(--ink);transform-origin:top}
+@media (prefers-reduced-motion:no-preference){
+  .cue i{animation:cue 1.8s ease-in-out infinite}
+  .mark{animation:rise .9s cubic-bezier(.16,1,.3,1) both}
+}
+@keyframes cue{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
+@keyframes rise{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+
+.tape{background:var(--orange);color:var(--ink);overflow:hidden;white-space:nowrap;
+  padding:10px 0;font-family:'Anton',sans-serif;font-size:20px;letter-spacing:.06em;
+  text-transform:uppercase;border-block:2px solid var(--ink)}
+.tape div{display:inline-block;padding-left:100%}
+@media (prefers-reduced-motion:no-preference){.tape div{animation:tape 26s linear infinite}}
+@keyframes tape{to{transform:translateX(-100%)}}
+
+/* ---- the build ----
+   Each scene is a tall section with a pinned stage inside it. How far the
+   reader has scrolled through the section is the whole timeline. */
+.scene{position:relative;height:340vh}
+.stage{position:sticky;top:var(--bar,38px);height:calc(100svh - var(--bar,38px));display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;
+  gap:clamp(12px,4vw,56px);padding:0 max(16px,env(safe-area-inset-left,0px));overflow:hidden}
+.art{position:relative;width:100%;max-width:560px;justify-self:center}
+.art svg{width:100%;height:auto;display:block;overflow:visible}
+.piece,.cut,.stitch,.swatch,.tag{will-change:transform,opacity}
+.piece{transform-box:fill-box;transform-origin:50% 50%}
+.cut{fill:none;stroke:var(--ink);stroke-width:1.4;stroke-dasharray:6 5;vector-effect:non-scaling-stroke}
+.stitch{fill:none;stroke:var(--orange);stroke-width:2;stroke-dasharray:5 4;stroke-linecap:round}
+.zip{stroke-dasharray:2 3;stroke-width:5}
+.info{max-width:420px}
+.steps{display:flex;gap:6px;margin:0 0 22px;flex-wrap:wrap}
+.steps span{font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:5px 9px;
+  border:1.5px solid var(--ink);border-radius:999px;opacity:.35;transition:opacity .25s,background .25s,color .25s}
+.steps span.on{opacity:1;background:var(--ink);color:var(--bone)}
+.num{font-size:13px;letter-spacing:.2em;margin:0 0 6px;color:var(--mute)}
+.name{font-size:clamp(46px,7.4vw,96px);margin:0 0 14px}
+.desc{margin:0 0 18px;font-size:14.5px;max-width:34ch}
+.buy{opacity:0;transform:translateY(16px)}
+.price{font-family:'Anton',sans-serif;font-size:34px;margin:0 0 12px}
+.price small{font-family:'Space Mono',monospace;font-size:13px;color:var(--mute);margin-left:6px}
+.sizes{display:flex;gap:8px;margin:0 0 16px}
+.sizes button{font:inherit;font-weight:700;min-width:46px;min-height:44px;border:1.5px solid var(--ink);
+  background:transparent;border-radius:3px;cursor:pointer}
+.sizes button[aria-pressed=true]{background:var(--ink);color:var(--bone)}
+.order{display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:0 22px;
+  background:var(--orange);color:var(--ink);border:2px solid var(--ink);border-radius:3px;
+  font:inherit;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;
+  box-shadow:4px 4px 0 var(--ink);transition:transform .12s,box-shadow .12s}
+.order:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.order svg{width:18px;height:18px}
+.note{min-height:1.5em;margin:10px 0 0;font-size:12.5px;color:var(--mute)}
+@media (max-width:820px){
+  .stage{grid-template-columns:1fr;grid-template-rows:auto auto;align-content:center;gap:4px}
+  .art{max-width:min(78vw,52svh)}
+  .info{justify-self:stretch;max-width:none}
+  .steps{margin:0 0 10px}
+  .name{font-size:clamp(38px,11vw,60px);margin:0 0 6px}
+  .desc{display:none}
+  .price{font-size:28px;margin:0 0 8px}
+  .sizes{margin:0 0 10px}
+}
+
+/* ---- the collection ---- */
+.drop{padding:clamp(64px,10vw,120px) max(16px,env(safe-area-inset-left,0px));
+  border-top:2px solid var(--ink)}
+.drop h2{font-size:clamp(54px,11vw,150px);margin:0 0 30px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:2px solid var(--ink);border-radius:4px;padding:18px;
+  display:flex;flex-direction:column;gap:10px}
+.card svg{width:100%;height:auto;aspect-ratio:400/440}
+.card h3{font-family:'Anton',sans-serif;font-weight:400;font-size:30px;margin:0;text-transform:uppercase}
+.card p{margin:0;font-size:13.5px;color:var(--mute)}
+.card .row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:auto}
+.card .price{font-size:26px;margin:0;color:var(--ink)}
+.card .order{min-height:46px;padding:0 16px;font-size:13px}
+
+/* ---- the pitch ---- */
+.pitch{background:var(--ink);color:var(--bone);
+  padding:clamp(64px,10vw,120px) max(16px,env(safe-area-inset-left,0px))}
+.pitch h2{font-size:clamp(44px,8vw,110px);margin:0 0 20px;max-width:12ch}
+.pitch h2 span{color:var(--orange)}
+.pitch p{max-width:52ch;margin:0 0 14px;color:rgba(236,231,221,.82)}
+.pitch ul{margin:18px 0 30px;padding:0;list-style:none;display:grid;gap:8px}
+.pitch li::before{content:"+ ";color:var(--orange);font-weight:700}
+.pitch .order{box-shadow:4px 4px 0 var(--bone);border-color:var(--bone);text-decoration:none}
+.foot{padding:20px max(16px,env(safe-area-inset-left,0px));font-size:12px;
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--ink);
+  color:rgba(236,231,221,.6);border-top:1px solid rgba(236,231,221,.15)}
+a:focus-visible,button:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<div class="concept">
+  <span class="long">Concept page by Blend. KHAYT is not a real brand and nothing here is for sale.</span>
+  <span class="short">Concept by Blend &middot; not a real brand</span>
+  <a href="/start/?src=demo-streetwear"><span class="long">Get a page like this for your brand</span><span class="short">Get one</span> &rarr;</a>
+</div>
+
+<header class="cover">
+  <div class="top"><b>KHAYT</b><span>Drop 01 &middot; Cairo</span></div>
+  <h1 class="mark disp">Khay<span>t</span></h1>
+  <div class="coverline">
+    <p>Heavyweight basics, cut and sewn in Cairo. Scroll and watch each piece come off the roll.</p>
+    <p class="cue"><i aria-hidden="true"></i>Scroll</p>
+  </div>
+</header>
+
+<div class="tape" aria-hidden="true"><div>Drop 01 &nbsp;&middot;&nbsp; Cut in Cairo &nbsp;&middot;&nbsp; Order on WhatsApp &nbsp;&middot;&nbsp; Three pieces, one run &nbsp;&middot;&nbsp; Drop 01 &nbsp;&middot;&nbsp; Cut in Cairo &nbsp;&middot;&nbsp; Order on WhatsApp &nbsp;&middot;&nbsp;</div></div>
+
+<!-- The fabrics, defined once. Each is a tile repeated across a piece, so
+     a cut piece of cloth shows the same weave as the roll it came from. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="jersey" width="6" height="6" patternUnits="userSpaceOnUse">
+      <rect width="6" height="6" fill="#1b1b1d"/>
+      <path d="M0 6 L3 0 L6 6" fill="none" stroke="#2a2a2d" stroke-width="1"/>
+    </pattern>
+    <pattern id="twill" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+      <rect width="8" height="8" fill="#55593a"/>
+      <rect width="3" height="8" fill="#4a4e31"/>
+    </pattern>
+    <pattern id="denim" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-30)">
+      <rect width="7" height="7" fill="#2f4d6d"/>
+      <rect width="2.5" height="7" fill="#3a5c80"/>
+    </pattern>
+    <filter id="lift" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#000" flood-opacity=".22"/>
+    </filter>
+
+    <!-- the finished garments, reused by the collection cards -->
+    <g id="g-tee">
+      <path fill="url(#jersey)" d="M134 92 L76 126 L96 196 L140 174 Z"/>
+      <path fill="url(#jersey)" d="M266 92 L324 126 L304 196 L260 174 Z"/>
+      <path fill="url(#jersey)" d="M134 92 C160 92 172 112 200 112 C228 112 240 92 266 92 L272 396 L128 396 Z"/>
+      <path fill="#2e2e31" d="M162 92 C176 106 188 112 200 112 C212 112 224 106 238 92 L244 96 C230 116 216 122 200 122 C184 122 170 116 156 96 Z"/>
+      <path class="stitch" d="M134 92 L140 174 M266 92 L260 174 M131 386 L269 386 M93 186 L138 164 M307 186 L262 164"/>
+    </g>
+    <g id="g-cargo">
+      <path fill="url(#twill)" d="M142 76 L200 76 L197 404 L134 404 Z"/>
+      <path fill="url(#twill)" d="M200 76 L258 76 L266 404 L203 404 Z"/>
+      <path fill="#41452a" d="M138 58 L262 58 L260 78 L140 78 Z"/>
+      <path fill="#4c5033" d="M146 214 L188 214 L188 268 L146 268 Z"/>
+      <path fill="#4c5033" d="M212 214 L254 214 L254 268 L212 268 Z"/>
+      <path class="stitch" d="M200 80 L200 150 M146 226 L188 226 M212 226 L254 226 M136 394 L197 394 M203 394 L265 394"/>
+    </g>
+    <g id="g-jacket">
+      <path fill="#294561" d="M150 98 C150 40 250 40 250 98 C236 84 216 78 200 78 C184 78 164 84 150 98 Z"/>
+      <path fill="url(#denim)" d="M134 96 L74 136 L58 300 L98 304 L114 190 L138 178 Z"/>
+      <path fill="url(#denim)" d="M266 96 L326 136 L342 300 L302 304 L286 190 L262 178 Z"/>
+      <path fill="url(#denim)" d="M134 96 C158 96 170 110 196 116 L196 402 L128 402 Z"/>
+      <path fill="url(#denim)" d="M266 96 C242 96 230 110 204 116 L204 402 L272 402 Z"/>
+      <path class="stitch" d="M134 96 L138 178 M266 96 L262 178 M130 390 L270 390 M60 288 L99 292 M340 288 L301 292"/>
+      <path class="stitch zip" d="M200 118 L200 400"/>
+    </g>
+  </defs>
+</svg>
+
+<!-- Scene template, three times. In each:
+     .swatch   the roll of fabric the pieces are cut from
+     .cut      the cutting lines, drawn on the fabric where each piece sits
+     .piece    the pieces; data-x/y/r is where each sits on the fabric,
+               relative to where it ends up in the garment
+     .stitch   the seams, sewn last -->
+
+<section class="scene" data-scene="tee" aria-labelledby="t-tee">
+  <div class="stage">
+    <div class="art">
+      <svg viewBox="0 0 400 440" role="img" aria-label="A black heavyweight t-shirt, built from its cut pieces">
+        <rect class="swatch" x="44" y="40" width="312" height="372" rx="4" fill="url(#jersey)"/>
+        <g class="cuts">
+          <path class="cut" data-x="-64" data-y="0" data-r="0" d="M134 92 C160 92 172 112 200 112 C228 112 240 92 266 92 L272 396 L128 396 Z"/>
+          <path class="cut" data-x="170" data-y="-30" data-r="-14" d="M134 92 L76 126 L96 196 L140 174 Z"/>
+          <path class="cut" data-x="-40" data-y="140" data-r="12" d="M266 92 L324 126 L304 196 L260 174 Z"/>
+          <path class="cut" data-x="78" data-y="262" data-r="0" d="M162 92 C176 106 188 112 200 112 C212 112 224 106 238 92 L244 96 C230 116 216 122 200 122 C184 122 170 116 156 96 Z"/>
+        </g>
+        <g class="pieces" filter="url(#lift)">
+          <path class="piece" data-x="170" data-y="-30" data-r="-14" fill="url(#jersey)" d="M134 92 L76 126 L96 196 L140 174 Z"/>
+          <path class="piece" data-x="-40" data-y="140" data-r="12" fill="url(#jersey)" d="M266 92 L324 126 L304 196 L260 174 Z"/>
+          <path class="piece" data-x="-64" data-y="0" data-r="0" fill="url(#jersey)" d="M134 92 C160 92 172 112 200 112 C228 112 240 92 266 92 L272 396 L128 396 Z"/>
+          <path class="piece" data-x="78" data-y="262" data-r="0" fill="#2e2e31" d="M162 92 C176 106 188 112 200 112 C212 112 224 106 238 92 L244 96 C230 116 216 122 200 122 C184 122 170 116 156 96 Z"/>
+        </g>
+        <path class="stitch" d="M134 92 L140 174 M266 92 L260 174 M131 386 L269 386 M93 186 L138 164 M307 186 L262 164"/>
+      </svg>
+    </div>
+    <div class="info">
+      <div class="steps" aria-hidden="true"><span>Fabric</span><span>Cut</span><span>Build</span><span>Stitch</span><span>Drop</span></div>
+      <p class="num">01 / 03</p>
+      <h2 class="name disp" id="t-tee">Box tee</h2>
+      <p class="desc">240gsm cotton jersey. Dropped shoulder, ribbed collar, cut boxy so it hangs straight.</p>
+      <div class="buy">
+        <p class="price">EGP 850<small>concept price</small></p>
+        <div class="sizes" role="group" aria-label="Size"><button aria-pressed="false">S</button><button aria-pressed="true">M</button><button aria-pressed="false">L</button><button aria-pressed="false">XL</button></div>
+        <button class="order" data-item="Box tee"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2s-1 .3-3.4-.7a11.6 11.6 0 0 1-4.6-4.1c-.4-.5-1.1-1.5-1.1-2.9s.7-2.1 1-2.4a1 1 0 0 1 .8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.2-.3.3-.1.6a8.2 8.2 0 0 0 1.5 1.9 7.4 7.4 0 0 0 2.2 1.4c.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l2 .9c.3.1.5.2.5.3a2.6 2.6 0 0 1-.2 1.4Z"/></svg>Order on WhatsApp</button>
+        <p class="note" role="status" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="scene" data-scene="cargo" aria-labelledby="t-cargo">
+  <div class="stage">
+    <div class="art">
+      <svg viewBox="0 0 400 440" role="img" aria-label="Olive cargo trousers, built from their cut pieces">
+        <rect class="swatch" x="44" y="40" width="312" height="372" rx="4" fill="url(#twill)"/>
+        <g class="cuts">
+          <path class="cut" data-x="-80" data-y="-14" data-r="0" d="M142 76 L200 76 L197 404 L134 404 Z"/>
+          <path class="cut" data-x="-2" data-y="-14" data-r="0" d="M200 76 L258 76 L266 404 L203 404 Z"/>
+          <path class="cut" data-x="114" data-y="64" data-r="90" d="M138 58 L262 58 L260 78 L140 78 Z"/>
+          <path class="cut" data-x="128" data-y="2" data-r="0" d="M146 214 L188 214 L188 268 L146 268 Z"/>
+          <path class="cut" data-x="62" data-y="84" data-r="0" d="M212 214 L254 214 L254 268 L212 268 Z"/>
+        </g>
+        <g class="pieces" filter="url(#lift)">
+          <path class="piece" data-x="-80" data-y="-14" data-r="0" fill="url(#twill)" d="M142 76 L200 76 L197 404 L134 404 Z"/>
+          <path class="piece" data-x="-2" data-y="-14" data-r="0" fill="url(#twill)" d="M200 76 L258 76 L266 404 L203 404 Z"/>
+          <path class="piece" data-x="114" data-y="64" data-r="90" fill="#41452a" d="M138 58 L262 58 L260 78 L140 78 Z"/>
+          <path class="piece" data-x="128" data-y="2" data-r="0" fill="#4c5033" d="M146 214 L188 214 L188 268 L146 268 Z"/>
+          <path class="piece" data-x="62" data-y="84" data-r="0" fill="#4c5033" d="M212 214 L254 214 L254 268 L212 268 Z"/>
+        </g>
+        <path class="stitch" d="M200 80 L200 150 M146 226 L188 226 M212 226 L254 226 M136 394 L197 394 M203 394 L265 394"/>
+      </svg>
+    </div>
+    <div class="info">
+      <div class="steps" aria-hidden="true"><span>Fabric</span><span>Cut</span><span>Build</span><span>Stitch</span><span>Drop</span></div>
+      <p class="num">02 / 03</p>
+      <h2 class="name disp" id="t-cargo">Field cargo</h2>
+      <p class="desc">Cotton twill, washed soft. Wide straight leg, two bellow pockets that actually hold a phone.</p>
+      <div class="buy">
+        <p class="price">EGP 1,250<small>concept price</small></p>
+        <div class="sizes" role="group" aria-label="Size"><button aria-pressed="false">S</button><button aria-pressed="true">M</button><button aria-pressed="false">L</button><button aria-pressed="false">XL</button></div>
+        <button class="order" data-item="Field cargo"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2s-1 .3-3.4-.7a11.6 11.6 0 0 1-4.6-4.1c-.4-.5-1.1-1.5-1.1-2.9s.7-2.1 1-2.4a1 1 0 0 1 .8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.2-.3.3-.1.6a8.2 8.2 0 0 0 1.5 1.9 7.4 7.4 0 0 0 2.2 1.4c.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l2 .9c.3.1.5.2.5.3a2.6 2.6 0 0 1-.2 1.4Z"/></svg>Order on WhatsApp</button>
+        <p class="note" role="status" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="scene" data-scene="jacket" aria-labelledby="t-jacket">
+  <div class="stage">
+    <div class="art">
+      <svg viewBox="0 0 400 440" role="img" aria-label="A hooded denim jacket, built from its cut pieces">
+        <rect class="swatch" x="36" y="30" width="328" height="396" rx="4" fill="url(#denim)"/>
+        <g class="cuts">
+          <path class="cut" data-x="-14" data-y="324" data-r="0" d="M150 98 C150 40 250 40 250 98 C236 84 216 78 200 78 C184 78 164 84 150 98 Z"/>
+          <path class="cut" data-x="176" data-y="-60" data-r="6" d="M134 96 L74 136 L58 300 L98 304 L114 190 L138 178 Z"/>
+          <path class="cut" data-x="-28" data-y="112" data-r="-6" d="M266 96 L326 136 L342 300 L302 304 L286 190 L262 178 Z"/>
+          <path class="cut" data-x="-76" data-y="-50" data-r="0" d="M134 96 C158 96 170 110 196 116 L196 402 L128 402 Z"/>
+          <path class="cut" data-x="-72" data-y="-50" data-r="0" d="M266 96 C242 96 230 110 204 116 L204 402 L272 402 Z"/>
+        </g>
+        <g class="pieces" filter="url(#lift)">
+          <path class="piece" data-x="-14" data-y="324" data-r="0" fill="#294561" d="M150 98 C150 40 250 40 250 98 C236 84 216 78 200 78 C184 78 164 84 150 98 Z"/>
+          <path class="piece" data-x="176" data-y="-60" data-r="6" fill="url(#denim)" d="M134 96 L74 136 L58 300 L98 304 L114 190 L138 178 Z"/>
+          <path class="piece" data-x="-28" data-y="112" data-r="-6" fill="url(#denim)" d="M266 96 L326 136 L342 300 L302 304 L286 190 L262 178 Z"/>
+          <path class="piece" data-x="-76" data-y="-50" data-r="0" fill="url(#denim)" d="M134 96 C158 96 170 110 196 116 L196 402 L128 402 Z"/>
+          <path class="piece" data-x="-72" data-y="-50" data-r="0" fill="url(#denim)" d="M266 96 C242 96 230 110 204 116 L204 402 L272 402 Z"/>
+        </g>
+        <path class="stitch" d="M134 96 L138 178 M266 96 L262 178 M130 390 L270 390 M60 288 L99 292 M340 288 L301 292"/>
+        <path class="stitch zip" d="M200 118 L200 400"/>
+      </svg>
+    </div>
+    <div class="info">
+      <div class="steps" aria-hidden="true"><span>Fabric</span><span>Cut</span><span>Build</span><span>Stitch</span><span>Drop</span></div>
+      <p class="num">03 / 03</p>
+      <h2 class="name disp" id="t-jacket">Hood jacket</h2>
+      <p class="desc">Mid-weight denim, full zip, lined hood. The one that goes over everything else in the drop.</p>
+      <div class="buy">
+        <p class="price">EGP 1,900<small>concept price</small></p>
+        <div class="sizes" role="group" aria-label="Size"><button aria-pressed="false">S</button><button aria-pressed="true">M</button><button aria-pressed="false">L</button><button aria-pressed="false">XL</button></div>
+        <button class="order" data-item="Hood jacket"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2s-1 .3-3.4-.7a11.6 11.6 0 0 1-4.6-4.1c-.4-.5-1.1-1.5-1.1-2.9s.7-2.1 1-2.4a1 1 0 0 1 .8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.2-.3.3-.1.6a8.2 8.2 0 0 0 1.5 1.9 7.4 7.4 0 0 0 2.2 1.4c.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l2 .9c.3.1.5.2.5.3a2.6 2.6 0 0 1-.2 1.4Z"/></svg>Order on WhatsApp</button>
+        <p class="note" role="status" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="drop" aria-labelledby="t-drop">
+  <h2 class="disp" id="t-drop">The drop</h2>
+  <div class="grid">
+    <article class="card">
+      <svg viewBox="0 0 400 440" aria-hidden="true"><use href="#g-tee"/></svg>
+      <h3>Box tee</h3><p>240gsm jersey &middot; black</p>
+      <div class="row"><p class="price">EGP 850</p><button class="order" data-item="Box tee">Order</button></div>
+    </article>
+    <article class="card">
+      <svg viewBox="0 0 400 440" aria-hidden="true"><use href="#g-cargo"/></svg>
+      <h3>Field cargo</h3><p>Cotton twill &middot; olive</p>
+      <div class="row"><p class="price">EGP 1,250</p><button class="order" data-item="Field cargo">Order</button></div>
+    </article>
+    <article class="card">
+      <svg viewBox="0 0 400 440" aria-hidden="true"><use href="#g-jacket"/></svg>
+      <h3>Hood jacket</h3><p>Mid-weight denim &middot; indigo</p>
+      <div class="row"><p class="price">EGP 1,900</p><button class="order" data-item="Hood jacket">Order</button></div>
+    </article>
+  </div>
+  <p class="note" id="grid-note" role="status" aria-live="polite"></p>
+</section>
+
+<section class="pitch" aria-labelledby="t-pitch">
+  <h2 class="disp" id="t-pitch">Your brand, <span>built like this.</span></h2>
+  <p>This page is a concept. Blend made it to show what a local brand's page can do when it is built for the product rather than from a template.</p>
+  <p>Yours would carry your own pieces, your own photos and your own prices, on your own domain, with every order landing in your WhatsApp already written out.</p>
+  <ul>
+    <li>Your collection, built to be scrolled</li>
+    <li>Order on WhatsApp under every piece</li>
+    <li>A link for your Instagram bio</li>
+    <li>UGC videos of real people wearing it</li>
+  </ul>
+  <a class="order" href="/start/?src=demo-streetwear">Tell us about your brand</a>
+</section>
+<footer class="foot">
+  <span>KHAYT is invented. Concept and build by <a href="/">Blend</a>, Cairo.</span>
+  <span>Every garment on this page is drawn, not photographed.</span>
+</footer>
+
+<script>
+/* The build, driven by scroll.
+ *
+ * Each scene is a tall section with a pinned stage. Progress through the
+ * section, 0 to 1, is the timeline:
+ *   0.00 to 0.16  the cutting lines appear on the fabric
+ *   0.14 to 0.30  the pieces lift off and the roll falls away
+ *   0.28 to 0.74  the pieces fly into place, one after another
+ *   0.70 to 0.86  the seams are sewn
+ *   0.84 to 0.98  the price, the sizes and the order button arrive
+ * One passive scroll listener marks a frame as due; one rAF reads every
+ * rect first and then writes every transform. Only transform and opacity
+ * change, so nothing is laid out again mid-scroll. With reduced motion
+ * every scene simply shows the finished garment. */
+(function () {
+  // the strip's real height, so the pinned stage starts right under it
+  var bar = document.querySelector('.concept');
+  function setBar() { document.documentElement.style.setProperty('--bar', bar.offsetHeight + 'px'); }
+  setBar(); window.addEventListener('resize', setBar, { passive: true });
+  var scenes = [].slice.call(document.querySelectorAll('.scene'));
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var model = scenes.map(function (s) {
+    return {
+      el: s,
+      swatch: s.querySelector('.swatch'),
+      cuts: [].slice.call(s.querySelectorAll('.cut')).map(prep),
+      pieces: [].slice.call(s.querySelectorAll('.piece')).map(prep),
+      stitches: [].slice.call(s.querySelectorAll('.stitch')),
+      steps: [].slice.call(s.querySelectorAll('.steps span')),
+      buy: s.querySelector('.buy')
+    };
+  });
+  function prep(el) {
+    return { el: el, x: +el.dataset.x || 0, y: +el.dataset.y || 0, r: +el.dataset.r || 0 };
+  }
+  // where a cutting line sits never changes: on the fabric, at the start
+  model.forEach(function (m) {
+    m.cuts.forEach(function (c) {
+      c.el.style.transformBox = 'fill-box';
+      c.el.style.transformOrigin = '50% 50%';
+      c.el.style.transform = 'translate(' + c.x + 'px,' + c.y + 'px) rotate(' + c.r + 'deg)';
+    });
+  });
+  function seg(p, a, b) { return Math.min(Math.max((p - a) / (b - a), 0), 1); }
+  function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+
+  function paint(m, p) {
+    var drawn = seg(p, 0.02, 0.16), lift = seg(p, 0.14, 0.30);
+    var sew = seg(p, 0.70, 0.86), drop = ease(seg(p, 0.84, 0.98));
+    m.swatch.style.opacity = String(1 - lift);
+    m.cuts.forEach(function (c) { c.el.style.opacity = String(drawn * (1 - lift)); });
+    m.pieces.forEach(function (pc, i) {
+      var k = ease(seg(p, 0.28 + i * 0.045, 0.60 + i * 0.045));
+      pc.el.style.opacity = String(lift);
+      pc.el.style.transform = 'translate(' + (pc.x * (1 - k)).toFixed(2) + 'px,' +
+        (pc.y * (1 - k)).toFixed(2) + 'px) rotate(' + (pc.r * (1 - k)).toFixed(2) + 'deg)';
+    });
+    m.stitches.forEach(function (s) { s.style.opacity = String(sew); });
+    m.buy.style.opacity = String(drop);
+    m.buy.style.transform = 'translateY(' + (16 * (1 - drop)).toFixed(1) + 'px)';
+    var step = p < 0.14 ? 0 : p < 0.28 ? 1 : p < 0.70 ? 2 : p < 0.84 ? 3 : 4;
+    m.steps.forEach(function (s, i) { s.classList.toggle('on', i === step); });
+  }
+
+  if (still) {
+    model.forEach(function (m) { paint(m, 1); });
+  } else {
+    var queued = false;
+    var frame = function () {
+      queued = false;
+      var vh = window.innerHeight;
+      var reads = model.map(function (m) {
+        var r = m.el.getBoundingClientRect();
+        var travel = r.height - vh;
+        return travel > 0 ? Math.min(Math.max(-r.top / travel, 0), 1) : 1;
+      });
+      model.forEach(function (m, i) { paint(m, reads[i]); });
+    };
+    var onScroll = function () { if (!queued) { queued = true; requestAnimationFrame(frame); } };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    frame();
+  }
+
+  // sizes are a choice of one
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('.sizes button');
+    if (b) {
+      [].forEach.call(b.parentNode.children, function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+    }
+    var o = e.target.closest('button.order');
+    if (o) {
+      var scene = o.closest('.info');
+      var size = scene ? scene.querySelector('.sizes [aria-pressed=true]') : null;
+      var note = scene ? scene.querySelector('.note') : document.getElementById('grid-note');
+      // a concept: show what would happen instead of messaging anybody
+      note.textContent = 'On a real brand page this opens WhatsApp with "I want the ' +
+        o.dataset.item + (size ? ', size ' + size.textContent : '') + '" already written.';
+    }
+  });
+})();
+</script>
+</body>
+</html>
