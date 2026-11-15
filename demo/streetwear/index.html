@@ -17,7 +17,7 @@
 <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Lalezar&family=Space+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Lalezar&family=Space+Mono:wght@400;700&display=swap">
 <link rel="modulepreload" href="vendor/three.module.min.js">
 <script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
 <style>
@@ -31,9 +31,11 @@
   --line:rgba(236,231,221,.16);color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--ink);color:var(--bone);font-family:'Space Mono',ui-monospace,monospace;
-  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:clip}
-.disp{font-family:Anton,Impact,'Arial Narrow',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.005em;line-height:.9}
+body{margin:0;background:var(--ink);color:var(--bone);font-family:Archivo,system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:clip}
+.disp{font-family:Archivo,Impact,sans-serif;font-weight:900;font-stretch:122%;text-transform:uppercase;letter-spacing:-.03em;line-height:.88}
+/* small labels stay in a mono, so the two voices never blur */
+.mono,.concept,.eyebrow,.btn,.tag,.steps .s,.drag,.cue,.top nav,.price,.badge,.chosen,.card .p,.foot,.chips button,.item .cost,.note{font-family:'Space Mono',ui-monospace,monospace}
 a{color:inherit}
 button{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--sky);outline-offset:3px}
@@ -48,16 +50,15 @@ button{font:inherit;color:inherit}
 
 /* layer 0 */
 .atmo{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.atmo i{position:absolute;border-radius:50%;will-change:transform}
+.atmo i{position:absolute;border-radius:50%}
 .atmo .o{width:70vmax;height:70vmax;left:50%;top:46%;margin:-35vmax 0 0 -35vmax;
-  background:radial-gradient(closest-side,rgba(255,79,26,.42),rgba(255,79,26,.12) 55%,transparent);animation:breathe 9s ease-in-out infinite alternate}
+  background:radial-gradient(closest-side,rgba(255,79,26,.42),rgba(255,79,26,.12) 55%,transparent)}
 .atmo .b{width:60vmax;height:60vmax;left:-18vmax;bottom:-22vmax;
-  background:radial-gradient(closest-side,rgba(47,79,224,.5),transparent 70%);animation:drift 14s ease-in-out infinite alternate}
+  background:radial-gradient(closest-side,rgba(47,79,224,.5),transparent 70%)}
 .atmo .b2{width:44vmax;height:44vmax;right:-14vmax;top:-10vmax;
-  background:radial-gradient(closest-side,rgba(47,79,224,.32),transparent 70%);animation:drift 17s ease-in-out infinite alternate-reverse}
+  background:radial-gradient(closest-side,rgba(47,79,224,.32),transparent 70%)}
 .atmo::after{content:"";position:absolute;inset:-50%;opacity:.09;mix-blend-mode:overlay;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation:grain 1.2s steps(4) infinite}
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
 @keyframes breathe{to{transform:scale(1.14) translateY(-3%)}}
 @keyframes drift{to{transform:translate(8vmax,-6vmax) scale(1.1)}}
 @keyframes grain{25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(-2%,-1%)}}
@@ -70,22 +71,22 @@ button{font:inherit;color:inherit}
 /* ---------- hero ---------- */
 .hero{position:relative;min-height:100vh;min-height:100svh;padding:34px 0 0}
 .wordmark{position:absolute;inset:34px 0 0;z-index:0;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:hidden}
-.wordmark b{font-size:clamp(150px,31vw,560px);line-height:.8;color:var(--orange);letter-spacing:-.01em;
+.wordmark b{font-size:clamp(90px,17.5vw,330px);line-height:.8;color:var(--orange);letter-spacing:-.04em;
   transform:translateY(-4%);text-shadow:0 0 120px rgba(255,79,26,.35)}
 .wordmark .ar{position:absolute;right:3vw;top:14%;font-family:Lalezar,sans-serif;font-size:clamp(70px,11vw,190px);line-height:1;
   color:transparent;-webkit-text-stroke:1.5px rgba(236,231,221,.5)}
 .wordmark .ed{position:absolute;right:1.4vw;bottom:30%;font-size:12px;letter-spacing:.3em;writing-mode:vertical-rl;transform:rotate(180deg);color:rgba(236,231,221,.6)}
 .top{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;
   padding:18px clamp(16px,4vw,48px);pointer-events:none}
-.top .logo{font-size:26px;letter-spacing:.04em;text-decoration:none;pointer-events:auto}
+.top .logo{font-size:20px;letter-spacing:.04em;text-decoration:none;pointer-events:auto}
 .top nav{display:flex;gap:22px;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;pointer-events:auto}
 .top nav a{text-decoration:none;opacity:.8}.top nav a:hover{opacity:1;color:var(--orange)}
 @media (max-width:620px){.top nav a:not(.cta){display:none}}
-.hero .copy{position:absolute;z-index:2;left:clamp(16px,4vw,48px);bottom:clamp(120px,19vh,190px);max-width:430px;pointer-events:none}
+.hero .copy{position:absolute;z-index:2;left:clamp(16px,4vw,48px);bottom:clamp(120px,19vh,190px);max-width:560px;pointer-events:none}
 .eyebrow{font-size:11px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--orange);margin:0 0 14px}
-.hero h1{font-size:clamp(46px,6.4vw,92px);margin:0 0 16px;text-shadow:0 4px 40px rgba(0,0,0,.5)}
+.hero h1{font-size:clamp(30px,4vw,60px);margin:0 0 16px;text-shadow:0 4px 40px rgba(0,0,0,.5)}
 .hero h1 span{color:transparent;-webkit-text-stroke:1.5px var(--bone)}
-.hero p{margin:0 0 22px;color:rgba(236,231,221,.82);font-size:14px;max-width:34ch}
+.hero p{margin:0 0 22px;color:rgba(236,231,221,.85);font-size:16px;max-width:34ch}
 .btns{display:flex;flex-wrap:wrap;gap:10px;pointer-events:auto}
 .btn{display:inline-flex;align-items:center;gap:10px;padding:15px 22px;border:0;border-radius:999px;background:var(--orange);color:var(--ink);
   font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;cursor:pointer;
@@ -94,9 +95,8 @@ button{font:inherit;color:inherit}
 .btn.ghost{background:transparent;color:var(--bone);box-shadow:inset 0 0 0 1.5px rgba(236,231,221,.5)}
 .btn.ghost:hover{box-shadow:inset 0 0 0 1.5px var(--bone);background:rgba(236,231,221,.08)}
 .hero .tags{position:absolute;z-index:2;right:clamp(16px,4vw,48px);bottom:clamp(140px,22vh,220px);display:grid;gap:10px;pointer-events:none}
-.tag{display:flex;align-items:center;gap:10px;padding:8px 12px 8px 8px;border-radius:999px;background:rgba(11,11,13,.55);
-  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1px var(--line);font-size:11px;letter-spacing:.06em;
-  animation:float 5s ease-in-out infinite}
+.tag{display:flex;align-items:center;gap:10px;padding:8px 12px 8px 8px;border-radius:999px;background:rgba(11,11,13,.78);
+  box-shadow:inset 0 0 0 1px var(--line);font-size:11px;letter-spacing:.06em}
 .tag:nth-child(2){animation-delay:-1.6s}.tag:nth-child(3){animation-delay:-3.2s}
 .tag b{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--orange);color:var(--ink);font-size:10px}
 .tag:nth-child(2) b{background:var(--cobalt);color:var(--bone)}.tag:nth-child(3) b{background:var(--bone)}
@@ -105,19 +105,19 @@ button{font:inherit;color:inherit}
   .hero .copy{bottom:150px;right:16px}
   .hero .tags{display:none}
   .wordmark{align-items:flex-start;padding-top:64px}
-  .wordmark b{font-size:40vw;transform:none}
+  .wordmark b{font-size:22vw;transform:none}
   .wordmark .ar{top:auto;bottom:34%;right:4vw}
   .wordmark .ed{display:none}
 }
 /* two crossing tapes */
 .tapes{position:absolute;z-index:2;left:-5vw;right:-5vw;bottom:34px;height:110px;pointer-events:none}
-.tape{position:absolute;left:0;right:0;overflow:hidden;white-space:nowrap;font-family:Anton,Impact,sans-serif;text-transform:uppercase;
-  font-size:clamp(18px,2.2vw,28px);line-height:1;padding:11px 0;box-shadow:0 14px 40px rgba(0,0,0,.35)}
-.tape .run{display:inline-flex;animation:run 26s linear infinite}
+.tape{position:absolute;left:0;right:0;overflow:hidden;white-space:nowrap;font-family:Archivo,Impact,sans-serif;font-weight:800;font-stretch:118%;letter-spacing:-.01em;text-transform:uppercase;
+  font-size:clamp(14px,1.45vw,20px);line-height:1;padding:12px 0;box-shadow:0 14px 40px rgba(0,0,0,.35)}
+.tape .run{display:inline-flex;animation:run 48s linear infinite}
 .tape .run span{padding-right:.6em}
 .tape.a{top:10px;background:var(--orange);color:var(--ink);transform:rotate(-3.5deg)}
 .tape.b{top:52px;background:var(--bone);color:var(--ink);transform:rotate(2.2deg)}
-.tape.b .run{animation-direction:reverse;animation-duration:32s}
+.tape.b .run{animation-direction:reverse;animation-duration:60s}
 .tape em{font-style:normal;font-family:Lalezar,sans-serif;font-size:1.15em}
 .tape i{font-style:normal;color:var(--cobalt)}
 @keyframes run{to{transform:translateX(-50%)}}
@@ -125,25 +125,29 @@ button{font:inherit;color:inherit}
 @media (max-width:760px){.cue{display:none}}
 
 /* ---------- the story: a tall section with words pinned over the canvas ---------- */
-#story{position:relative;z-index:2;height:760vh;pointer-events:none}
+#story{position:relative;z-index:2;height:600vh;pointer-events:none}
 .pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
 .chapter{position:absolute;left:clamp(16px,4vw,48px);top:50%;width:min(380px,40vw);transform:translateY(-40%);opacity:0;
   transition:opacity .45s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
 .chapter.on{opacity:1;transform:translateY(-50%)}
 .chapter.right{left:auto;right:clamp(16px,4vw,48px)}
-.chapter .n{font-family:Anton,sans-serif;font-size:clamp(70px,9vw,130px);line-height:.8;color:transparent;-webkit-text-stroke:1.5px var(--orange);display:block;margin-bottom:8px}
-.chapter h2{font-size:clamp(38px,4.6vw,68px);margin:0 0 12px}
-.chapter p{margin:0;font-size:14px;color:rgba(236,231,221,.82)}
+/* while the table stands on the left, the words sit above it */
+.chapter.tl{top:96px;transform:translateY(12px)}
+.chapter.tl.on{transform:none}
+@media (min-width:761px){.chapter{padding:22px 24px 24px;border-radius:20px;background:rgba(11,11,13,.82);box-shadow:inset 0 0 0 1px var(--line)}}
+.chapter .n{font-family:Archivo,sans-serif;font-weight:900;font-stretch:122%;font-size:clamp(52px,5.6vw,92px);line-height:.8;color:transparent;-webkit-text-stroke:1.5px var(--orange);display:block;margin-bottom:8px}
+.chapter h2{font-size:clamp(26px,2.9vw,44px);margin:0 0 12px}
+.chapter p{margin:0;font-size:16px;color:rgba(236,231,221,.82)}
 .chapter .price{display:inline-block;margin-top:14px;padding:7px 12px;border-radius:999px;background:var(--bone);color:var(--ink);font-weight:700;font-size:13px}
 .chapter .price small{font-weight:400;opacity:.6;margin-left:6px;font-size:10px}
 .chapter .btns{margin-top:18px}
 @media (max-width:760px){
-  .chapter,.chapter.right{left:16px;right:16px;width:auto;top:auto;bottom:96px;transform:translateY(16px);
-    padding:16px 16px 18px;border-radius:18px;background:rgba(11,11,13,.62);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  .chapter,.chapter.right,.chapter.tl{left:16px;right:16px;width:auto;top:auto;bottom:96px;transform:translateY(16px);
+    padding:16px 16px 18px;border-radius:18px;background:rgba(11,11,13,.86);
     box-shadow:inset 0 0 0 1px var(--line)}
-  .chapter.on{transform:none}
-  .chapter .n{font-size:44px;display:inline-block;margin:0 10px 0 0;vertical-align:baseline}
-  .chapter h2{font-size:34px;display:inline}
+  .chapter.on,.chapter.tl.on{transform:none}
+  .chapter .n{font-size:30px;display:inline-block;margin:0 10px 0 0;vertical-align:baseline}
+  .chapter h2{font-size:22px;display:inline}
   .chapter p{margin-top:10px;font-size:13px}
 }
 .steps{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);display:flex;gap:4px;margin:0;padding:0;list-style:none;width:min(560px,calc(100% - 32px))}
@@ -156,13 +160,13 @@ button{font:inherit;color:inherit}
 
 /* ---------- the fitting room ---------- */
 #fit{position:relative;z-index:2;min-height:100vh;padding:120px clamp(16px,4vw,48px) 80px;display:flex;justify-content:flex-end;align-items:center;pointer-events:none}
-.room{pointer-events:auto;width:min(420px,100%);padding:26px 24px;border-radius:24px;background:rgba(17,17,20,.72);
-  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:inset 0 0 0 1px var(--line),0 30px 80px rgba(0,0,0,.45)}
-.room h2{font-size:clamp(40px,4.4vw,60px);margin:0 0 8px}
-.room .lede{margin:0 0 20px;font-size:13px;color:rgba(236,231,221,.75)}
+.room{pointer-events:auto;width:min(420px,100%);padding:26px 24px;border-radius:24px;background:rgba(17,17,20,.9);
+  box-shadow:inset 0 0 0 1px var(--line),0 30px 80px rgba(0,0,0,.45)}
+.room h2{font-size:clamp(26px,2.6vw,36px);margin:0 0 8px}
+.room .lede{margin:0 0 20px;font-size:15px;color:rgba(236,231,221,.75)}
 .item{padding:16px 0;border-top:1px solid var(--line)}
 .item header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
-.toggle{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;cursor:pointer;font-family:Anton,sans-serif;font-size:22px;text-transform:uppercase;letter-spacing:.02em}
+.toggle{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;cursor:pointer;font-family:Archivo,sans-serif;font-weight:800;font-stretch:115%;font-size:15px;text-transform:uppercase;letter-spacing:0}
 .toggle i{width:22px;height:22px;border-radius:6px;box-shadow:inset 0 0 0 1.5px rgba(236,231,221,.5);display:inline-grid;place-items:center;font-style:normal;font-size:13px;color:var(--ink)}
 .toggle[aria-pressed="true"] i{background:var(--orange);box-shadow:none}
 .toggle[aria-pressed="true"] i::before{content:"✓"}
@@ -178,7 +182,7 @@ button{font:inherit;color:inherit}
 .chips .ar{font-family:Lalezar,sans-serif;font-size:15px;font-weight:400;line-height:1}
 .chosen{font-size:11px;color:rgba(236,231,221,.6);margin-left:2px}
 .total{display:flex;justify-content:space-between;align-items:baseline;padding:16px 0 18px;border-top:1px solid var(--line)}
-.total b{font-family:Anton,sans-serif;font-size:30px;font-weight:400}
+.total b{font-family:Archivo,sans-serif;font-weight:900;font-stretch:118%;font-size:22px}
 .room .btn{width:100%;justify-content:center}
 .note{margin:12px 0 0;font-size:12px;color:rgba(236,231,221,.75);min-height:0}
 .note:empty{display:none}
@@ -193,7 +197,7 @@ button{font:inherit;color:inherit}
 .solid{position:relative;z-index:3}
 .drop{background:var(--bone);color:var(--ink);padding:clamp(64px,10vw,120px) clamp(16px,4vw,48px)}
 .drop .head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:36px}
-.drop h2{font-size:clamp(64px,11vw,170px);margin:0}
+.drop h2{font-size:clamp(44px,7.5vw,120px);margin:0}
 .drop h2 span{color:var(--orange)}
 .drop .head p{max-width:34ch;margin:0;font-size:13px}
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,2vw,24px)}
@@ -202,17 +206,17 @@ button{font:inherit;color:inherit}
 .card .ph{position:relative;aspect-ratio:4/5;overflow:hidden}
 .card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
 .card:hover img{transform:scale(1.04)}
-.card .no{position:absolute;top:14px;left:16px;font-family:Anton,sans-serif;font-size:58px;line-height:.8;color:transparent;-webkit-text-stroke:1.5px var(--ink);opacity:.5}
+.card .no{position:absolute;top:14px;left:16px;font-family:Archivo,sans-serif;font-weight:900;font-stretch:122%;font-size:40px;line-height:.8;color:transparent;-webkit-text-stroke:1.5px var(--ink);opacity:.5}
 .card .badge{position:absolute;top:16px;right:16px;padding:6px 10px;border-radius:999px;background:var(--ink);color:var(--bone);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
 .card .meta{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px 18px;background:var(--ink);color:var(--bone)}
-.card h3{font-size:30px;margin:0}
+.card h3{font-size:19px;margin:0 0 4px}
 .card .p{font-size:13px;font-weight:700}
 .card .p small{display:block;font-weight:400;font-size:10px;opacity:.6}
 .card .try{padding:11px 15px;font-size:11px}
 .pitch{background:var(--ink);padding:clamp(72px,10vw,130px) clamp(16px,4vw,48px);display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,5vw,80px);align-items:start;
   background-image:radial-gradient(50% 60% at 100% 0%,rgba(47,79,224,.35),transparent 70%),radial-gradient(40% 50% at 0% 100%,rgba(255,79,26,.22),transparent 70%)}
 @media (max-width:860px){.pitch{grid-template-columns:1fr}}
-.pitch h2{font-size:clamp(52px,8vw,120px);margin:0}
+.pitch h2{font-size:clamp(38px,5.4vw,84px);margin:0}
 .pitch h2 span{color:var(--orange)}
 .pitch p{font-size:14px;color:rgba(236,231,221,.8);margin:0 0 14px;max-width:46ch}
 .pitch ul{list-style:none;margin:22px 0 28px;padding:0;display:grid;gap:10px}
@@ -275,12 +279,11 @@ button{font:inherit;color:inherit}
 
 <section id="story" aria-label="How the drop is made">
   <div class="pin">
-    <article class="chapter"><span class="n">00</span><h2 class="disp">Pull it apart.</h2><p>Every fit starts as flat cloth. Here is the drop, taken back to its pieces.</p></article>
-    <article class="chapter right"><span class="n">01</span><h2 class="disp">Fabric.</h2><p>Jersey for the tee. Twill for the cargo. Denim for the jacket.</p></article>
+    <article class="chapter right"><span class="n">01</span><h2 class="disp">Fabric.</h2><p>Every fit starts flat. Jersey for the tee, twill for the cargo, denim for the jacket.</p></article>
     <article class="chapter right"><span class="n">02</span><h2 class="disp">Cut.</h2><p>Every pattern piece marked on the roll and cut to size.</p></article>
-    <article class="chapter"><span class="n">03</span><h2 class="disp">Box tee.</h2><p>Heavy jersey, dropped shoulder, the print on the chest.</p><span class="price">EGP 850<small>concept price</small></span></article>
-    <article class="chapter right"><span class="n">04</span><h2 class="disp">Field cargo.</h2><p>Twill, side pockets, a little stack at the ankle.</p><span class="price">EGP 1,250<small>concept price</small></span></article>
-    <article class="chapter"><span class="n">05</span><h2 class="disp">Hood jacket.</h2><p>Denim, worn open, hood up.</p><span class="price">EGP 1,900<small>concept price</small></span></article>
+    <article class="chapter tl"><span class="n">03</span><h2 class="disp">Box tee.</h2><p>Heavy jersey, dropped shoulder, the print on the chest.</p><span class="price">EGP 850<small>concept price</small></span></article>
+    <article class="chapter tl"><span class="n">04</span><h2 class="disp">Field cargo.</h2><p>Twill, side pockets, a little stack at the ankle.</p><span class="price">EGP 1,250<small>concept price</small></span></article>
+    <article class="chapter tl"><span class="n">05</span><h2 class="disp">Hood jacket.</h2><p>Denim, worn open, hood up.</p><span class="price">EGP 1,900<small>concept price</small></span></article>
     <article class="chapter"><span class="n">06</span><h2 class="disp">The drop.</h2><p>Three pieces, 150 of each. Now make it yours.</p></article>
     <div class="steps" aria-hidden="true">
       <span class="track"><span class="fill"></span></span>
@@ -446,6 +449,6 @@ button{font:inherit;color:inherit}
   total();
 })();
 </script>
-<script type="module" src="app.js?v=8ab20308"></script>
+<script type="module" src="app.js?v=daf6b820"></script>
 </body>
 </html>

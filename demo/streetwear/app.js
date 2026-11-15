@@ -6,11 +6,11 @@
  * The flat shape is the wrapped one unrolled, so the pieces have the outlines
  * of real patterns. Scrolling the story moves the pieces:
  *
- *   on the body  ->  floating flat around it  ->  laid on the fabric
- *   -> cut out   ->  flown back and wrapped on, garment by garment
+ *   on the body  ->  laid flat on the fabric  ->  cut out
+ *   ->  the table slides aside  ->  flown back and wrapped on, one garment at a time
  *
- * A piece has three poses while flat (park: orbiting the mannequin; layout:
- * on the fabric; tangent: touching the body where it will sit) and one
+ * A piece has three poses while flat (layout: on the fabric; aside: the
+ * table moved beside him; tangent: touching the body where it will sit) and one
  * deformation, the wrap, which bends it round the body like a page curling.
  * The customizer drives the same parameters with time instead of scroll.
  */
@@ -109,7 +109,7 @@ try {
   document.documentElement.classList.add('no-gl');
   throw e;
 }
-renderer.setPixelRatio(Math.min(devicePixelRatio || 1, MOBILE ? 1.6 : 2));
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, MOBILE ? 1.35 : 1.75));
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.05;
 renderer.shadowMap.enabled = true;
@@ -127,7 +127,7 @@ scene.add(new THREE.HemisphereLight(0xffffff, 0x221a14, .35));
 const key = new THREE.DirectionalLight(0xfff4ea, 2.4);
 key.position.set(1.6, 3.2, 2.4);
 key.castShadow = true;
-key.shadow.mapSize.set(MOBILE ? 1024 : 2048, MOBILE ? 1024 : 2048);
+key.shadow.mapSize.set(MOBILE ? 1024 : 1536, MOBILE ? 1024 : 1536);
 Object.assign(key.shadow.camera, { left: -1.3, right: 1.3, top: 2.1, bottom: -.3, near: .5, far: 8 });
 key.shadow.bias = -.0004; key.shadow.normalBias = .02;
 scene.add(key);
@@ -298,7 +298,9 @@ function drawPrint(kind, teeHex) {
   const ink = lum > .55 ? '#141416' : '#efe9dd';
   c.fillStyle = ink; c.textAlign = 'center'; c.textBaseline = 'middle';
   if (kind === 'KHAYT') {
-    c.font = '170px Anton, Impact, sans-serif'; c.fillText('KHAYT', W / 2, H / 2 - 20);
+    if ('fontStretch' in c) c.fontStretch = 'expanded';
+    c.font = '900 118px Archivo, Impact, sans-serif'; c.fillText('KHAYT', W / 2, H / 2 - 20);
+    if ('fontStretch' in c) c.fontStretch = 'normal';
     c.fillStyle = '#ff4f1a'; c.font = 'bold 30px "Space Mono", monospace'; c.fillText('DROP 03 · CAIRO', W / 2, H / 2 + 92);
   } else if (kind === 'خيط') {
     c.font = '250px Lalezar, sans-serif'; c.fillText('خيط', W / 2, H / 2 + 10);
@@ -552,11 +554,6 @@ const folds = (theta, y, amp, lo, hi) => amp * Math.sin(theta * 7 + y * 9) * Mat
 /* ---------- poses ---------- */
 const ALL = [...G.tee, ...G.cargo, ...G.jacket];
 
-// park: the flat pieces orbit the mannequin
-ALL.forEach((p, k) => {
-  const a = k / ALL.length * TAU + .4, r = .78 + (k % 3) * .09;
-  p.park = { a, r, y: .55 + ((k * 7) % 5) * .27, tilt: ((k * 5) % 7 - 3) * .12, spin: ((k * 3) % 5 - 2) * .25 };
-});
 // layout: on three bolts of fabric in front of the mannequin, one row per garment
 const LAYOUT = { z: .82, cy: 1.12, scale: .5, gap: .035, rows: {} };
 {
@@ -613,15 +610,23 @@ const CUTS = ALL.map(p => {
 });
 
 const _q = new THREE.Quaternion(), _e = new THREE.Euler(), _v = new THREE.Vector3();
-function parkPose(p, t) {
-  const k = p.park, a = k.a + t * .06;
-  const pos = V(Math.sin(a) * k.r, k.y + .025 * Math.sin(t * .9 + k.a * 3), Math.cos(a) * k.r);
-  _e.set(k.tilt, a + k.spin, k.tilt * .5);
-  return { pos, q: new THREE.Quaternion().setFromEuler(_e), s: .62 };
-}
 // the rail: where a garment waits, off to the side, while the fitting room has it off
 function railPose(p, k) { return { pos: V(-1.7 - k * .03, 1.05 + (k % 4) * .16, -.5 + k * .01), q: new THREE.Quaternion().setFromEuler(_e.set(0, .5, 0)), s: .6 }; }
 function layoutPose(p) { return { pos: p.layout.clone(), q: new THREE.Quaternion(), s: LAYOUT.scale }; }
+// after the cut the whole table slides aside, smaller and turned toward the camera, so he is in clear view
+const ASIDE = { c: V(-.84, 1.0, .28), k: .62, ry: .32 };
+function waitPose(p, k, portrait) {
+  if (portrait) return railPose(p, k);                // a phone has no room beside him: the pieces wait off screen
+  const rel = p.layout.clone().sub(V(0, LAYOUT.cy, LAYOUT.z)).multiplyScalar(ASIDE.k).applyAxisAngle(V(0, 1, 0), ASIDE.ry);
+  return { pos: ASIDE.c.clone().add(rel), q: new THREE.Quaternion().setFromAxisAngle(V(0, 1, 0), ASIDE.ry), s: LAYOUT.scale * ASIDE.k };
+}
+function sourcePose(p, k, aside, portrait) {
+  if (aside <= 0) return layoutPose(p);
+  const B = waitPose(p, k, portrait);
+  if (aside >= 1) return B;
+  const A = layoutPose(p);
+  return { pos: A.pos.lerp(B.pos, aside), q: A.q.slerp(B.q, aside), s: lerp(A.s, B.s, aside) };
+}
 function tangentPose(p) { return { pos: p.P.clone(), q: p.tq.clone(), s: 1 }; }
 // interpolate round the body's axis so nothing passes through the mannequin
 function travel(A, B, t) {
@@ -629,8 +634,8 @@ function travel(A, B, t) {
   const aa = Math.atan2(A.pos.x, A.pos.z); let ab = Math.atan2(B.pos.x, B.pos.z);
   let da = ab - aa; while (da > Math.PI) da -= TAU; while (da < -Math.PI) da += TAU;
   const ta = ease(clamp(t * 1.35)), tr = ease(clamp((t - .2) / .8)), ty = ease(t);
-  const a = aa + da * ta, r = lerp(ra, rb, tr) + Math.sin(Math.PI * t) * .12;
-  return { pos: V(Math.sin(a) * r, lerp(A.pos.y, B.pos.y, ty) + Math.sin(Math.PI * t) * .05, Math.cos(a) * r),
+  const a = aa + da * ta, r = lerp(ra, rb, tr) + Math.sin(Math.PI * t) * .06;
+  return { pos: V(Math.sin(a) * r, lerp(A.pos.y, B.pos.y, ty), Math.cos(a) * r),
     q: A.q.clone().slerp(B.q, ease(t)), s: lerp(A.s, B.s, ease(t)) };
 }
 
@@ -662,7 +667,7 @@ function writeWrap(o, base, w, kcx, kcy) {
   if (o.mode !== 'wrap') { o.mesh.position.set(0, 0, 0); o.mesh.quaternion.identity(); o.mesh.scale.setScalar(1); }
   o.mode = 'wrap'; o.last = w;
 }
-function placePiece(p, f, w, lam, t, rail) {
+function placePiece(p, f, w, src) {
   const kc = (p.nv >> 1) * (p.nu + 1) + (p.nu >> 1), kcx = p.F[kc * 2], kcy = p.F[kc * 2 + 1];
   const visible = true;
   p.mesh.visible = visible;
@@ -672,7 +677,6 @@ function placePiece(p, f, w, lam, t, rail) {
     for (const c of p.children) writeWrap(c, p, w, kcx, kcy);
     return;
   }
-  const src = rail ? rail : lam <= 0 ? parkPose(p, t) : lam >= 1 ? layoutPose(p) : travel(parkPose(p, t), layoutPose(p), lam);
   const pose = f <= 0 ? src : f >= 1 ? tangentPose(p) : travel(src, tangentPose(p), f);
   writeRigid(p, pose, p.F, kcx, kcy);
   for (const c of p.children) writeRigid(c, pose, c.F, kcx, kcy);
@@ -690,14 +694,14 @@ const state = {
   pending: {},                                  // colour waiting for the garment to come off
 };
 
-function garmentPose(g, d, lam, t, custom) {
+function garmentPose(g, d, srcFor, hideAtZero) {
   const ps = G[g], n = ps.length;
   const f = clamp(d), w = clamp(d - 1);
   ps.forEach((p, k) => {
     const o = n > 1 ? k / (n - 1) : 0;
     const fk = f >= 1 ? 1 : clamp(f * 1.4 - .4 * o), wk = w >= 1 ? 1 : w > 0 ? clamp(w * 1.25 - .25 * o) : 0;
-    placePiece(p, fk >= 1 && w > 0 ? 1 : fk, fk >= 1 ? wk : 0, lam, t, custom ? railPose(p, k) : null);
-    if (custom && d <= 0) { p.mesh.visible = false; for (const c of p.children) c.mesh.visible = false; }
+    placePiece(p, fk >= 1 && w > 0 ? 1 : fk, fk >= 1 ? wk : 0, srcFor(p, k));
+    if (hideAtZero && d <= 0) { p.mesh.visible = false; for (const c of p.children) c.mesh.visible = false; }
   });
   const done = smooth(seg(d, 1.86, 2));
   for (const s of STITCH[g]) { s.visible = done > 0; s.geometry.setDrawRange(0, Math.ceil(s.userData.count * done)); }
@@ -710,18 +714,19 @@ const els = {
   chapters: [...document.querySelectorAll('.chapter')], steps: [...document.querySelectorAll('.steps .s')],
   bar: document.querySelector('.steps .fill'),
 };
-const CHAPTERS = [0, .07, .15, .27, .46, .64, .84];   // where each chapter's text takes over
+const CHAPTERS = [0, .12, .26, .46, .64, .84];   // where each chapter's text takes over
 
 const CAM = {
   hero:   { pos: V(0, 1.12, 3.95), tgt: V(0, .98, 0) },
-  park:   { pos: V(.9, 1.45, 3.5), tgt: V(0, 1.12, 0) },
   layout: { pos: V(0, 1.12, 3.2), tgt: V(0, 1.12, .82) },
-  tee:    { pos: V(1.05, 1.5, 1.95), tgt: V(0, 1.26, 0) },
-  cargo:  { pos: V(-1.3, .98, 2.45), tgt: V(0, .68, 0) },
-  jacket: { pos: V(1.35, 1.55, 2.6), tgt: V(0, 1.2, 0) },
+  build:  { pos: V(.55, 1.2, 3.45), tgt: V(-.3, 1.0, 0) },
+  tee:    { pos: V(.5, 1.32, 2.95), tgt: V(-.25, 1.12, 0) },
+  cargo:  { pos: V(.42, .98, 3.05), tgt: V(-.25, .78, 0) },
+  jacket: { pos: V(.5, 1.26, 3.3), tgt: V(-.25, 1.02, 0) },
   drop:   { pos: V(0, 1.16, 4.05), tgt: V(0, .97, 0) },
 };
-const CAMKEYS = [[0, 'hero'], [.06, 'park'], [.11, 'layout'], [.215, 'layout'], [.27, 'park'], [.32, 'tee'], [.455, 'tee'], [.5, 'cargo'], [.635, 'cargo'], [.68, 'jacket'], [.84, 'jacket'], [.9, 'drop'], [1, 'drop']];
+// few, slow camera moves: one to the fabric, one to the build, a small push per garment, out for the drop
+const CAMKEYS = [[0, 'hero'], [.1, 'layout'], [.2, 'layout'], [.27, 'build'], [.31, 'tee'], [.45, 'tee'], [.49, 'cargo'], [.63, 'cargo'], [.67, 'jacket'], [.84, 'jacket'], [.92, 'drop'], [1, 'drop']];
 function camAt(p) {
   let i = 0; while (i < CAMKEYS.length - 2 && CAMKEYS[i + 1][0] <= p) i++;
   const [pa, a] = CAMKEYS[i], [pb, b] = CAMKEYS[i + 1];
@@ -770,43 +775,41 @@ function frame(now) {
   const fitF = smooth(clamp(1 - fr.top / H));          // 0 until the fitting room scrolls in
   const custom = fitF > .5;
 
-  // garments
-  const lam = inHero ? 0 : p < .18 ? ease(seg(p, .08, .15)) : 1 - ease(seg(p, .215, .27));
-  const RANGE = { tee: [.28, .44], cargo: [.47, .62], jacket: [.65, .82] };
+  const portrait = W / H < .8;
+  // garments: off the body onto the fabric (outer layers first), cut, then on again one at a time
+  const aside = inHero || custom ? 0 : ease(seg(p, .2, .26));
+  const srcFor = custom ? railPose : (pc, k) => sourcePose(pc, k, aside, portrait);
+  const OFF = { jacket: [.0, .07], cargo: [.025, .095], tee: [.05, .12] };
+  const ON = { tee: [.28, .44], cargo: [.48, .63], jacket: [.66, .83] };
   for (const g of ['tee', 'cargo', 'jacket']) {
     // customizer: move toward the target at a steady speed
     const c = state.customAnim;
     const tgt = state.custom[g];
     if (c[g] !== tgt) { const s = Math.sign(tgt - c[g]) * dt * 2.1; c[g] = Math.abs(tgt - c[g]) <= Math.abs(s) ? tgt : c[g] + s; }
     if (c[g] === 0 && state.pending[g]) { state.pending[g](); delete state.pending[g]; }
-    const story = inHero ? 2 : p < .08 ? 2 * (1 - seg(p, 0, .08)) : 2 * seg(p, RANGE[g][0], RANGE[g][1]);
+    const story = inHero ? 2 : p < .14 ? 2 * (1 - seg(p, OFF[g][0], OFF[g][1])) : 2 * seg(p, ON[g][0], ON[g][1]);
     state.d[g] = custom ? c[g] : story;
-    garmentPose(g, state.d[g], custom ? 0 : lam, state.t, custom);
+    garmentPose(g, state.d[g], srcFor, custom);
   }
 
-  // fabric bolts and cutting lines
-  const sheetIn = inHero || custom ? 0 : ease(seg(p, .065, .125)), sheetOut = inHero || custom ? 0 : seg(p, .19, .225);
+  // fabric bolts (they roll out first, so the pieces have somewhere to land) and cutting lines
+  const sheetIn = inHero || custom ? 0 : ease(seg(p, 0, .06)), sheetOut = inHero || custom ? 0 : seg(p, .17, .2);
   for (const g in SHEETS) {
     const m = SHEETS[g];
     m.visible = sheetIn > 0 && sheetOut < 1;
-    if (!m.visible) continue;
     m.scale.x = Math.max(.001, sheetIn);
     m.material.opacity = 1 - sheetOut;
-    const pos = m.geometry.attributes.position, base = m.userData.base;
-    for (let i = 0; i < pos.count; i++) pos.setZ(i, base[i * 3 + 2] + .006 * Math.sin(base[i * 3] * 9 + state.t * 1.6) * (1 - sheetIn * .7));
-    pos.needsUpdate = true;
   }
-  const cutDraw = inHero || custom ? 0 : seg(p, .135, .19), cutFade = seg(p, .205, .235);
+  const cutDraw = inHero || custom ? 0 : seg(p, .12, .17), cutFade = seg(p, .19, .22);
   cutMat.opacity = .9 * (1 - cutFade);
   for (const l of CUTS) { l.visible = cutDraw > 0 && cutFade < 1; l.geometry.setDrawRange(0, Math.ceil(l.userData.count * cutDraw)); }
-  stitchMat.opacity = 1;
 
   // turning: idle sway in the hero, still while the pieces fly, a full turn at the end
   let rot;
   if (custom) rot = state.drag + (REDUCE ? 0 : Math.sin(state.t * .3) * .12);
-  else if (inHero) rot = state.drag + (REDUCE ? 0 : Math.sin(state.t * .35) * .55);
-  else rot = (p > .84 ? ease(seg(p, .84, 1)) * TAU : 0) + state.drag * (p > .84 ? 1 : 0);
-  if (!inHero && !custom && p < .84) state.drag *= .9;
+  else if (inHero) rot = state.drag + (REDUCE ? 0 : Math.sin(state.t * .25) * .3);
+  else rot = (p > .86 ? Math.sin(ease(seg(p, .86, 1)) * Math.PI) * .9 : 0) + state.drag * (p > .86 ? 1 : 0);
+  if (!inHero && !custom && p < .86) state.drag *= .9;
   // take the short way round: a full turn and no turn look the same
   rot += Math.round((state.rot - rot) / TAU) * TAU;
   state.rot += (rot - state.rot) * Math.min(1, dt * 6);
@@ -814,13 +817,12 @@ function frame(now) {
 
   // camera
   let c = inHero ? { pos: CAM.hero.pos.clone(), tgt: CAM.hero.tgt.clone() } : camAt(p);
-  const portrait = W / H < .8;
   // a phone is narrow: step back from the close-ups so the garment is not cropped
-  if (portrait && !inHero) c.pos.sub(c.tgt).multiplyScalar(1.28).add(c.tgt);
-  if (!inHero && p > .08 && p < .27) {               // keep the fabric in frame on a phone
+  if (portrait && !inHero) { c.tgt.x = 0; c.pos.x *= .5; c.pos.sub(c.tgt).multiplyScalar(1.22).add(c.tgt); }
+  if (!inHero && p < .27) {                          // keep the whole fabric in frame, on any screen
     const r = LAYOUT.rows;
     const need = fitDistance(Math.max(r.tee.w, r.cargo.w, r.jacket.w) * 1.04, (r.tee.h + r.cargo.h + r.jacket.h) * 1.12 + .1);
-    const k = ease(seg(p, .08, .12)) * (1 - ease(seg(p, .215, .26)));
+    const k = ease(seg(p, 0, .1)) * (1 - ease(seg(p, .2, .26)));
     c.pos.z = lerp(c.pos.z, LAYOUT.z + need, k);
   }
   if (custom || fitF > 0) {
@@ -829,8 +831,6 @@ function frame(now) {
     c.pos.lerp(tgt.pos, k); c.tgt.lerp(tgt.tgt, k);
     if (portrait) c.pos.z += 1.5 * k;
   }
-  // a breath of movement so the frame never freezes
-  if (!REDUCE) { c.pos.x += Math.sin(state.t * .4) * .03; c.pos.y += Math.sin(state.t * .53) * .015; }
   camera.position.copy(c.pos); camera.lookAt(c.tgt);
   // in the fitting room the mannequin moves aside for the panel
   // on a phone the words sit at the bottom, so the mannequin moves up out of their way
@@ -843,8 +843,8 @@ function frame(now) {
   if (!inHero && els.chapters.length) {
     let ci = 0; for (let i = 0; i < CHAPTERS.length; i++) if (p >= CHAPTERS[i]) ci = i;
     els.chapters.forEach((el, i) => el.classList.toggle('on', i === ci && p < 1));
-    els.steps.forEach((el, i) => el.classList.toggle('on', i <= ci - 1));
-    if (els.bar) els.bar.style.transform = `scaleX(${clamp((p - .07) / .93)})`;
+    els.steps.forEach((el, i) => el.classList.toggle('on', i <= ci));
+    if (els.bar) els.bar.style.transform = `scaleX(${p})`;
   }
 
   renderer.render(scene, camera);
@@ -892,7 +892,7 @@ if (SHOT) {
   const camK = { tee: { pos: V(.7, 1.4, 2.25), tgt: V(0, 1.22, 0) }, cargo: { pos: V(-.85, .92, 2.75), tgt: V(0, .6, 0) }, jacket: { pos: V(.95, 1.35, 3.1), tgt: V(0, 1.1, 0) }, fit: { pos: V(.7, 1.2, 3.9), tgt: V(0, .97, 0) } }[SHOT];
   const shotFrame = () => {
     requestAnimationFrame(shotFrame);
-    for (const g of ['tee', 'cargo', 'jacket']) garmentPose(g, pose[g], 0, 0);
+    for (const g of ['tee', 'cargo', 'jacket']) garmentPose(g, pose[g], railPose, true);
     // hide what is parked so the photograph is clean
     for (const g of ['tee', 'cargo', 'jacket']) if (pose[g] === 0) for (const p of G[g]) { p.mesh.visible = false; p.children.forEach(c => c.mesh.visible = false); }
     for (const s in SHEETS) SHEETS[s].visible = false; for (const l of CUTS) l.visible = false;
