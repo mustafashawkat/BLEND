@@ -23,9 +23,7 @@
  * endpoint it opens WhatsApp with the enquiry written out instead.
  */
 (function () {
-  // Empty until the new script version is deployed: the sheet was restructured
-  // first, and the old version would write rows into the wrong columns.
-  var FORM_ENDPOINT = '';
+  var FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbz-vNtR-vB_Zr-hJ2WsfDfNUJ0wlf06Bsixbt4okyjrc6sogoi9E250mpg2KFS23DFh/exec';
   var WHATSAPP = '201107409572';
   var KEY = 'blend_src';
   var DAYS = 30;
