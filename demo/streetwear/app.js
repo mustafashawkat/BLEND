@@ -827,7 +827,7 @@ function frame(now) {
     const tgt = CAM.drop;
     const k = fitF;
     c.pos.lerp(tgt.pos, k); c.tgt.lerp(tgt.tgt, k);
-    if (portrait) c.pos.z += .9 * k;
+    if (portrait) c.pos.z += 1.5 * k;
   }
   // a breath of movement so the frame never freezes
   if (!REDUCE) { c.pos.x += Math.sin(state.t * .4) * .03; c.pos.y += Math.sin(state.t * .53) * .015; }
