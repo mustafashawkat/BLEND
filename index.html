@@ -716,6 +716,78 @@ html{overflow-x:clip}
   .cluster{transition:none}
 }
 </style>
+
+<style>
+/* ================= 15 November =================
+   The brands on the first screen, the photographs swiped on a phone, and
+   the page made lighter where it is mostly read: on a phone.
+   ============================================== */
+
+/* ---- the roster band ----
+   Lime ground, dark purple type. White on this lime measures 1.18:1, which
+   is a band of colour with names nobody can read; the purple is 15.7:1 and
+   is what the buttons already use, so it reads as the same brand. */
+.brandband{position:relative;z-index:2;background:var(--lime);color:#1A0B2E;
+  display:flex;align-items:center;gap:6px 24px;padding:15px 0 14px}
+.bb-label{flex:0 0 auto;margin:0;max-width:none;white-space:nowrap;
+  padding-left:max(16px,env(safe-area-inset-left,0px),calc((100vw - 1080px)/2 + 16px));
+  font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:#1A0B2E}
+.brandband .marquee{margin:0;flex:1 1 auto;min-width:0}
+.brandband .marquee-row span{color:#1A0B2E}
+.brandband .marquee-row span::after{background:#1A0B2E;opacity:.5}
+@media (max-width:700px){
+  .brandband{flex-direction:column;align-items:stretch;padding:13px 0 12px}
+  .bb-label{padding-left:max(16px,env(safe-area-inset-left,0px))}
+}
+
+/* ---- the photographs, swiped on a phone ----
+   Below the width where the pinned sideways gallery runs, the nine posts
+   were a single column to scroll past and back up to. Now they are a row
+   the thumb swipes, snapping one card to the centre, with the next one
+   peeking in from the edge so it is obvious there is more. Native
+   scrolling, so it is as smooth as the phone's own gallery. */
+.swipe-hint{display:none}
+@media (max-width:879px){
+  .shots.evgrid{display:flex;gap:12px;overflow-x:auto;overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+    margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));
+    padding:4px max(16px,env(safe-area-inset-left,0px)) 18px;
+    scroll-padding-inline:max(16px,env(safe-area-inset-left,0px))}
+  .shots.evgrid::-webkit-scrollbar{display:none}
+  .shots.evgrid figure{flex:0 0 min(78%,340px);scroll-snap-align:center;
+    transform:none!important;animation:none!important;clip-path:none!important;
+    opacity:1!important}
+  .swipe-hint{display:flex;align-items:center;gap:8px;margin:14px 0 0;
+    font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ink-50)}
+  .swipe-hint i{display:block;width:26px;height:1px;background:currentColor}
+}
+
+/* ---- lighter on a phone ----
+   Traced on an emulated phone, one pass down the page cost 223 paints and
+   about 290ms of rasterising. Three things account for most of it:
+
+   - the grain is a fixed layer over the whole screen blended with
+     soft-light, so the phone re-blends the entire viewport on every frame
+     of every scroll. It is invisible at phone size anyway.
+   - the contour rings, the drifting washes and the slow push on every
+     photograph keep animating whether or not they are on screen.
+   - two videos autoplay in a loop wherever the reader happens to be.
+
+   On touch screens the grain goes, the rings behind the sections stand
+   still (the two on the cover keep turning), and the photographs stop
+   pushing. Everywhere, anything animated stops while its section is off
+   screen, and the videos only play while they are in view. */
+@media (pointer:coarse),(max-width:879px){
+  body::after{display:none}
+  .tinted .rings,.close .rings{animation:none}
+  .tintwash{animation:none!important}
+  .shots img{animation:none!important}
+}
+.idle .rings,.idle .blob,.idle .tintwash,.idle .dev-i,
+.idle .marquee-row,.idle .shots img{animation-play-state:paused!important}
+</style>
 </head>
 <body>
 
@@ -759,6 +831,15 @@ html{overflow-x:clip}
   <svg class="rings ccw" aria-hidden="true" focusable="false"
        style="--rs:min(96vw,820px);--rd:240s;color:var(--lime);opacity:.11;
               left:-24%;bottom:-54%"><use href="#rings"/></svg>
+  <!-- The roster, on the first screen. The label is not decoration: none of
+       these brands hired Blend for UGC, and a logo strip on a UGC agency's
+       cover would say they did unless something says otherwise. -->
+  <div class="brandband" aria-label="Brands Blend has worked with on staffing, events and giveaways">
+    <p class="bb-label">Staffing, events and giveaways for</p>
+    <div class="marquee">
+      <div class="marquee-row"><span>L'Or&eacute;al</span><span>Garnier</span><span>K&eacute;rastase</span><span>LUX</span><span>Dell</span><span>IBM</span><span>Huawei</span><span>Honor</span><span>LG</span><span>Bosch</span><span>Emaar</span><span>SODIC</span><span>Orascom</span><span>Majid Al Futtaim</span><span>Ahmad Tea</span><span>Eucerin</span><span>ADNOC</span><span>Standard Bank</span><span>Egypt Post</span><span>The American University in Cairo</span><span>L'Or&eacute;al</span><span>Garnier</span><span>K&eacute;rastase</span><span>LUX</span><span>Dell</span><span>IBM</span><span>Huawei</span><span>Honor</span><span>LG</span><span>Bosch</span><span>Emaar</span><span>SODIC</span><span>Orascom</span><span>Majid Al Futtaim</span><span>Ahmad Tea</span><span>Eucerin</span><span>ADNOC</span><span>Standard Bank</span><span>Egypt Post</span><span>The American University in Cairo</span></div>
+    </div>
+  </div>
   <div class="wrap cover-grid">
     <div class="cover-copy">
       <p class="sub">Blend &middot; Cairo</p>
@@ -801,6 +882,7 @@ html{overflow-x:clip}
 
     <p class="scroll-cue"><i aria-hidden="true"></i>Scroll</p>
   </div>
+
 </header>
 
 <section>
@@ -930,7 +1012,7 @@ html{overflow-x:clip}
     </div>
 
     <div class="note">
-      <p><strong>Being straight about this one.</strong> The brands on the previous page
+      <p><strong>Being straight about this one.</strong> The brands at the top of this page
         hired us for staffing, events and giveaways. They are not UGC clients, and we are
         not going to let a logo imply otherwise.</p>
       <p>So the first video is <span class="hl">on us</span>. You judge the quality before
@@ -962,6 +1044,7 @@ html{overflow-x:clip}
       <figure><img src="img/post5.jpg" alt="Crew member running an activity with guests rather than watching from the back" loading="lazy"></figure>
       <figure><img src="img/post8.jpg" alt="Night crew at a beach club on the North Coast" loading="lazy"></figure>
     </div>
+    <p class="swipe-hint" aria-hidden="true">Swipe <i></i></p>
     <p class="cap evgrid">Every photograph here is from a Blend event. No stock
       photography on this page.</p>
 
@@ -1020,11 +1103,6 @@ html{overflow-x:clip}
     </div>
     <p class="cap">Our own footage, from our own events</p>
 
-    <h3 style="margin-top:clamp(36px,6vw,56px)">Brands that have called us in</h3>
-    <div class="marquee" aria-label="Brands Blend has worked with">
-      <div class="marquee-row"><span>L'Or&eacute;al</span><span>Garnier</span><span>K&eacute;rastase</span><span>LUX</span><span>Dell</span><span>IBM</span><span>Huawei</span><span>Honor</span><span>LG</span><span>Bosch</span><span>Emaar</span><span>SODIC</span><span>Orascom</span><span>Majid Al Futtaim</span><span>Ahmad Tea</span><span>Eucerin</span><span>ADNOC</span><span>Standard Bank</span><span>Egypt Post</span><span>The American University in Cairo</span><span>L'Or&eacute;al</span><span>Garnier</span><span>K&eacute;rastase</span><span>LUX</span><span>Dell</span><span>IBM</span><span>Huawei</span><span>Honor</span><span>LG</span><span>Bosch</span><span>Emaar</span><span>SODIC</span><span>Orascom</span><span>Majid Al Futtaim</span><span>Ahmad Tea</span><span>Eucerin</span><span>ADNOC</span><span>Standard Bank</span><span>Egypt Post</span><span>The American University in Cairo</span></div>
-    </div>
-    <p class="cap" style="margin-top:14px">Staffing, events and giveaways work</p>
   </div>
 </section>
 
@@ -1407,6 +1485,28 @@ html{overflow-x:clip}
     }, { threshold: 0.5 });
     steps.forEach(function (el) { io.observe(el); });
   }
+})();
+</script>
+
+<script>
+/* Stop what nobody can see. Each band is watched; while it is off screen it
+ * carries .idle, which pauses its endless animations, and any video in it
+ * is paused. The first look at a band starts it again. IntersectionObserver
+ * costs nothing between crossings, so this adds no work to a scroll. */
+(function () {
+  if (!('IntersectionObserver' in window)) return;
+  var bands = [].slice.call(document.querySelectorAll('header.cover, section, footer.close'));
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      var on = e.isIntersecting;
+      e.target.classList.toggle('idle', !on);
+      [].forEach.call(e.target.querySelectorAll('video[autoplay]'), function (v) {
+        if (on) { var go = v.play(); if (go && go.catch) go.catch(function () {}); }
+        else v.pause();
+      });
+    });
+  }, { rootMargin: '120px 0px 120px 0px' });
+  bands.forEach(function (b) { io.observe(b); });
 })();
 </script>
 </body>
