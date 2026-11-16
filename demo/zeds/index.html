@@ -177,6 +177,64 @@ footer{padding-block:34px 44px;color:var(--mute);font-size:13px}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
 footer a{color:var(--violet)}
 
+/* the trip: the scroll is the ride. A map, a route that draws itself, a car
+   that drives it, and the app beside it showing each stage. */
+#trip{position:relative;height:520vh;background:var(--deep)}
+#trip .stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:radial-gradient(80% 70% at 60% 40%,#3A0A8C,var(--deep) 75%)}
+#trip svg.map{position:absolute;inset:0;width:100%;height:100%;display:none}
+#trip svg.map.on{display:block}
+html[dir="ltr"] #trip svg.map{transform:scaleX(-1)}
+.trip-cap{position:absolute;z-index:3;bottom:72px;inset-inline-start:max(16px,4vw);max-width:520px;color:#fff}
+.trip-cap .n{font-size:14px;font-weight:800;color:var(--cyan)}
+.trip-cap h2{font-size:clamp(28px,3.4vw,46px);font-weight:900;margin:6px 0 8px}
+.trip-cap p{margin:0;opacity:.85;font-size:17px}
+.trip-cap>div{position:absolute;inset:0 auto auto 0;width:100%;opacity:0;transform:translateY(12px);transition:opacity .45s ease,transform .5s ease}
+html[dir="rtl"] .trip-cap>div{inset:0 0 auto auto}
+.trip-cap>div.on{opacity:1;transform:none;position:relative}
+.trip-dots{position:absolute;z-index:3;bottom:28px;inset-inline-start:max(16px,4vw);display:flex;gap:8px}
+.trip-dots i{width:34px;height:5px;border-radius:9px;background:rgba(255,255,255,.22);transition:background .3s}
+.trip-dots i.on{background:var(--cyan)}
+.phone{position:absolute;z-index:4;inset-inline-end:max(16px,6vw);top:50%;transform:translateY(-50%);width:300px;height:610px;border-radius:44px;background:#0E0620;padding:12px;box-shadow:0 40px 90px rgba(0,0,0,.5),inset 0 0 0 2px rgba(255,255,255,.08)}
+.phone .scr{position:relative;width:100%;height:100%;border-radius:34px;overflow:hidden;background:#F6F3FC;color:var(--ink)}
+.phone .notch{position:absolute;top:10px;left:50%;width:96px;height:24px;margin-left:-48px;border-radius:20px;background:#0E0620;z-index:3}
+.phone .mapmini{position:absolute;inset:0 0 46% 0;background:linear-gradient(160deg,#E9E1FF,#D7F6FB)}
+.phone .mapmini::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(75,0,181,.08) 2px,transparent 2px),linear-gradient(90deg,rgba(75,0,181,.08) 2px,transparent 2px);background-size:38px 38px}
+.phone .mapmini b{position:absolute;left:50%;top:58%;width:16px;height:16px;margin:-8px;border-radius:50%;background:var(--violet);box-shadow:0 0 0 8px rgba(75,0,181,.18)}
+.sheet{position:absolute;inset:auto 0 0 0;height:52%;background:#fff;border-radius:26px 26px 0 0;box-shadow:0 -10px 30px rgba(20,9,43,.12);padding:18px 16px}
+.sheet .s{position:absolute;inset:18px 16px;opacity:0;transform:translateY(10px);transition:opacity .4s ease,transform .45s ease;display:flex;flex-direction:column;gap:10px}
+.sheet .s.on{opacity:1;transform:none}
+.sheet h4{margin:0;font-size:17px;font-weight:800}
+.sheet .fld{background:var(--paper);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--mute)}
+.sheet .fld b{color:var(--ink)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips>span{font-size:11px;font-weight:700;padding:6px 9px;border-radius:999px;background:var(--paper)}
+.chips>span.sel{background:var(--violet);color:#fff}
+.cap-row{display:flex;align-items:center;gap:10px}
+.cap-row .av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#FF8CC1,#7A1BD8);flex:none}
+.cap-row small{display:block;color:var(--mute);font-size:11.5px}
+.eta{margin-inline-start:auto;font-weight:900;font-size:22px;color:var(--violet)}
+.eta small{font-size:11px;font-weight:600}
+.pinkb{align-self:flex-start;font-size:11px;font-weight:800;color:#B0186A;background:#FFE3F0;padding:5px 10px;border-radius:999px}
+.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tools>span{background:var(--paper);border-radius:12px;padding:10px 6px;text-align:center;font-size:11px;font-weight:700}
+.tools>span.sos{background:#FFE1E1;color:#A01010}
+.tile{border-radius:14px;padding:12px;background:linear-gradient(135deg,#2A0068,#5B12D6);color:#fff;font-size:13px}
+.tile b{display:block;font-size:15px}
+.stars{font-size:26px;color:#FFC83D;letter-spacing:3px}
+.go{background:var(--violet);color:#fff;text-align:center;border-radius:12px;padding:11px;font-weight:800;font-size:13px}
+@media (max-width:860px){
+  .trip-cap{bottom:auto;top:66px;inset-inline:16px;max-width:none}
+  .trip-cap h2{font-size:24px}.trip-cap p{font-size:14px}
+  .phone{inset:auto 0 0 0;top:auto;transform:none;width:auto;height:34%;border-radius:24px 24px 0 0;padding:0;box-shadow:0 -12px 40px rgba(0,0,0,.35)}
+  .phone .scr{border-radius:24px 24px 0 0}
+  .phone .notch,.phone .mapmini{display:none}
+  .sheet{height:100%;border-radius:24px 24px 0 0}
+  .trip-dots{bottom:auto;top:calc(66% - 22px)}
+}
+.ride .im img{transition:transform .9s cubic-bezier(.2,.8,.2,1),opacity .6s ease}
+.js .ride:not(.in) .im img{transform:translateX(70px);opacity:0}
+html[dir="ltr"].js .ride:not(.in) .im img{transform:translateX(-70px)}
+
 .rv{opacity:1;transform:none;transition:opacity .7s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
 .js .rv:not(.in){opacity:0;transform:translateY(24px)}
 @media (prefers-reduced-motion:reduce){.chip{animation:none}.rv,.sw,.sw::after{transition:none}html{scroll-behavior:auto}}
@@ -225,6 +283,29 @@ footer a{color:var(--violet)}
     </div>
   </div>
 </header>
+
+<section id="trip" aria-label="How a Zeds trip goes">
+  <div class="stage">
+    <div class="trip-cap" aria-live="polite">
+      <div class="on"><span class="n"><span lang-ar>1 · اطلب</span><span lang-en>1 · Book</span></span><h2><span lang-ar>رايح فين؟ اكتبها واختار.</span><span lang-en>Where to? Type it, pick a ride.</span></h2><p><span lang-ar>عادي، بلس، بايك، ديل أو شاتل.</span><span lang-en>Regular, Plus, Bike, Deal or Shuttle.</span></p></div>
+      <div><span class="n"><span lang-ar>2 · الكابتن جاي</span><span lang-en>2 · Your captain is coming</span></span><h2><span lang-ar>تابعه على الخريطة لحد ما يوصلك.</span><span lang-en>Watch them on the map until they arrive.</span></h2><p><span lang-ar>ولو مفعّلة Pink Mode، الكابتن ست.</span><span lang-en>With Pink Mode on, your captain is a woman.</span></p></div>
+      <div><span class="n"><span lang-ar>3 · في الطريق</span><span lang-en>3 · On the way</span></span><h2><span lang-ar>رحلة آمنة من غير ما تفكر.</span><span lang-en>A safe ride without a second thought.</span></h2><p><span lang-ar>سجّل الرحلة، شارك موقعك، وزرار طوارئ في إيدك.</span><span lang-en>Record the ride, share your location, SOS in your hand.</span></p></div>
+      <div><span class="n"><span lang-ar>4 · استمتع</span><span lang-en>4 · Enjoy it</span></span><h2><span lang-ar>الطريق نفسه بقى أحلى.</span><span lang-en>The ride itself got better.</span></h2><p><span lang-ar>مسلسلات وماتشات وموسيقى وألعاب طول المشوار.</span><span lang-en>Shows, matches, music and games all the way.</span></p></div>
+      <div><span class="n"><span lang-ar>5 · وصلت</span><span lang-en>5 · You are there</span></span><h2><span lang-ar>وصلت. قيّم مشوارك.</span><span lang-en>Arrived. Rate your ride.</span></h2><p><span lang-ar>والمشوار الجاي بضغطة واحدة.</span><span lang-en>And the next one is one tap away.</span></p></div>
+    </div>
+    <div class="trip-dots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+    <div class="phone" aria-hidden="true"><div class="scr">
+      <span class="notch"></span><div class="mapmini"><b></b></div>
+      <div class="sheet">
+        <div class="s on"><h4><span lang-ar>رايح فين؟</span><span lang-en>Where to?</span></h4><div class="fld"><span lang-ar>من: <b>موقعك الحالي</b></span><span lang-en>From: <b>your location</b></span></div><div class="fld"><span lang-ar>إلى: <b>محطة الرمل</b></span><span lang-en>To: <b>Raml Station</b></span></div><div class="chips"><span class="sel"><span lang-ar>عادي</span><span lang-en>Regular</span></span><span><span lang-ar>بلس</span><span lang-en>Plus</span></span><span><span lang-ar>بايك</span><span lang-en>Bike</span></span><span><span lang-ar>ديل</span><span lang-en>Deal</span></span><span><span lang-ar>شاتل</span><span lang-en>Shuttle</span></span></div></div>
+        <div class="s"><h4><span lang-ar>الكابتن في الطريق ليك</span><span lang-en>Your captain is on the way</span></h4><div class="cap-row"><span class="av"></span><div><b><span lang-ar>كابتن سارة</span><span lang-en>Captain Sara</span></b><small><span lang-ar>عربية بنفسجي · ★ 4.9</span><span lang-en>Purple car · ★ 4.9</span></small></div><span class="eta"><span id="eta">4</span> <small><span lang-ar>دقايق</span><span lang-en>min</span></small></span></div><span class="pinkb">Pink Mode</span></div>
+        <div class="s"><h4><span lang-ar>في الطريق</span><span lang-en>On the way</span></h4><div class="tools"><span><span lang-ar>سجّل</span><span lang-en>Record</span></span><span><span lang-ar>شارك موقعك</span><span lang-en>Share</span></span><span class="sos">SOS</span></div><div class="fld"><span lang-ar>بنتك شايفة رحلتك لحظة بلحظة</span><span lang-en>Your family can see the trip live</span></div></div>
+        <div class="s"><h4><span lang-ar>استمتع بالطريق</span><span lang-en>Enjoy the ride</span></h4><div class="tile"><b>WATCH IT</b><span lang-ar>كمّل الحلقة من مكان ما وقفت</span><span lang-en>Pick up the episode where you left it</span></div><div class="fld"><span lang-ar>فاضل <b id="left">8</b> دقايق</span><span lang-en><b id="left-en">8</b> min to go</span></div></div>
+        <div class="s"><h4><span lang-ar>وصلت</span><span lang-en>You have arrived</span></h4><div class="stars">★★★★★</div><div class="fld"><span lang-ar>قيّم مشوارك مع كابتن سارة</span><span lang-en>Rate your ride with Captain Sara</span></div><div class="go"><span lang-ar>مشوار جديد</span><span lang-en>New ride</span></div></div>
+      </div>
+    </div></div>
+  </div>
+</section>
 
 <section id="rides">
   <div class="wrap">
@@ -388,6 +469,75 @@ footer a{color:var(--violet)}
 
   var saved = null; try { saved = localStorage.getItem('zeds-lang'); } catch (e) {}
   if (saved === 'en') setLang('en');
+
+  // the trip: build the map for the screen's shape, then drive it on scroll
+  (function () {
+    var stage = document.querySelector('#trip .stage'); if (!stage) return;
+    var NS = 'http://www.w3.org/2000/svg';
+    var MAPS = {
+      wide: { vb: [1000, 640], a: 'M300 620 C360 610 420 580 480 520', b: 'M480 520 C560 450 540 380 660 340 C780 300 820 300 880 220 C910 180 930 150 960 110', sea: 'M640 0 C700 60 820 70 1000 40 L1000 0 Z' },
+      tall: { vb: [600, 1000], a: 'M60 700 C110 680 160 660 200 620', b: 'M200 620 C260 570 400 590 400 520 C400 450 230 470 240 400 C250 330 400 330 450 260', sea: 'M330 0 C380 50 470 70 600 50 L600 0 Z' }
+    };
+    function el(n, a) { var e = document.createElementNS(NS, n); for (var k in a) e.setAttribute(k, a[k]); return e; }
+    var built = {};
+    function build(key) {
+      var M = MAPS[key], w = M.vb[0], h = M.vb[1];
+      var svg = el('svg', { 'class': 'map', viewBox: '0 0 ' + w + ' ' + h, preserveAspectRatio: 'xMidYMid slice', 'aria-hidden': 'true' });
+      svg.appendChild(el('path', { d: M.sea, fill: 'rgba(31,211,236,.13)' }));
+      for (var i = 1; i < 14; i++) svg.appendChild(el('path', { d: 'M0 ' + (i * h / 14 + (i % 3) * 9) + ' L' + w + ' ' + (i * h / 14 - (i % 2) * 14), stroke: 'rgba(255,255,255,' + (i % 4 ? .05 : .11) + ')', 'stroke-width': i % 4 ? 2 : 6 }));
+      for (var j = 1; j < 12; j++) svg.appendChild(el('path', { d: 'M' + (j * w / 12 + (j % 2) * 12) + ' 0 L' + (j * w / 12 - (j % 3) * 10) + ' ' + h, stroke: 'rgba(255,255,255,' + (j % 4 ? .05 : .11) + ')', 'stroke-width': j % 4 ? 2 : 6 }));
+      var a = el('path', { d: M.a, fill: 'none', stroke: 'rgba(255,255,255,.45)', 'stroke-width': 5, 'stroke-dasharray': '2 12', 'stroke-linecap': 'round' });
+      var bBase = el('path', { d: M.b, fill: 'none', stroke: 'rgba(255,255,255,.12)', 'stroke-width': 10, 'stroke-linecap': 'round' });
+      var b = el('path', { d: M.b, fill: 'none', stroke: '#1FD3EC', 'stroke-width': 10, 'stroke-linecap': 'round' });
+      svg.appendChild(a); svg.appendChild(bBase); svg.appendChild(b);
+      var end = M.b.trim().split(' ').slice(-2).map(Number), start = M.a.trim().split(' ').slice(-2).map(Number);
+      var pin1 = el('g', { transform: 'translate(' + start[0] + ' ' + start[1] + ')' }); pin1.appendChild(el('circle', { r: 16, fill: '#fff' })); pin1.appendChild(el('circle', { r: 8, fill: '#4B00B5' }));
+      var pin2 = el('g', { transform: 'translate(' + end[0] + ' ' + end[1] + ')' }); pin2.appendChild(el('circle', { r: 22, fill: 'rgba(31,211,236,.25)' })); pin2.appendChild(el('circle', { r: 12, fill: '#1FD3EC' })); pin2.appendChild(el('circle', { r: 5, fill: '#22005A' }));
+      svg.appendChild(pin1); svg.appendChild(pin2);
+      var car = el('g', {});
+      car.appendChild(el('rect', { x: -30, y: -15, width: 60, height: 30, rx: 11, fill: '#6A1DF0', stroke: '#fff', 'stroke-width': 3 }));
+      car.appendChild(el('rect', { x: 2, y: -11, width: 15, height: 22, rx: 4, fill: '#22005A' }));
+      car.appendChild(el('rect', { x: -22, y: -11, width: 11, height: 22, rx: 4, fill: '#22005A' }));
+      car.appendChild(el('path', { d: 'M-30 4 L30 -4', stroke: '#1FD3EC', 'stroke-width': 4 }));
+      svg.appendChild(car);
+      stage.insertBefore(svg, stage.firstChild);
+      var la = a.getTotalLength(), lb = b.getTotalLength();
+      b.setAttribute('stroke-dasharray', lb + ' ' + lb);
+      return { svg: svg, a: a, b: b, la: la, lb: lb, car: car };
+    }
+    var caps = [].slice.call(document.querySelectorAll('.trip-cap > div')), dots = [].slice.call(document.querySelectorAll('.trip-dots i')), scr = [].slice.call(document.querySelectorAll('.sheet .s'));
+    var eta = document.getElementById('eta'), left = document.getElementById('left'), leftEn = document.getElementById('left-en');
+    var trip = document.getElementById('trip'), cur = null, lastStage = -1, ticking = false;
+    var REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function place(m, path, len, t) {
+      var d = Math.max(0, Math.min(len, len * t)), p = path.getPointAtLength(d), q = path.getPointAtLength(Math.min(len, d + 2)), r = path.getPointAtLength(Math.max(0, d - 2));
+      var ang = Math.atan2(q.y - r.y, q.x - r.x) * 180 / Math.PI;
+      m.car.setAttribute('transform', 'translate(' + p.x + ' ' + p.y + ') rotate(' + ang + ')');
+    }
+    function frame() {
+      ticking = false;
+      var key = innerWidth / innerHeight < .9 ? 'tall' : 'wide';
+      if (!built[key]) built[key] = build(key);
+      if (cur !== built[key]) { if (cur) cur.svg.classList.remove('on'); cur = built[key]; cur.svg.classList.add('on'); }
+      var r = trip.getBoundingClientRect(), p = Math.max(0, Math.min(1, -r.top / Math.max(1, r.height - innerHeight)));
+      var st = p < .14 ? 0 : p < .34 ? 1 : p < .62 ? 2 : p < .88 ? 3 : 4;
+      // 0 to .34: the captain drives to you; .38 to .92: the ride; then you have arrived
+      if (p < .36) place(cur, cur.a, cur.la, Math.min(1, Math.max(0, (p - .04) / .3)));
+      else place(cur, cur.b, cur.lb, Math.min(1, (p - .38) / .54));
+      var drawn = Math.min(1, Math.max(0, (p - .38) / .54));
+      cur.b.setAttribute('stroke-dashoffset', String(cur.lb * (1 - drawn)));
+      eta.textContent = Math.max(1, Math.round(4 - 3 * Math.min(1, Math.max(0, (p - .14) / .2))));
+      var l = Math.max(1, Math.round(8 - 7 * drawn)); left.textContent = l; leftEn.textContent = l;
+      if (st !== lastStage) {
+        caps.forEach(function (c, i) { c.classList.toggle('on', i === st); });
+        dots.forEach(function (d, i) { d.classList.toggle('on', i <= st); });
+        scr.forEach(function (s, i) { s.classList.toggle('on', i === st); });
+        lastStage = st;
+      }
+    }
+    function req() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
+    addEventListener('scroll', req, { passive: true }); addEventListener('resize', req); frame();
+  })();
 
   // reveal once on the way down; the Pink Mode switch flips when it arrives
   var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: .18 });
