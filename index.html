@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Blend is a Cairo agency for UGC video and for ushers and events. One brief, one team.">
+<meta name="description" content="Blend is a Cairo agency for UGC video, ushers and events, and web pages. One brief, one team.">
 <meta property="og:title" content="Blend, Cairo">
 <meta property="og:url" content="https://blend-marketing.com/">
 <meta property="og:image" content="https://blend-marketing.com/img/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Blend: UGC video, ushers and events, Cairo">
+<meta property="og:image:alt" content="Blend: UGC video, ushers and events, web pages, Cairo">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
-<meta property="og:description" content="UGC video, ushers and events. One team for the whole campaign.">
+<meta property="og:description" content="UGC video, ushers and events, and web pages. One team for the whole campaign.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#0A0710">
-<title>Blend, Cairo · UGC video, ushers and events</title>
+<title>Blend, Cairo · UGC video, ushers and events, web pages</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap">
@@ -257,7 +257,7 @@ a:focus-visible,button:focus-visible,video:focus-visible{
              0 18px 40px rgba(26,11,46,.30),0 3px 10px rgba(26,11,46,.22)}
 .phone-screen{position:relative;border-radius:32px;overflow:hidden;background:#000;
   aspect-ratio:9/19.5;display:grid}
-.phone-screen video{width:100%;height:100%;object-fit:cover;border-radius:0;
+.phone-screen video,.phone-screen img{width:100%;height:100%;object-fit:cover;border-radius:0;
   aspect-ratio:auto;background:#000}
 .phone-notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);
   width:72px;height:19px;border-radius:12px;background:#0b0810;z-index:2;
@@ -784,6 +784,50 @@ html{overflow-x:clip}
 }
 .idle .rings,.idle .blob,.idle .tintwash,.idle .dev-i,
 .idle .marquee-row,.idle .shots img{animation-play-state:paused!important}
+
+/* ---- web pages: a laptop and a phone, both playing a recording of the real page ---- */
+.t-web .tintwash{background:
+  radial-gradient(46% 40% at 82% 12%,rgba(200,255,0,.13),transparent 70%),
+  radial-gradient(42% 36% at 8% 74%,rgba(91,33,168,.20),transparent 70%)}
+.show{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);
+  gap:clamp(24px,4vw,48px);align-items:center;margin-top:clamp(34px,5vw,52px)}
+.show+.show{padding-top:clamp(30px,4vw,44px);border-top:1px solid var(--ink-14)}
+.show-r{grid-template-columns:minmax(0,1fr) minmax(0,1.55fr)}
+.show-r .show-dev{order:2}
+.show-dev{position:relative;padding:0 9% 7% 0}
+.show-r .show-dev{padding:0 0 7% 9%}
+.laptop-screen{position:relative;border-radius:12px 12px 0 0;padding:9px 9px 0;
+  background:linear-gradient(160deg,#2b2436,#15101c 42%,#372e45);
+  box-shadow:0 1px 1px rgba(255,255,255,.14) inset,0 22px 48px rgba(0,0,0,.45)}
+.laptop-screen video,.laptop-screen img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;
+  object-position:top;background:#000;border-radius:3px 3px 0 0}
+.laptop-base{height:12px;margin:0 -5%;border-radius:0 0 12px 12px;
+  background:linear-gradient(180deg,#3a3147,#1b1622);box-shadow:0 10px 22px rgba(0,0,0,.4)}
+.phone-sm{position:absolute;right:0;bottom:0;width:23%;max-width:none;padding:5px;
+  border-radius:22px}
+.phone-sm .phone-screen{border-radius:18px;aspect-ratio:9/16}
+.phone-sm .phone-notch{width:34%;height:9px;top:6px}
+.show-r .phone-sm{right:auto;left:0}
+.show-k{font-size:11px;font-weight:700;letter-spacing:.17em;text-transform:uppercase;
+  color:var(--lime);margin:0 0 8px}
+.show-txt h3{margin-bottom:9px}
+.show-note{font-size:14px;color:var(--ink-50)}
+.show-note a{color:var(--ink)}
+@media (max-width:760px){.show,.show-r{grid-template-columns:1fr}.show-r .show-dev{order:0}}
+
+/* ---- the budget slider ---- */
+.budget{margin-top:26px;padding:22px 22px 24px;background:var(--card);border-radius:3px;
+  max-width:640px}
+.budget label{display:block;font-weight:700;font-size:16px;margin-bottom:12px}
+.bud-row{display:flex;align-items:center;gap:16px}
+.bud-row input{flex:1;accent-color:var(--lime);height:28px;min-width:0}
+.bud-row output{font-weight:700;font-size:20px;letter-spacing:-.02em;min-width:9.5ch;
+  text-align:right;font-variant-numeric:tabular-nums}
+.bud-scale{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-50);
+  margin:2px 0 14px;padding-right:calc(9.5ch + 16px)}
+.bud-fit{font-size:16px;margin:0 0 8px;min-height:3.2em}
+.bud-small{font-size:13.5px;color:var(--ink-50);margin:0 0 18px}
+.audit{font-size:14.5px;color:var(--ink-50);margin-top:-4px}
 </style>
 
 <link rel="stylesheet" href="/assets/lead.css?v=30879dca">
@@ -809,6 +853,7 @@ html{overflow-x:clip}
     <ul>
       <li><a class="l" href="#ugc">UGC</a></li>
       <li><a class="l" href="#events">Ushers &amp; events</a></li>
+      <li><a class="l" href="#web">Web pages</a></li>
       <li><a class="l" href="#how">How it works</a></li>
     </ul>
     <a class="cta" href="#contact">Get in touch</a>
@@ -842,8 +887,9 @@ html{overflow-x:clip}
     <div class="cover-copy">
       <p class="sub">Blend &middot; Cairo</p>
       <h1 class="mark">blend</h1>
-      <p class="line">We put the content and the people on your campaign.</p>
-      <p class="svc"><b>UGC video</b> &nbsp;/&nbsp; <b>Ushers &amp; events</b></p>
+      <p class="line">We put the content, the people and the page on your campaign.</p>
+      <p class="svc"><b>UGC video</b> &nbsp;/&nbsp; <b>Ushers &amp; events</b> &nbsp;/&nbsp;
+        <b>Web pages</b></p>
       <div class="cover-cta">
         <a class="btn" href="#contact">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
@@ -889,7 +935,8 @@ html{overflow-x:clip}
     <h2>Six years on the floor. Now the whole campaign.</h2>
     <p class="lead">Blend started in events, putting briefed teams on the floor for
       activations and launches across Egypt. We have built outward from there, so one
-      team now handles the content and the people on the same campaign.</p>
+      team now handles the content, the people and the page your customers order
+      from.</p>
     <p>Founded and run by Moustafa Shawkat, in Cairo.</p>
 
     <div class="nums">
@@ -1103,6 +1150,118 @@ html{overflow-x:clip}
   </div>
 </section>
 
+<section id="web" class="tinted t-web">
+  <div class="tintwash" aria-hidden="true"></div>
+  <svg class="rings ccw" aria-hidden="true" focusable="false"
+       style="--rs:min(110vw,960px);--rd:200s;color:var(--lime);opacity:.10;
+              right:-24%;top:-46%"><use href="#rings"/></svg>
+  <div class="wrap rv">
+    <div class="rule" style="background:var(--lime)"></div>
+    <p class="eyebrow" style="color:var(--lime)">Service three</p>
+    <h2>Web pages</h2>
+    <p class="lead">A page your customers can order from, built around your brand: your
+      photos, your products, your colours, and motion made for them.</p>
+
+    <div class="show">
+      <div class="show-dev">
+        <div class="laptop">
+          <div class="laptop-screen">
+            <video src="img/web/kygo-desk.mp4" poster="img/web/kygo-desk.jpg" muted loop playsinline autoplay preload="metadata" aria-label="The KYGO page scrolling on a laptop"></video>
+          </div>
+          <div class="laptop-base" aria-hidden="true"></div>
+        </div>
+        <div class="phone phone-sm">
+          <div class="phone-screen">
+            <div class="phone-notch" aria-hidden="true"></div>
+            <video src="img/web/kygo-phone.mp4" poster="img/web/kygo-phone.jpg" muted loop playsinline autoplay preload="metadata" aria-label="The KYGO page scrolling on a phone"></video>
+          </div>
+        </div>
+      </div>
+      <div class="show-txt">
+        <p class="show-k">KYGO &middot; streetwear</p>
+        <h3>A drop, told in one scroll</h3>
+        <p>Film behind the name, the pieces one by one, and a WhatsApp button that
+          writes the order for the customer.</p>
+        <p class="show-note">A concept we built for our own label.
+          <a href="/demo/streetwear/" target="_blank" rel="noopener">Open the page</a></p>
+      </div>
+    </div>
+
+    <div class="show show-r">
+      <div class="show-dev">
+        <div class="laptop">
+          <div class="laptop-screen">
+            <img src="img/web/khayt-desk.jpg" alt="The KHAYT fitting room on a laptop: a 3D model and the colour picker" loading="lazy" decoding="async">
+          </div>
+          <div class="laptop-base" aria-hidden="true"></div>
+        </div>
+        <div class="phone phone-sm">
+          <div class="phone-screen">
+            <div class="phone-notch" aria-hidden="true"></div>
+            <img src="img/web/khayt-phone.jpg" alt="The KHAYT page on a phone" loading="lazy" decoding="async">
+          </div>
+        </div>
+      </div>
+      <div class="show-txt">
+        <p class="show-k">KHAYT &middot; 3D</p>
+        <h3>The outfit, on a model, as you scroll</h3>
+        <p>Pieces fly onto a 3D model, and a fitting room lets the customer change
+          colours and sizes before ordering.</p>
+        <p class="show-note">An invented label, built to show what a page can do.
+          <a href="/demo/streetwear-3d/" target="_blank" rel="noopener">Open the page</a></p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:clamp(36px,6vw,56px)">What you get</h3>
+    <div class="rows">
+      <div>
+        <h3>Your look, from scratch</h3>
+        <p>Colours, type and motion made from your own photos. Nobody else has the same
+          page.</p>
+      </div>
+      <div>
+        <h3>Ordering on WhatsApp</h3>
+        <p>Every product opens a chat with the piece and the size already written out.</p>
+      </div>
+      <div>
+        <h3>Fast on a phone</h3>
+        <p>Photos compressed and loaded as people scroll, so a page with a hundred
+          products still opens quickly.</p>
+      </div>
+      <div>
+        <h3>No monthly fee</h3>
+        <p>No platform subscription. You pay for your own domain, and the page is yours.</p>
+      </div>
+      <div>
+        <h3>Three rounds of changes</h3>
+        <p>Before you sign it off. After that, adding or removing products is quoted.</p>
+      </div>
+      <div>
+        <h3>Need online payment?</h3>
+        <p>A cart and card payment make it a website. We quote that separately.</p>
+      </div>
+    </div>
+
+    <div class="price">
+      <span class="big">From EGP 6,000</span>
+      <span class="unit">per page &middot; 5 to 10 days from the day we have your photos</span>
+    </div>
+
+    <div class="budget">
+      <label for="bud">What budget are you working with?</label>
+      <div class="bud-row">
+        <input id="bud" type="range" min="6000" max="20000" step="500" value="8000">
+        <output for="bud" id="bud-v">EGP 8,000</output>
+      </div>
+      <div class="bud-scale" aria-hidden="true"><span>6,000</span><span>20,000</span></div>
+      <p class="bud-fit" id="bud-fit"></p>
+      <p class="bud-small">Every page is built at the level you see above. The budget decides
+        how much of it there is. After the brief we send a quote close to your number.</p>
+      <a class="btn" href="#contact" id="bud-go">Start with this budget</a>
+    </div>
+  </div>
+</section>
+
 <section id="how" class="tinted t-how">
   <div class="tintwash" aria-hidden="true"></div>
   <svg class="rings" aria-hidden="true" focusable="false"
@@ -1112,28 +1271,28 @@ html{overflow-x:clip}
     <div class="rule" style="background:var(--purple)"></div>
     <p class="eyebrow" style="color:var(--purple)">How it works</p>
     <h2>One brief. Nothing to chase.</h2>
-    <p class="lead">A video agency and a staffing agency means two contracts, two
-      timelines and two people to chase. This is one of each.</p>
+    <p class="lead">A video agency, a staffing agency and a web designer means three
+      contracts, three timelines and three people to chase. This is one of each.</p>
     <div class="steps">
       <div>
         <div>
           <h3>Brief</h3>
           <p>One conversation. We map what the campaign actually needs, and say so if it
-            only needs one of the two.</p>
+            does not need all three.</p>
         </div>
       </div>
       <div>
         <div>
           <h3>Build</h3>
-          <p>Creators booked and crew scheduled, running in parallel rather than one
-            after the other.</p>
+          <p>Creators booked, crew scheduled, page designed. Running in parallel rather
+            than one after the other.</p>
         </div>
       </div>
       <div>
         <div>
           <h3>Deliver</h3>
-          <p>Video in 3 to 5 days from the day the product arrives. Crew on the floor,
-            briefed and in uniform before the doors open.</p>
+          <p>Video in 3 to 5 days from the day the product arrives. A web page in 5 to
+            10 days. Crew on the floor, briefed and in uniform before the doors open.</p>
         </div>
       </div>
     </div>
@@ -1147,7 +1306,9 @@ html{overflow-x:clip}
   <div class="wrap">
     <div class="rule"></div>
     <h2>Send us the product.</h2>
-    <p>One message and we will map it out. Content, crew, or both.</p>
+    <p>One message and we will map it out. Content, crew, a web page, or all three.</p>
+    <p class="audit">Not sure where to start? A page audit is EGP 500, and it comes off
+      any service you book after it.</p>
     <div id="lead-root" data-type="client"></div>
     <div class="contact">
       <div>
@@ -1168,6 +1329,37 @@ html{overflow-x:clip}
 </footer>
 
 
+<script>
+/* the budget slider: what that budget usually covers, and it carries the number
+ * into the form below so the customer does not type it twice */
+(function () {
+  var r = document.getElementById('bud');
+  if (!r) return;
+  var out = document.getElementById('bud-v'), fit = document.getElementById('bud-fit');
+  var bands = [
+    [6000, 'One page for one collection, in your own look, with ordering on WhatsApp.'],
+    [10000, 'A bigger range across several collections, in Arabic and English.'],
+    [15000, 'A large catalogue, or more than one page.'],
+    [20000, 'At this size, ask us whether you need a website instead.']
+  ];
+  function show() {
+    var v = +r.value, t = bands[0][1];
+    bands.forEach(function (b) { if (v >= b[0]) t = b[1]; });
+    out.textContent = 'EGP ' + v.toLocaleString('en-US') + (v >= 20000 ? '+' : '');
+    fit.textContent = t;
+    r.style.background = '';
+  }
+  r.addEventListener('input', show);
+  show();
+  document.getElementById('bud-go').addEventListener('click', function () {
+    var v = +r.value;
+    var web = document.querySelector('input[name="needs"][value="Web page"]');
+    if (web) web.checked = true;
+    var sel = document.querySelector('select[name="budget"]');
+    if (sel) sel.value = v < 10000 ? 'Under 10,000' : v <= 25000 ? '10,000 to 25,000' : '25,000 to 50,000';
+  });
+})();
+</script>
 <script>
 /* Motion for browsers without animation-timeline.
  *
