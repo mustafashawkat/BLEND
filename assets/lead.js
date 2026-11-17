@@ -23,7 +23,7 @@
  * endpoint it opens WhatsApp with the enquiry written out instead.
  */
 (function () {
-  var FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbz-vNtR-vB_Zr-hJ2WsfDfNUJ0wlf06Bsixbt4okyjrc6sogoi9E250mpg2KFS23DFh/exec';
+  var FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycby7AswxZTjOrkhTpWgs65hgTDFRxjWa9FOaRnRiTWad9wbxIQoZ6YTyLYKLAgtSM6iW/exec';
   var WHATSAPP = '201107409572';
   var KEY = 'blend_src';
   var DAYS = 30;
